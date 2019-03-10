@@ -174,7 +174,7 @@ public class ChartView extends View implements View.OnTouchListener {
 //        if(ms % 2 == 0)
 //            fp.setColor(Color.RED);
 //        else
-            fp.setColor(Color.YELLOW);
+            fp.setColor(Color.WHITE);
 
         canvas.drawRect(0, 0, W, H, fp);
 

@@ -3,11 +3,13 @@ package ru19july.tgchart;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ public class ChartControlsView extends LinearLayout {
     private final ChartViewSlider mSlider;
     private View mValue;
     private ChartView mImage;
+    private String TAG = ChartControlsView.class.getSimpleName();
 
     public ChartControlsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,6 +56,13 @@ public class ChartControlsView extends LinearLayout {
             checkBox.setChecked(i % 2 == 0);
 
             insertPoint.addView(checkBox, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.d(TAG, "onCheckedChanged: " + isChecked);
+                }
+            });
         }
 
     }

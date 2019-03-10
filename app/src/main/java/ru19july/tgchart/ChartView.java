@@ -137,6 +137,8 @@ public class ChartView extends View {
         int decimalCount = tool == null ? Utils.DEFAULT_DECIMAL_COUNT : tool.DecimalCount;
         //quotes = GroupBy(60, quotes);//M1:60; M5:300; H1:3600
 */
+        int decimalCount = Utils.DEFAULT_DECIMAL_COUNT ;
+
         //очищаем график
         Paint fp = new Paint();
         fp.setAntiAlias(false);
@@ -181,7 +183,7 @@ public class ChartView extends View {
 
             DrawChartCurve(quotes, canvas);
 
-            //DrawHorizontalLines(numScale, decimalCount, canvas);
+            DrawHorizontalLines(numScale, decimalCount, canvas);
 
             //пишем Profit
             Paint p = new Paint();
@@ -195,7 +197,7 @@ public class ChartView extends View {
             canvas.drawText(str, (W - xw) * Utils.PROFIT_TEXT_X_POSITION_RATIO, H * Utils.PROFIT_TEXT_Y_POSITION_RATIO, p);
 
             //floating line
-            //DrawFloatingLine(quoteValue, decimalCount, lastX, lastY, canvas);
+            DrawFloatingLine(quoteValue, decimalCount, lastX, lastY, canvas);
         }
 
         drawing = false;
@@ -317,7 +319,7 @@ public class ChartView extends View {
             }
         }
     }
-/*
+
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
@@ -350,128 +352,6 @@ public class ChartView extends View {
         }
     }
 
-    private void FindMinMaxByHookTimeframe(List<Quote> quotes, HookTimeframe htf, int optionKind) {
-        if (quotes.size() > 0) {
-            Quote q = quotes.get(quotes.size() - 1);
-            double qValue = q.value;
-            if (htf != null) {
-
-                if (optionKind == 2) {
-                    float up_delta = ((HookTimeframeTouch) htf).UpDelta;
-                    double ud = qValue + up_delta;
-                    float down_delta = ((HookTimeframeTouch) htf).DownDelta;
-                    double dd = qValue - down_delta;
-
-                    minQuote = dd;
-                    maxQuote = ud;
-                }
-
-                if (optionKind == 3) {
-                    float delta_top_ext = ((HookTimeframeRange) htf).DeltaTopExternal;
-                    float delta_top_int = ((HookTimeframeRange) htf).DeltaTopInternal;
-                    float delta_bot_ext = ((HookTimeframeRange) htf).DeltaBottomExternal;
-                    float delta_bot_int = ((HookTimeframeRange) htf).DeltaBottomInternal;
-
-                    double dte = qValue + delta_top_ext;
-                    double dti = qValue + delta_top_int;
-                    double dbe = qValue - delta_bot_ext;
-                    double dbi = qValue - delta_bot_int;
-
-                    minQuote = Math.min(dbe, dbi);
-                    maxQuote = Math.max(dte, dti);
-                }
-            }
-        }
-    }
-
-    private void DrawTouch(HookTimeframe htf, double qValue, int decimalCount, Canvas canvas) {
-        if (htf != null) {
-            float up_delta = ((HookTimeframeTouch) htf).UpDelta;
-            double ud = qValue + up_delta;
-            float udY = GetY(ud);
-            float down_delta = ((HookTimeframeTouch) htf).DownDelta;
-            double dd = qValue - down_delta;
-            float ddY = GetY(dd);
-
-            Paint p2 = new Paint();
-            p2.setAntiAlias(false);
-            p2.setStyle(Paint.Style.FILL_AND_STROKE);
-            p2.setColor(Utils.LINE_COLOR);
-            p2.setStrokeWidth(2);
-            //отрисовываем линию UpDelta
-            canvas.drawLine(0, udY, ChartLineWidth, udY, p2);
-            //отрисовываем линию DownDelta
-            canvas.drawLine(0, ddY, ChartLineWidth, ddY, p2);
-
-            DrawMarker2(canvas, 1, udY, ud, decimalCount);
-            DrawMarker2(canvas, 1, ddY, dd, decimalCount);
-        }
-
-    }
-
-    private void DrawRange(HookTimeframe htf, double qValue, int decimalCount, Canvas canvas) {
-        if (htf != null) {
-            float delta_top_ext = ((HookTimeframeRange) htf).DeltaTopExternal;
-            float delta_top_int = ((HookTimeframeRange) htf).DeltaTopInternal;
-            float delta_bot_ext = ((HookTimeframeRange) htf).DeltaBottomExternal;
-            float delta_bot_int = ((HookTimeframeRange) htf).DeltaBottomInternal;
-
-            double dte = qValue + delta_top_ext;
-            double dti = qValue + delta_top_int;
-            double dbe = qValue - delta_bot_ext;
-            double dbi = qValue - delta_bot_int;
-
-            float dteY = GetY(dte);
-            float dtiY = GetY(dti);
-            float dbeY = GetY(dbe);
-            float dbiY = GetY(dbi);
-
-            Paint p2 = new Paint();
-            p2.setAntiAlias(false);
-            p2.setStyle(Paint.Style.FILL_AND_STROKE);
-
-            //internal-блоки
-            if (BinaryStationClient.Instance().Direction() == Utils.DIRECTION_PUT)
-                p2.setColor(Utils.RED_BLOCK_COLOR);
-            else
-                p2.setColor(Utils.GREEN_BLOCK_COLOR);
-            canvas.drawRect(0, dteY, ChartLineWidth, dtiY, p2);
-            canvas.drawRect(0, dbiY, ChartLineWidth, dbeY, p2);
-
-            //external-блоки
-            if (BinaryStationClient.Instance().Direction() == Utils.DIRECTION_PUT) {
-                p2.setColor(Utils.GREEN_BLOCK_COLOR);
-
-                Paint p3 = new Paint();
-                p3.setAntiAlias(false);
-                p3.setStyle(Paint.Style.FILL_AND_STROKE);
-                p3.setColor(Utils.RED_BLOCK_COLOR);
-                canvas.drawRect(0, dtiY, ChartLineWidth, dbiY, p3);
-            }
-            else {
-                p2.setColor(Utils.RED_BLOCK_COLOR);
-                canvas.drawRect(0, dtiY, ChartLineWidth, dbiY, p2);
-            }
-
-            canvas.drawRect(0, 0, ChartLineWidth, dteY, p2);
-            canvas.drawRect(0, dbeY, ChartLineWidth, H, p2);
-
-            //отрисовываем линии
-            p2.setColor(Utils.LINE_COLOR);
-            p2.setStrokeWidth(2);
-            canvas.drawLine(0, dteY, ChartLineWidth, dteY, p2);
-            canvas.drawLine(0, dtiY, ChartLineWidth, dtiY, p2);
-            canvas.drawLine(0, dbiY, ChartLineWidth, dbiY, p2);
-            canvas.drawLine(0, dbeY, ChartLineWidth, dbeY, p2);
-
-            DrawMarker2(canvas, 1, dteY, dte, decimalCount);
-            DrawMarker2(canvas, 2, dtiY, dti, decimalCount);
-            DrawMarker2(canvas, 2, dbiY, dbi, decimalCount);
-            DrawMarker2(canvas, 1, dbeY, dbe, decimalCount);
-
-        }
-    }
-
     private void DrawFloatingLine(double quoteValue, int decimalCount, float lastX, float lastY, Canvas canvas) {
         Path mPath = new Path();
         mPath.moveTo(0, lastY);
@@ -496,7 +376,7 @@ public class ChartView extends View {
         p.setStyle(Paint.Style.FILL_AND_STROKE);
         canvas.drawCircle(lastX, lastY, 10, p);
     }
-*/
+
     private void DrawMarker(Canvas canvas, float lastX, float lastY, double quoteValue, int decimalCount) {
         //треугольник
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

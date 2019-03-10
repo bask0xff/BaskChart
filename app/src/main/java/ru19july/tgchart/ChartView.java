@@ -50,6 +50,7 @@ public class ChartView extends View implements View.OnTouchListener {
     private long lastDrawTime = 0;
 
     private boolean drawing = false;
+    private float xx = 50.0f;
 
     public ChartView(Context context) {
         super(context);
@@ -176,9 +177,9 @@ public class ChartView extends View implements View.OnTouchListener {
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         long ms = (new Date()).getTime();
         //Log.d(TAG, "ms: " + ms);
-        if(ms % 2 == 0)
-            fp.setColor(Color.RED);
-        else
+//        if(ms % 2 == 0)
+//            fp.setColor(Color.RED);
+//        else
             fp.setColor(Color.YELLOW);
 
         canvas.drawRect(0, 0, W, H, fp);
@@ -221,7 +222,7 @@ public class ChartView extends View implements View.OnTouchListener {
             p.setAntiAlias(true);
             p.setStyle(Paint.Style.FILL_AND_STROKE);
             p.setFakeBoldText(true);
-            String str = String.format("+%.0f%%", 77.0f);
+            String str = String.format("+%.0f%%", xx);
             p.setTextSize(H / 2);
             int xw = (int) p.measureText(str);
             p.setColor(Utils.PROFIT_COLOR);
@@ -529,6 +530,8 @@ public class ChartView extends View implements View.OnTouchListener {
         boolean result = detector.onTouchEvent(event);
 
         mScaleDetector.onTouchEvent(event);
+
+        xx = event.getX();
 
         int x = (int) event.getX();
         Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);

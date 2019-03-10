@@ -29,7 +29,7 @@ public class ChartControlsView extends LinearLayout {
         a.recycle();
 
         setOrientation(LinearLayout.VERTICAL);
-        setGravity(Gravity.CENTER_VERTICAL);
+        setGravity(Gravity.TOP);
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -38,11 +38,11 @@ public class ChartControlsView extends LinearLayout {
         TextView title = (TextView) getChildAt(0);
         title.setText(titleText);
 
-        //mValue = getChildAt(1);
-        //mValue.setBackgroundColor(valueColor);
-
         mImage = (ChartView) getChildAt(1);
         //mImage.setVisibility(GONE);
+
+        //TextView title2 = (TextView) getChildAt(2);
+        //title2.setText("=========================");
     }
 
     public ChartControlsView(Context context) {

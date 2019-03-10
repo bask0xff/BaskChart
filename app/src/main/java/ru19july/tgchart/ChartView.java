@@ -222,8 +222,6 @@ public class ChartView extends View implements View.OnTouchListener {
             p.setColor(Utils.PROFIT_COLOR);
             canvas.drawText(str, (W - xw) * Utils.PROFIT_TEXT_X_POSITION_RATIO, H * Utils.PROFIT_TEXT_Y_POSITION_RATIO, p);
 
-            //floating line
-            DrawFloatingLine(quoteValue, decimalCount, lastX, lastY, canvas);
         }
 
         drawing = false;
@@ -376,102 +374,6 @@ public class ChartView extends View implements View.OnTouchListener {
 
             yLine += numScale.tickSpacing;
         }
-    }
-
-    private void DrawFloatingLine(double quoteValue, int decimalCount, float lastX, float lastY, Canvas canvas) {
-        Path mPath = new Path();
-        mPath.moveTo(0, lastY);
-        mPath.quadTo(ChartLineWidth/2, lastY, ChartLineWidth, lastY);
-
-        Paint mPaint = new Paint();
-        mPaint.setAntiAlias(false);
-        mPaint.setColor(Utils.MARKER_BG_COLOR);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(2);
-        mPaint.setPathEffect(new DashPathEffect(new float[]{20, 10}, 0));
-
-        canvas.drawPath(mPath, mPaint);
-
-        DrawMarker(canvas, lastX, lastY, quoteValue, decimalCount);
-
-        //кружок в конце линии графика
-        Paint p = new Paint();
-        p.setAntiAlias(true);
-        p.setFakeBoldText(true);
-        p.setColor(Utils.CHART_LINE_COLOR);
-        p.setStyle(Paint.Style.FILL_AND_STROKE);
-        canvas.drawCircle(lastX, lastY, 10, p);
-    }
-
-    private void DrawMarker(Canvas canvas, float lastX, float lastY, double quoteValue, int decimalCount) {
-        //треугольник
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        paint.setStrokeWidth(2);
-        paint.setColor(Utils.MARKER_BG_COLOR);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setAntiAlias(true);
-
-        Point point1_draw = new Point((int) lastX + 15, (int) lastY);
-        Point point2_draw = new Point((int) lastX + 30, (int) lastY - 10);
-        Point point3_draw = new Point((int) lastX + 30, (int) lastY + 10);
-
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(point1_draw.x, point1_draw.y);
-        path.lineTo(point2_draw.x, point2_draw.y);
-        path.lineTo(point3_draw.x, point3_draw.y);
-        path.lineTo(point1_draw.x, point1_draw.y);
-        path.close();
-
-        canvas.drawPath(path, paint);
-
-        //floating quote
-        Paint p = new Paint();
-        p.setAntiAlias(true);
-        p.setStyle(Paint.Style.FILL_AND_STROKE);
-        p.setFakeBoldText(true);
-        p.setStrokeWidth(1);
-        String strFmt = String.format("%%.%df", decimalCount);
-        String str = String.format(strFmt, (float) quoteValue);
-
-        //TODO:сделать функцию авторесайза текста, чтобы текст вписывался в определённый регион
-        p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
-        int xw = (int) p.measureText(str);
-
-        //чёрный фон для текста плавающей текущей котировки
-        p.setColor(Utils.MARKER_BG_COLOR);
-        RectF rect = new RectF(
-                lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
-                lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
-                lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
-                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO);
-        canvas.drawRoundRect(rect, 8, 8, p);
-
-        p.setColor(Utils.MARKER_TEXT_COLOR);
-        canvas.drawText(str, lastX + 30 + 3, lastY + 5, p);
-    }
-
-    private void DrawMarker2(Canvas canvas, int xPosition, float y, double value, int decimalCount) {
-        Paint p = new Paint();
-        p.setAntiAlias(true);
-        p.setStyle(Paint.Style.FILL_AND_STROKE);
-        p.setFakeBoldText(true);
-        p.setStrokeWidth(1);
-        String strFmt = String.format("%%.%df", decimalCount);
-        String str = String.format(strFmt, (float) value);
-
-        p.setTextSize(H * 0.05f);
-        int xw = (int) p.measureText(str);
-
-        float x = (xPosition - 1) * xw * 1.2f + W / 100.0f;
-
-        p.setColor(Utils.MARKER_SECOND_BG_COLOR);
-        RectF rect = new RectF(x + 25, y - H * 0.05f, x + 25 + xw * 1.25f, y + H * 0.04545f);
-        canvas.drawRoundRect(rect, 8.0f, 8.0f, p);
-
-        p.setColor(Utils.MARKER_SECOND_TEXT_COLOR);
-        canvas.drawText(str, x + 30 + 3, y + 5, p);
     }
 
     private void DrawPoly(Point[] point, Canvas canvas, Paint paint) {

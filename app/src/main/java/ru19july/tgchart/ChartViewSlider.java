@@ -19,6 +19,8 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     private float mScaleFactor = 1.f;
     Paint paint;
 
+    int slLeft;
+    int slRight;
     private int W, H;
     private final String TAG = "ChartViewSlider";
 
@@ -53,6 +55,9 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         detector = new GestureDetector(ChartViewSlider.this.getContext(), new MyListener());
 
+        slRight = W;
+        slLeft = W * 3/4;
+
         paint = new Paint();
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(1);
@@ -76,7 +81,10 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
             }
         }
     }
-
+/*
+    @Override
+    protected void onMeasure() {}
+*/
     @Override
     protected void onDraw(final Canvas canvas) {
 
@@ -99,7 +107,13 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         Paint fp = new Paint();
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setColor(Color.LTGRAY);
+        fp.setColor(Color.WHITE);
+
+        canvas.drawRect(0, 0, W, H, fp);
+
+        fp.setAntiAlias(false);
+        fp.setStyle(Paint.Style.FILL_AND_STROKE);
+        fp.setColor(Color.argb(0xFF, 0xF5, 0xF8, 0xF9));
 
         canvas.drawRect(0, 0, xx, H, fp);
 

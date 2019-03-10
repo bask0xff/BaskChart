@@ -14,6 +14,7 @@ import ru19july.tgchart.R;
 
 public class ChartControlsView extends LinearLayout {
 
+    private final ChartViewSlider mSlider;
     private View mValue;
     private ChartView mImage;
 
@@ -41,8 +42,7 @@ public class ChartControlsView extends LinearLayout {
         mImage = (ChartView) getChildAt(1);
         //mImage.setVisibility(GONE);
 
-        //TextView title2 = (TextView) getChildAt(2);
-        //title2.setText("=========================");
+        mSlider = (ChartViewSlider) getChildAt(2);
     }
 
     public ChartControlsView(Context context) {

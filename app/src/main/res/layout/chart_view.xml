@@ -19,23 +19,30 @@
         android:visibility="visible"
         />
 
-    <ru19july.tgchart.ChartView
-        android:id="@+id/chartView2"
-        android:layout_marginTop="10dp"
+    <ru19july.tgchart.ChartViewSlider
+        android:id="@+id/chartViewSlider"
+        android:layout_marginTop="1dp"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="50dp"
         android:visibility="visible"
         />
 
 
     <TextView
+        android:text="-------------"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         android:layout_marginLeft="16dp"
         android:textSize="18sp"
         />
+
+    <CheckBox
+        android:text="blablabla"
+        android:checked="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
 </merge>

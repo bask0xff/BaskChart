@@ -11,6 +11,8 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
@@ -23,8 +25,9 @@ import ru19july.tgchart.utils.Logger;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 
-public class ChartView extends View {
+public class ChartView extends View implements View.OnTouchListener {
 
+    private GestureDetector detector;
     Paint paint;
 
     private double minQuote = Double.MAX_VALUE;
@@ -47,16 +50,36 @@ public class ChartView extends View {
 
     public ChartView(Context context) {
         super(context);
+        Log.d(TAG, "ChartView(Context context)");
+
+        setOnTouchListener(this);
+
+        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
+
+        //setOnClickListener(null);
+
         initView(context, null);
     }
 
     public ChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
+
+        setOnTouchListener(this);
+
+        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
+
         initView(context, attrs);
     }
 
     public ChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
+
+        setOnTouchListener(this);
+
+        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
+
         initView(context, attrs);
     }
 
@@ -459,4 +482,40 @@ public class ChartView extends View {
         canvas.drawPath(path, paint);
     }
 
+
+    class MyListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        int x = (int) event.getX();
+        Log.d(TAG, "onTouch; ACTION: " + event.getAction() + ";  x=" + x);
+        if(event.getAction() == MotionEvent.ACTION_MOVE) {
+
+            //paddle.setXPosition(x);
+            invalidate();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean result = detector.onTouchEvent(event);
+
+        int x = (int) event.getX();
+        Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
+
+        if (!result) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                //stopScrolling();
+                result = true;
+            }
+        }
+        return result;
+    }
 }

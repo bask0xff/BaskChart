@@ -529,7 +529,7 @@ public class ChartView extends View implements View.OnTouchListener {
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
 
-        mScaleDetector.onTouchEvent(event);
+        //mScaleDetector.onTouchEvent(event);
 
         xx = event.getX();
 

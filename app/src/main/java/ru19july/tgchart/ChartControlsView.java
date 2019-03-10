@@ -28,7 +28,7 @@ public class ChartControlsView extends LinearLayout {
         //        android.R.color.holo_blue_light);
         a.recycle();
 
-        setOrientation(LinearLayout.HORIZONTAL);
+        setOrientation(LinearLayout.VERTICAL);
         setGravity(Gravity.CENTER_VERTICAL);
 
         LayoutInflater inflater = (LayoutInflater) context
@@ -38,11 +38,11 @@ public class ChartControlsView extends LinearLayout {
         TextView title = (TextView) getChildAt(0);
         title.setText(titleText);
 
-        mValue = getChildAt(1);
+        //mValue = getChildAt(1);
         //mValue.setBackgroundColor(valueColor);
 
-        mImage = (ChartView) getChildAt(2);
-
+        mImage = (ChartView) getChildAt(1);
+        //mImage.setVisibility(GONE);
     }
 
     public ChartControlsView(Context context) {

@@ -124,7 +124,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
         W = canvas.getWidth();
         H = canvas.getHeight();
-        ChartLineWidth = canvas.getWidth() * 4 / 5;//место, где заканчивается график
+        ChartLineWidth = canvas.getWidth() * 25 / 40;//место, где заканчивается график
 
         PrepareCanvas(canvas);
 

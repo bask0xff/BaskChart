@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +28,9 @@ import ru19july.tgchart.utils.Utils;
 
 public class ChartView extends View implements View.OnTouchListener {
 
+    private ScaleGestureDetector mScaleDetector;
     private GestureDetector detector;
+    private float mScaleFactor = 1.f;
     Paint paint;
 
     private double minQuote = Double.MAX_VALUE;
@@ -53,7 +56,7 @@ public class ChartView extends View implements View.OnTouchListener {
         Log.d(TAG, "ChartView(Context context)");
 
         setOnTouchListener(this);
-
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
 
         //setOnClickListener(null);
@@ -66,7 +69,7 @@ public class ChartView extends View implements View.OnTouchListener {
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
 
         setOnTouchListener(this);
-
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
 
         initView(context, attrs);
@@ -77,7 +80,7 @@ public class ChartView extends View implements View.OnTouchListener {
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
 
         setOnTouchListener(this);
-
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
 
         initView(context, attrs);
@@ -109,6 +112,9 @@ public class ChartView extends View implements View.OnTouchListener {
     protected void onDraw(final Canvas canvas) {
         frames++;
 
+        canvas.save();
+        canvas.scale(mScaleFactor, mScaleFactor);
+
         //long timeLeft = BinaryStationClient.Instance().CurrentTime() - startTime;
 
         //if(timeLeft>1000)
@@ -126,6 +132,8 @@ public class ChartView extends View implements View.OnTouchListener {
         ChartLineWidth = canvas.getWidth() * 4 / 5;//место, где заканчивается график
 
         PrepareCanvas(canvas);
+
+        canvas.restore();
     }
 
     private float GetY(double y) {
@@ -490,6 +498,19 @@ public class ChartView extends View implements View.OnTouchListener {
         }
     }
 
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+
+            // Don't let the object get too small or too large.
+            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+
+            invalidate();
+            return true;
+        }
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
@@ -506,6 +527,8 @@ public class ChartView extends View implements View.OnTouchListener {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
+
+        mScaleDetector.onTouchEvent(event);
 
         int x = (int) event.getX();
         Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);

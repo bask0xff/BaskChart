@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,6 +45,16 @@ public class ChartControlsView extends LinearLayout {
         //mImage.setVisibility(GONE);
 
         mSlider = (ChartViewSlider) getChildAt(2);
+
+        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
+        for(int i=0; i<2; i++) {
+            CheckBox checkBox = new CheckBox(context);
+            checkBox.setText("your text " + (i+1));
+            checkBox.setChecked(i % 2 == 0);
+
+            insertPoint.addView(checkBox, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+
     }
 
     public ChartControlsView(Context context) {

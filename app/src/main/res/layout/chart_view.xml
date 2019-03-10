@@ -28,21 +28,13 @@
         />
 
 
-    <TextView
-        android:text="-------------"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginLeft="16dp"
-        android:textSize="18sp"
-        />
 
-    <CheckBox
-        android:text="blablabla"
-        android:checked="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/insert_point"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+    </LinearLayout>
 
 </merge>

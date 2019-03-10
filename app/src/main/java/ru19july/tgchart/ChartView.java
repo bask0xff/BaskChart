@@ -15,6 +15,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,22 +57,12 @@ public class ChartView extends View implements View.OnTouchListener {
         super(context);
         Log.d(TAG, "ChartView(Context context)");
 
-        setOnTouchListener(this);
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
-
-        //setOnClickListener(null);
-
         initView(context, null);
     }
 
     public ChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
-
-        setOnTouchListener(this);
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
 
         initView(context, attrs);
     }
@@ -80,14 +71,14 @@ public class ChartView extends View implements View.OnTouchListener {
         super(context, attrs, defStyleAttr);
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
 
-        setOnTouchListener(this);
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
-
         initView(context, attrs);
     }
 
     public void initView(Context context, AttributeSet attrs) {
+        setOnTouchListener(this);
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
+
         paint = new Paint();
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(1);
@@ -103,6 +94,9 @@ public class ChartView extends View implements View.OnTouchListener {
             try {
                 boolean mShowText = a.getBoolean(R.styleable.ChartView_showLegend, false);
                 int mTextPos = a.getInteger(R.styleable.ChartView_labelPosition, 0);
+
+                Log.d(TAG, "initView: showLegend: " + mShowText);
+                Log.d(TAG, "initView: textPos: " + mTextPos);
             } finally {
                 a.recycle();
             }

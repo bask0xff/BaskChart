@@ -43,3 +43,6 @@ projectFilesBackup/
 output.json
 *.log
 .log
+
+*.li
+.li

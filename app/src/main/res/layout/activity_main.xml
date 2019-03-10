@@ -21,10 +21,17 @@
         android:id="@+id/chartView"
         chart:showLegend="true"
         chart:labelPosition="right"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:visibility="gone"
+        />
+
+    <ru19july.tgchart.ChartControlsView
+        android:id="@+id/chartControlsView"
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-
+        chart:titleText="Title text"
         />
 
 </android.support.constraint.ConstraintLayout>

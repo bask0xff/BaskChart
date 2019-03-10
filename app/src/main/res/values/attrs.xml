@@ -8,6 +8,10 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ChartControlsView">
+        <attr name="titleText" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="TouchAreaButton">
     	<attr name="toucharea" format="string"/>
     </declare-styleable>

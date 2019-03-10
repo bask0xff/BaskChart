@@ -216,7 +216,7 @@ public class ChartView extends View implements View.OnTouchListener {
             p.setAntiAlias(true);
             p.setStyle(Paint.Style.FILL_AND_STROKE);
             p.setFakeBoldText(true);
-            String str = String.format("+%.0f%%", xx);
+            String str = xx + ""; //String.format("+%.0f%%", xx);
             p.setTextSize(H / 2);
             int xw = (int) p.measureText(str);
             p.setColor(Utils.PROFIT_COLOR);

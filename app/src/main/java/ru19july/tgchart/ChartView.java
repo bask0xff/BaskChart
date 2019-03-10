@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import ru19july.tgchart.utils.Logger;
+import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 
 public class ChartView extends View {
@@ -116,11 +118,20 @@ public class ChartView extends View {
         //long startDrawing = BinaryStationClient.Instance().CurrentTime();
 
         drawing = true;
-        /*
-        List<Quote> quotes = BinaryStationClient.Instance().CurrentChartQuotes();
+
+        List<Quote> quotes = new ArrayList<>();
+        for(int i = 0; i< 100; i++){
+            Quote q = new Quote();
+            q.unixtime = (int) (i + System.currentTimeMillis()/1000);
+            q.value = Math.cos(i/100 * 3.14);
+            q.datetime = new Date();
+
+            quotes.add(q);
+        }
+
         if (quotes == null) return null;
 
-        HookTimeframe htf = BinaryStationClient.Instance().CurrentHookTimeframe();
+        /*HookTimeframe htf = BinaryStationClient.Instance().CurrentHookTimeframe();
         int optionKind = BinaryStationClient.Instance().OptionKind();
         Tool tool = BinaryStationClient.Instance().CurrentTool();
         int decimalCount = tool == null ? Utils.DEFAULT_DECIMAL_COUNT : tool.DecimalCount;
@@ -140,7 +151,7 @@ public class ChartView extends View {
         canvas.drawRect(0, 0, W, H, fp);
 
         //drawing graph quote
-        /*
+
         if (quotes.size() > 0) {
             double quoteValue = 0.0;
 
@@ -151,7 +162,7 @@ public class ChartView extends View {
             minQuote = Double.MAX_VALUE;
             maxQuote = Double.MIN_VALUE;
 
-            FindMinMaxByHookTimeframe(quotes, htf, optionKind);
+            //FindMinMaxByHookTimeframe(quotes, htf, optionKind);
 
             FindMinMax(quotes);
 
@@ -164,44 +175,49 @@ public class ChartView extends View {
             if(Double.isNaN(maxQuote))
                 maxQuote = quoteValue + 0.01;
 
-            Logger.i("ChartView",  quoteValue + "; min:" + minQuote + ", max:" + maxQuote);
+            Log.i("ChartView",  quoteValue + "; min:" + minQuote + ", max:" + maxQuote);
 
             numScale = new NiceScale(minQuote, maxQuote);
 
             DrawChartCurve(quotes, canvas);
 
-            DrawHorizontalLines(numScale, decimalCount, canvas);
+            //DrawHorizontalLines(numScale, decimalCount, canvas);
 
             //пишем Profit
             Paint p = new Paint();
             p.setAntiAlias(true);
             p.setStyle(Paint.Style.FILL_AND_STROKE);
             p.setFakeBoldText(true);
-            String str = String.format("+%.0f%%", BinaryStationClient.Instance().ProfitPercents());
+            String str = String.format("+%.0f%%", 77.0f);
             p.setTextSize(H / 2);
             int xw = (int) p.measureText(str);
             p.setColor(Utils.PROFIT_COLOR);
             canvas.drawText(str, (W - xw) * Utils.PROFIT_TEXT_X_POSITION_RATIO, H * Utils.PROFIT_TEXT_Y_POSITION_RATIO, p);
 
-            if (optionKind == 2) {
-                //Touch chart
-                DrawTouch(htf, q.value, decimalCount, canvas);
-            }
-
-            if (optionKind == 3) {
-                //Range chart
-                DrawRange(htf, q.value, decimalCount, canvas);
-            }
-
             //floating line
-            DrawFloatingLine(quoteValue, decimalCount, lastX, lastY, canvas);
+            //DrawFloatingLine(quoteValue, decimalCount, lastX, lastY, canvas);
         }
-*/
+
         drawing = false;
         //lastDrawTime = BinaryStationClient.Instance().CurrentTime();
         return canvas;
     }
-/*
+
+    private void FindMinMax(List<Quote> quotes) {
+        for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
+            int k = quotes.size() - i - 1;
+            if (k>=0 && k<quotes.size()) {
+                Quote q = quotes.get(k);
+                if (q.value > maxQuote) maxQuote = q.value;
+                if (q.value < minQuote) minQuote = q.value;
+            }
+            else {
+                Logger.e(TAG, "quote is null, k=" + k + "; quotes=" + quotes.size());
+                return;
+            }
+        }
+    }
+
     private void DrawChartCurve(List<Quote> quotes, Canvas canvas) {
         Paint lp = new Paint();
         lp.setAntiAlias(false);
@@ -231,7 +247,8 @@ public class ChartView extends View {
                     Quote q = quotes.get(indx);
 
                     //меняем k на timeIndex
-                    int timeIndex = (BinaryStationClient.Instance().CurrentTime() - q.unixtime);
+                    long currentTime = System.currentTimeMillis()/1000;
+                    int timeIndex = (int) (currentTime - q.unixtime);
                     //timeIndex = k;
                     if(timeIndex<0) timeIndex = 0;
 
@@ -300,7 +317,7 @@ public class ChartView extends View {
             }
         }
     }
-
+/*
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
@@ -330,21 +347,6 @@ public class ChartView extends View {
             canvas.drawText(str, W * 0.90f, yL - textSize*0.3f, p);
 
             yLine += numScale.tickSpacing;
-        }
-    }
-
-    private void FindMinMax(List<Quote> quotes) {
-        for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
-            int k = quotes.size() - i - 1;
-            if (k>=0 && k<quotes.size()) {
-                Quote q = quotes.get(k);
-                if (q.value > maxQuote) maxQuote = q.value;
-                if (q.value < minQuote) minQuote = q.value;
-            }
-            else {
-                Logger.e(TAG, "quote is null, k=" + k + "; quotes=" + quotes.size());
-                return;
-            }
         }
     }
 

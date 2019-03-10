@@ -485,6 +485,10 @@ public class ChartView extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
+    public void updateSlide(int position) {
+        xx = position;
+        invalidate();
+    }
 
     class MyListener extends GestureDetector.SimpleOnGestureListener {
         @Override
@@ -525,10 +529,10 @@ public class ChartView extends View implements View.OnTouchListener {
 
         //mScaleDetector.onTouchEvent(event);
 
-        xx = event.getX();
+        //xx = event.getX();
 
-        int x = (int) event.getX();
-        Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
+        //int x = (int) event.getX();
+        //Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
 
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {

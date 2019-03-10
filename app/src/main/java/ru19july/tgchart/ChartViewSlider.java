@@ -20,7 +20,9 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     Paint paint;
 
     private int W, H;
-    private final String TAG = "ChartView";
+    private final String TAG = "ChartViewSlider";
+
+    ISliderListener mOnSliderListener;
 
     private boolean drawing = false;
     private float xx = 50.0f;
@@ -105,6 +107,10 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         return canvas;
     }
 
+    public void setSliderListener(ISliderListener sliderListener) {
+        mOnSliderListener = sliderListener;
+    }
+
     class MyListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDown(MotionEvent e) {
@@ -128,7 +134,6 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_MOVE) {
-
             invalidate();
         }
         return false;
@@ -137,11 +142,11 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
-
-        xx = event.getX();
-
         int x = (int) event.getX();
         Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
+
+        xx = event.getX();
+        mOnSliderListener.onSlide((int)xx);
 
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -149,7 +154,14 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
                 result = true;
             }
         }
+
+
+
         return result;
+    }
+
+    interface ISliderListener{
+        void onSlide(int position);
     }
 
 }

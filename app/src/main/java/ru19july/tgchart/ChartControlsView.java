@@ -48,6 +48,14 @@ public class ChartControlsView extends LinearLayout {
         //mImage.setVisibility(GONE);
 
         mSlider = (ChartViewSlider) getChildAt(2);
+        mSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
+            @Override
+            public void onSlide(int position) {
+                Log.d(TAG, "onSlide: " + position);
+
+                mImage.updateSlide(position);
+            }
+        });
 
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
         for(int i=0; i<2; i++) {

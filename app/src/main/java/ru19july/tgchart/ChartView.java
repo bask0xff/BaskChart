@@ -34,7 +34,7 @@ public class ChartView extends View implements View.OnTouchListener {
     private double maxQuote = Double.MIN_VALUE;
 
     private int W, ChartLineWidth, H;
-    private final String TAG = "TradingChart";
+    private final String TAG = "ChartView";
 
     private int fps;
     private float fpt;
@@ -167,7 +167,7 @@ public class ChartView extends View implements View.OnTouchListener {
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         long ms = (new Date()).getTime();
-        Log.d(TAG, "ms: " + ms);
+        //Log.d(TAG, "ms: " + ms);
         if(ms % 2 == 0)
             fp.setColor(Color.RED);
         else
@@ -200,7 +200,7 @@ public class ChartView extends View implements View.OnTouchListener {
             if(Double.isNaN(maxQuote))
                 maxQuote = quoteValue + 0.01;
 
-            Log.i("ChartView",  quoteValue + "; min:" + minQuote + ", max:" + maxQuote);
+            //Log.i("ChartView",  quoteValue + "; min:" + minQuote + ", max:" + maxQuote);
 
             numScale = new NiceScale(minQuote, maxQuote);
 
@@ -494,7 +494,7 @@ public class ChartView extends View implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
 
         int x = (int) event.getX();
-        Log.d(TAG, "onTouch; ACTION: " + event.getAction() + ";  x=" + x);
+        //Log.d(TAG, "onTouch; ACTION: " + event.getAction() + ";  x=" + x);
         if(event.getAction() == MotionEvent.ACTION_MOVE) {
 
             //paddle.setXPosition(x);
@@ -518,4 +518,11 @@ public class ChartView extends View implements View.OnTouchListener {
         }
         return result;
     }
+    /*
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        scroller.fling(currentX, currentY, velocityX / SCALE, velocityY / SCALE, minX, minY, maxX, maxY);
+        postInvalidate();
+        return true;
+    }*/
 }

@@ -170,9 +170,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
                 result = true;
             }
         }
-
-
-
+        
         return result;
     }
 

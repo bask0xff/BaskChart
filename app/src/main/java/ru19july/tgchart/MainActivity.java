@@ -3,6 +3,10 @@ package ru19july.tgchart;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +20,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private ChartData gsonObj;
-
+    private ChartControlsView chartControlsView;
+    private Spinner dropdown;
     //ChartView chartView;
 
     @Override
@@ -29,10 +34,31 @@ public class MainActivity extends AppCompatActivity {
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
-        List<ChartData> charts = readJson(json);
+        final List<ChartData> charts = readJson(json);
 
-        ChartControlsView chartControlsView = findViewById(R.id.chartControlsView);
-        chartControlsView.setData(charts.get(4));
+        chartControlsView = findViewById(R.id.chartControlsView);
+        chartControlsView.setData(charts.get(0));
+
+        dropdown = findViewById(R.id.spinner1);
+
+        String[] items = new String[charts.size()];
+        for (int i = 0; i < charts.size(); i++)
+            items[i] = "Chart #" + (i + 1);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        dropdown.setAdapter(adapter);
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                chartControlsView.setData(charts.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private List<ChartData> readJson(String json) {

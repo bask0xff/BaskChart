@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 
 import ru19july.tgchart.utils.Logger;
@@ -139,16 +140,14 @@ public class ChartView extends View implements View.OnTouchListener {
         return realY;
     }
 
-    List<Quote> quotes = null;
-
     public Canvas PrepareCanvas(Canvas canvas) {
-        if(drawing) return canvas;
+        if (drawing) return canvas;
 
         //long startDrawing = BinaryStationClient.Instance().CurrentTime();
 
         drawing = true;
 
-        if (quotes == null) return null;
+        if (mChartData == null) return null;
 
         /*HookTimeframe htf = BinaryStationClient.Instance().CurrentHookTimeframe();
         int optionKind = BinaryStationClient.Instance().OptionKind();
@@ -156,28 +155,23 @@ public class ChartView extends View implements View.OnTouchListener {
         int decimalCount = tool == null ? Utils.DEFAULT_DECIMAL_COUNT : tool.DecimalCount;
         //quotes = GroupBy(60, quotes);//M1:60; M5:300; H1:3600
 */
-        int decimalCount = Utils.DEFAULT_DECIMAL_COUNT ;
+        int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
         //очищаем график
         Paint fp = new Paint();
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         long ms = (new Date()).getTime();
-        //Log.d(TAG, "ms: " + ms);
-//        if(ms % 2 == 0)
-//            fp.setColor(Color.RED);
-//        else
-            fp.setColor(Color.WHITE);
+
+        fp.setColor(Color.parseColor("#333333"));
 
         canvas.drawRect(0, 0, W, H, fp);
 
         //drawing graph quote
-
-        if (quotes.size() > 0) {
+        if (mChartData.series.get(0).values.size() > 0) {
             double quoteValue = 0.0;
 
-            Quote q = quotes.get(quotes.size() - 1);
-            quoteValue = q.value;
+            quoteValue = mChartData.series.get(1).values.get(mChartData.series.get(1).values.size() - 1);
 
             //find minQuote, maxQuote by last period
             minQuote = Double.MAX_VALUE;
@@ -185,22 +179,22 @@ public class ChartView extends View implements View.OnTouchListener {
 
             //FindMinMaxByHookTimeframe(quotes, htf, optionKind);
 
-            FindMinMax(quotes);
+            FindMinMax(mChartData.series.get(1).values);
 
             NiceScale numScale = new NiceScale(minQuote, maxQuote);
             minQuote = numScale.niceMin;
             maxQuote = numScale.niceMax;
 
-            if(Double.isNaN(minQuote))
+            if (Double.isNaN(minQuote))
                 minQuote = quoteValue - 0.01;
-            if(Double.isNaN(maxQuote))
+            if (Double.isNaN(maxQuote))
                 maxQuote = quoteValue + 0.01;
 
             //Log.i("ChartView",  quoteValue + "; min:" + minQuote + ", max:" + maxQuote);
 
             numScale = new NiceScale(minQuote, maxQuote);
 
-            DrawChartCurve(quotes, canvas);
+            DrawChart(mChartData.series, canvas);
 
             DrawHorizontalLines(numScale, decimalCount, canvas);
 
@@ -221,13 +215,55 @@ public class ChartView extends View implements View.OnTouchListener {
         return canvas;
     }
 
-    private void FindMinMax(List<Quote> quotes) {
+
+    private void DrawChart(List<Series> quotes, Canvas canvas) {
+        Paint lp = new Paint();
+        lp.setAntiAlias(false);
+        lp.setStrokeWidth(1);
+        lp.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
+        p.setColor(Color.BLUE);
+
+        //очищаем график
+        Paint fp = new Paint();
+        fp.setAntiAlias(false);
+        fp.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        Random r = new Random();
+
+        Path path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+
+        for (int i = 0; i < quotes.get(0).values.size(); i++) {
+            int x = (int) (((i + 0.f) / quotes.get(0).values.size()) * W);
+            int y = r.nextInt((int) xx);
+            for (int j = 1; j < quotes.size(); j++) {
+                y = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
+
+                fp.setColor(Color.parseColor(quotes.get(j).color));
+
+                //path.moveTo(point[0].x, point[0].y);
+                //path.lineTo(point[1].x, point[1].y);
+                //path.close();
+                //canvas.drawPath(path, paint);
+
+                canvas.drawRect(x - 2, y - 2, x + 2, y + 2, fp);
+            }
+        }
+    }
+
+
+
+    private void FindMinMax(List<Long> quotes) {
         for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
             int k = quotes.size() - i - 1;
             if (k>=0 && k<quotes.size()) {
-                Quote q = quotes.get(k);
-                if (q.value > maxQuote) maxQuote = q.value;
-                if (q.value < minQuote) minQuote = q.value;
+                Long q = quotes.get(k);
+                if (q > maxQuote) maxQuote = q;
+                if (q < minQuote) minQuote = q;
             }
             else {
                 Logger.e(TAG, "quote is null, k=" + k + "; quotes=" + quotes.size());
@@ -236,7 +272,7 @@ public class ChartView extends View implements View.OnTouchListener {
         }
     }
 
-    private void DrawChartCurve(List<Quote> quotes, Canvas canvas) {
+    private void DrawChartCurve(List<Series> quotes, Canvas canvas) {
         Paint lp = new Paint();
         lp.setAntiAlias(false);
         lp.setStrokeWidth(1);
@@ -255,27 +291,27 @@ public class ChartView extends View implements View.OnTouchListener {
             float x0 = -1;
             float y0 = -1;
             int startTime = 0;
-            if(quotes.size()>1)
-                startTime = quotes.get(quotes.size()-2).unixtime;
+            //if(quotes.size()>1)
+            //    startTime = quotes.get(quotes.size()-2).unixtime;
 
             while (k < Utils.CHART_POINTS && k < quotes.size() && quotes.size() > 0 && quotes.size() > k) {
                 p.setStrokeWidth(1);
                 int indx = quotes.size() - k - 1;
                 if (indx >= 0 && indx < quotes.size()) {
-                    Quote q = quotes.get(indx);
+                    //Quote q = quotes.get(indx);
 
                     //меняем k на timeIndex
                     long currentTime = System.currentTimeMillis()/1000;
-                    int timeIndex = (int) (currentTime - q.unixtime);
-                    //timeIndex = k;
-                    if(timeIndex<0) timeIndex = 0;
+                    int timeIndex = (int) (currentTime - /*q.unixtime*/ currentTime + k * 10);
+                    timeIndex = k;
+                    //if(timeIndex<0) timeIndex = 0;
 
                     float x = (float) (ChartLineWidth - (ChartLineWidth * timeIndex / (60 * Utils.CHART_POINTS)));
-                    float y = (float) (H * q.value / (maxQuote - minQuote));
+                    float y = (float) (H * 777/*q.value*/  / (maxQuote - minQuote));
 
                     points.add(new Point((int) x, (int) y));
 
-                    y = GetY(q.value);
+                    y = GetY(777/*q.value*/);
 
                     //линия графика
                     if (j == 0) {
@@ -300,7 +336,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
                         //вертикальные линии для шкалы времени
                         //вычисляем время текущей точки
-                        Date date = new Date(q.unixtime * 1000L);
+                        Date date = new Date( /*q.unixtime*/ (1549756800 + k * 1000) * 1000L);
                         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                         String formattedTime = sdf.format(date);
@@ -349,6 +385,7 @@ public class ChartView extends View implements View.OnTouchListener {
             Paint mPaint = new Paint();
             mPaint.setAntiAlias(false);
             mPaint.setColor(Utils.MARKER_BG_COLOR);
+            mPaint.setColor(Utils.RED_COLOR);
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
             canvas.drawPath(mPath, mPaint);
@@ -386,16 +423,6 @@ public class ChartView extends View implements View.OnTouchListener {
 
     public void setData(ChartData chartData) {
         mChartData = chartData;
-
-        quotes = new ArrayList<>();
-        for(int i = 0; i< mChartData.series.get(0).values.size(); i++){
-            Quote q = new Quote();
-            q.unixtime = (int) ((mChartData.series.get(0).values.get(i))/1000);
-            q.value = mChartData.series.get(1).values.get(i);
-            //q.datetime = new Date();
-
-            quotes.add(q);
-        }
 
         invalidate();
     }

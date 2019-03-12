@@ -79,6 +79,8 @@ public class ChartControlsView extends LinearLayout {
         chartView.setData(mChartData);
 
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
+        insertPoint.removeAllViews();
+
         for (int i = 1; i < mChartData.series.size(); i++) {
             CheckBox checkBox = new CheckBox(mContext);
             checkBox.setText(mChartData.series.get(i).title + " ("+ mChartData.series.get(i).color +")");

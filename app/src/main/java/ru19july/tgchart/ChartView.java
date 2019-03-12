@@ -419,13 +419,12 @@ public class ChartView extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    public void updateSlide(int startX, int endX) {
+    public void updateSlideFrameWindow(int startX, int endX) {
         xStart = startX;
         xEnd = endX;
 
         startNormalized = (xStart + 0.f) / W;
         endNormalized = (xEnd + 0.f) / W;
-//        startIndex=0;
 
         invalidate();
     }
@@ -460,12 +459,8 @@ public class ChartView extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
         int x = (int) event.getX();
-        //Log.d(TAG, "onTouch; ACTION: " + event.getAction() + ";  x=" + x);
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
-
-            //paddle.setXPosition(x);
             invalidate();
         }
         return false;
@@ -475,13 +470,6 @@ public class ChartView extends View implements View.OnTouchListener {
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
 
-        //mScaleDetector.onTouchEvent(event);
-
-        //xStart = event.getX();
-
-        //int x = (int) event.getX();
-        //Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
-
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 //stopScrolling();
@@ -490,11 +478,5 @@ public class ChartView extends View implements View.OnTouchListener {
         }
         return result;
     }
-    /*
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        scroller.fling(currentX, currentY, velocityX / SCALE, velocityY / SCALE, minX, minY, maxX, maxY);
-        postInvalidate();
-        return true;
-    }*/
+
 }

@@ -29,6 +29,10 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     private boolean drawing = false;
     private float xStart = 50.0f;
     private float xEnd = 450.0f;
+    private boolean slideMoving = false;
+    private float startMoveX = 0.0f;
+    private float xStartSaved = 0.0f;
+    private float xEndSaved = 0.f;
 
     public ChartViewSlider(Context context) {
         super(context);
@@ -161,7 +165,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
         int x = (int) event.getX();
-        Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
+        //Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
 
         float xx = event.getX();
         float dx1 = Math.abs(xx - xStart);
@@ -170,7 +174,24 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         if(dx1 < 50 && dx1 < dx2) xStart = xx;
         if(dx2 < 50 && dx2 < dx1) xEnd = xx;
 
-        Log.d(TAG, "onTouchEvent: dx1/dx2: " + (int)dx1 + " / " + (int)dx2);
+        if (((dx1> 50 && (dx1 < dx2)) || (dx2> 50 && (dx2 < dx1))) && event.getAction() == MotionEvent.ACTION_DOWN) {
+            slideMoving = true;
+            xStartSaved = xStart;
+            xEndSaved = xEnd;
+            startMoveX = xx;
+            //result = true;
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_MOVE && slideMoving) {
+            xStart = xStartSaved + (xx - startMoveX);
+            if(xStart<0) xStart = 0;
+            xEnd = xEndSaved + (xx - startMoveX);
+            if(xEnd>=W) xEnd = W;
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            slideMoving = false;
+        }
 
         mOnSliderListener.onSlide((int) xStart, (int)xEnd);
 

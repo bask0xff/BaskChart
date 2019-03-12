@@ -53,12 +53,9 @@ public class ChartControlsView extends LinearLayout {
         mSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
             @Override
             public void onSlide(int xStart, int xEnd) {
-                Log.d(TAG, "onSlide: " + xStart + "/" + xEnd);
-
-                chartView.updateSlide(xStart, xEnd);
+                chartView.updateSlideFrameWindow(xStart, xEnd);
             }
         });
-
 
     }
 

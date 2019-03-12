@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         final List<ChartData> charts = readJson(json);
 
         chartControlsView = findViewById(R.id.chartControlsView);
-        chartControlsView.setData(charts.get(0));
+        //chartControlsView.setData(charts.get(0));
 
         dropdown = findViewById(R.id.spinner1);
 

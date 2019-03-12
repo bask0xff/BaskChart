@@ -8,14 +8,12 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,7 +50,8 @@ public class ChartView extends View implements View.OnTouchListener {
     private long lastDrawTime = 0;
 
     private boolean drawing = false;
-    private float xx = 50.0f;
+    private float xStart = 50.0f;
+    private float xEnd = 450.0f;
     private ChartData mChartData;
 
     int startIndex = 0;
@@ -172,9 +171,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
         //drawing graph quote
         if (mChartData.series.get(0).values.size() > 0) {
-            double quoteValue = 0.0;
-
-            quoteValue = mChartData.series.get(1).values.get(mChartData.series.get(1).values.size() - 1);
+            double quoteValue = mChartData.series.get(1).values.get(mChartData.series.get(1).values.size() - 1);
 
             //find minQuote, maxQuote by last period
             minQuote = Double.MAX_VALUE;
@@ -205,7 +202,7 @@ public class ChartView extends View implements View.OnTouchListener {
             p.setAntiAlias(true);
             p.setStyle(Paint.Style.FILL_AND_STROKE);
             p.setFakeBoldText(true);
-            String str = xx + ""; //String.format("+%.0f%%", xx);
+            String str = xStart + ""; //String.format("+%.0f%%", xStart);
             p.setTextSize(H / 2);
             int xw = (int) p.measureText(str);
             p.setColor(Utils.PROFIT_COLOR);
@@ -244,9 +241,9 @@ public class ChartView extends View implements View.OnTouchListener {
             int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
             int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
             for (int j = 1; j < quotes.size(); j++) {
-                if(!quotes.get(j).isChecked()) continue;
+                if (!quotes.get(j).isChecked()) continue;
 
-                int y1 = (int) ((1 - quotes.get(j).values.get(i-1) / maxQuote) * H);
+                int y1 = (int) ((1 - quotes.get(j).values.get(i - 1) / maxQuote) * H);
                 int y2 = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
 
                 fp.setColor(Color.parseColor(quotes.get(j).color));
@@ -265,12 +262,11 @@ public class ChartView extends View implements View.OnTouchListener {
     private void FindMinMax(List<Long> quotes) {
         for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
             int k = quotes.size() - i - 1;
-            if (k>=0 && k<quotes.size()) {
+            if (k >= 0 && k < quotes.size()) {
                 Long q = quotes.get(k);
                 if (q > maxQuote) maxQuote = q;
                 if (q < minQuote) minQuote = q;
-            }
-            else {
+            } else {
                 Logger.e(TAG, "quote is null, k=" + k + "; quotes=" + quotes.size());
                 return;
             }
@@ -306,13 +302,13 @@ public class ChartView extends View implements View.OnTouchListener {
                     //Quote q = quotes.get(indx);
 
                     //меняем k на timeIndex
-                    long currentTime = System.currentTimeMillis()/1000;
+                    long currentTime = System.currentTimeMillis() / 1000;
                     int timeIndex = (int) (currentTime - /*q.unixtime*/ currentTime + k * 10);
                     timeIndex = k;
                     //if(timeIndex<0) timeIndex = 0;
 
                     float x = (float) (ChartLineWidth - (ChartLineWidth * timeIndex / (60 * Utils.CHART_POINTS)));
-                    float y = (float) (H * 777/*q.value*/  / (maxQuote - minQuote));
+                    float y = (float) (H * 777/*q.value*/ / (maxQuote - minQuote));
 
                     points.add(new Point((int) x, (int) y));
 
@@ -349,7 +345,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
                             Path mPath = new Path();
                             mPath.moveTo(x, 0);
-                            mPath.quadTo(x, H/2, x, H);
+                            mPath.quadTo(x, H / 2, x, H);
                             Paint mPaint = new Paint();
                             mPaint.setAntiAlias(false);
                             mPaint.setColor(Utils.MARKER_BG_COLOR);
@@ -360,7 +356,7 @@ public class ChartView extends View implements View.OnTouchListener {
                             p.setColor(Utils.TIME_COLOR);
                             p.setStrokeWidth(1);
                             int tw = (int) p.measureText(formattedTime);
-                            p.setTextSize( ChartLineWidth/50 );
+                            p.setTextSize(ChartLineWidth / 50);
                             canvas.drawText(formattedTime, x + 5, H * 0.95f, p);
                         }
                     }
@@ -380,13 +376,12 @@ public class ChartView extends View implements View.OnTouchListener {
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
-        while (yLine <= numScale.niceMax)
-        {
+        while (yLine <= numScale.niceMax) {
             float yL = GetY(yLine);
 
             Path mPath = new Path();
             mPath.moveTo(0, yL);
-            mPath.quadTo(W/2, yL, W, yL);
+            mPath.quadTo(W / 2, yL, W, yL);
             Paint mPaint = new Paint();
             mPaint.setAntiAlias(false);
             mPaint.setColor(Utils.MARKER_BG_COLOR);
@@ -404,7 +399,7 @@ public class ChartView extends View implements View.OnTouchListener {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Utils.NICESCALE_TEXT_COLOR);
-            canvas.drawText(str, W * 0.90f, yL - textSize*0.3f, p);
+            canvas.drawText(str, W * 0.90f, yL - textSize * 0.3f, p);
 
             yLine += numScale.tickSpacing;
         }
@@ -421,17 +416,20 @@ public class ChartView extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    public void updateSlide(int position) {
-        xx = position;
+    public void updateSlide(int startX, int endX) {
+        xStart = startX;
+        xEnd = endX;
 
-        startIndex = (int) (((xx + 0.f)/W) * mChartData.series.get(0).values.size());
+        startIndex = (int) (((xStart + 0.f) / W) * mChartData.series.get(0).values.size());
+        endIndex = (int) (((xEnd + 0.f) / W) * mChartData.series.get(0).values.size());
+//        startIndex=0;
 
         invalidate();
     }
 
     public void setData(ChartData chartData) {
         mChartData = chartData;
-        if(endIndex == 0)
+        if (endIndex == 0)
             endIndex = mChartData.series.get(0).values.size();
 
         invalidate();
@@ -462,7 +460,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
         int x = (int) event.getX();
         //Log.d(TAG, "onTouch; ACTION: " + event.getAction() + ";  x=" + x);
-        if(event.getAction() == MotionEvent.ACTION_MOVE) {
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
 
             //paddle.setXPosition(x);
             invalidate();
@@ -476,7 +474,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
         //mScaleDetector.onTouchEvent(event);
 
-        //xx = event.getX();
+        //xStart = event.getX();
 
         //int x = (int) event.getX();
         //Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);

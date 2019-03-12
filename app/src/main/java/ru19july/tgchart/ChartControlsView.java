@@ -52,10 +52,10 @@ public class ChartControlsView extends LinearLayout {
         mSlider = (ChartViewSlider) getChildAt(2);
         mSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
             @Override
-            public void onSlide(int position) {
-                Log.d(TAG, "onSlide: " + position);
+            public void onSlide(int xStart, int xEnd) {
+                Log.d(TAG, "onSlide: " + xStart + "/" + xEnd);
 
-                chartView.updateSlide(position);
+                chartView.updateSlide(xStart, xEnd);
             }
         });
 
@@ -86,6 +86,7 @@ public class ChartControlsView extends LinearLayout {
             checkBox.setText(mChartData.series.get(i).title + " ("+ mChartData.series.get(i).color +")");
             checkBox.setTextColor(getColor(mChartData.series.get(i).color));
             checkBox.setChecked(true);
+            mChartData.series.get(i).setChecked(true);
 
             insertPoint.addView(checkBox, i - 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 

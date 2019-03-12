@@ -27,7 +27,8 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     ISliderListener mOnSliderListener;
 
     private boolean drawing = false;
-    private float xx = 50.0f;
+    private float xStart = 50.0f;
+    private float xEnd = 450.0f;
 
     public ChartViewSlider(Context context) {
         super(context);
@@ -115,7 +116,8 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         fp.setColor(Color.parseColor("#77555555"));
 
-        canvas.drawRect(0, 0, xx, H, fp);
+        canvas.drawRect(0, 0, xStart, H, fp);
+        canvas.drawRect(xEnd, 0, W, H, fp);
 
 //        canvas.drawRect(0, 0, W, H, fp);
 
@@ -161,8 +163,12 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         int x = (int) event.getX();
         Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
 
-        xx = event.getX();
-        mOnSliderListener.onSlide((int)xx);
+        float xx = event.getX();
+        float dx1 = Math.abs(xx - xStart);
+        float dx2 = Math.abs(xx - xEnd);
+        if(dx1 < dx2) xStart = xx; else xEnd = xx;
+
+        mOnSliderListener.onSlide((int) xStart, (int)xEnd);
 
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -175,7 +181,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     }
 
     interface ISliderListener{
-        void onSlide(int position);
+        void onSlide(int xStart, int xEnd);
     }
 
 }

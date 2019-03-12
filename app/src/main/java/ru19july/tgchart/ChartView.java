@@ -54,8 +54,8 @@ public class ChartView extends View implements View.OnTouchListener {
     private float xEnd = 450.0f;
     private ChartData mChartData;
 
-    int startIndex = 0;
-    int endIndex = 0;
+    float startNormalized = 0.0f;
+    float endNormalized = 0.0f;
 
     public ChartView(Context context) {
         super(context);
@@ -236,6 +236,9 @@ public class ChartView extends View implements View.OnTouchListener {
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
+
+        int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
+        int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
 
         for (int i = startIndex + 1; i < endIndex; i++) {
             int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
@@ -420,8 +423,8 @@ public class ChartView extends View implements View.OnTouchListener {
         xStart = startX;
         xEnd = endX;
 
-        startIndex = (int) (((xStart + 0.f) / W) * mChartData.series.get(0).values.size());
-        endIndex = (int) (((xEnd + 0.f) / W) * mChartData.series.get(0).values.size());
+        startNormalized = (xStart + 0.f) / W;
+        endNormalized = (xEnd + 0.f) / W;
 //        startIndex=0;
 
         invalidate();
@@ -429,8 +432,8 @@ public class ChartView extends View implements View.OnTouchListener {
 
     public void setData(ChartData chartData) {
         mChartData = chartData;
-        if (endIndex == 0)
-            endIndex = mChartData.series.get(0).values.size();
+        if (endNormalized <= 0.0E-10)
+            endNormalized = 1.0f;
 
         invalidate();
     }

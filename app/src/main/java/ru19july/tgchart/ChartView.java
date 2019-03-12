@@ -235,8 +235,9 @@ public class ChartView extends View implements View.OnTouchListener {
 
         //очищаем график
         Paint fp = new Paint();
-        fp.setAntiAlias(false);
+        fp.setAntiAlias(true);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
+        fp.setStrokeWidth(6.0f);
 
         Random r = new Random();
 
@@ -245,12 +246,12 @@ public class ChartView extends View implements View.OnTouchListener {
 
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
+        for (int j = 1; j < quotes.size(); j++) {
+            if (!quotes.get(j).isChecked()) continue;
+            for (int i = startIndex + 1; i < endIndex; i++) {
+                int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
+                int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
 
-        for (int i = startIndex + 1; i < endIndex; i++) {
-            int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
-            int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
-            for (int j = 1; j < quotes.size(); j++) {
-                if (!quotes.get(j).isChecked()) continue;
 
                 int y1 = (int) ((1 - quotes.get(j).values.get(i - 1) / maxQuote) * H);
                 int y2 = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
@@ -265,7 +266,19 @@ public class ChartView extends View implements View.OnTouchListener {
                 //canvas.drawRect(x - 2, y - 2, x + 2, y + 2, fp);
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
+
+            int k = quotes.get(1).values.size()/2;
+
+            float xk = (((k - startIndex - 0.f) / (endIndex - startIndex)) * W);
+            float yk = (float) ((1.0f - quotes.get(j).values.get(k) / maxQuote) * H);
+
+            fp.setColor(Color.parseColor(quotes.get(j).color));
+            canvas.drawCircle(xk, yk, 12, fp);
+            fp.setColor(Color.parseColor("#333333"));
+            canvas.drawCircle(xk, yk, 6, fp);
         }
+
+
     }
 
     private MinMax FindMinMax(List<Long> quotes) {
@@ -398,8 +411,8 @@ public class ChartView extends View implements View.OnTouchListener {
             mPath.quadTo(W / 2, yL, W, yL);
             Paint mPaint = new Paint();
             mPaint.setAntiAlias(false);
-            mPaint.setColor(Utils.MARKER_BG_COLOR);
-            mPaint.setColor(Utils.RED_COLOR);
+            //  `mPaint.setColor(Utils.MARKER_BG_COLOR);
+            mPaint.setColor(Color.BLACK);
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
             canvas.drawPath(mPath, mPaint);

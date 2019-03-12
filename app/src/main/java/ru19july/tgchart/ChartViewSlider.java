@@ -112,7 +112,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         Paint fp = new Paint();
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setColor(Color.parseColor("#77222222"));
+        fp.setColor(Color.parseColor("#777777"));
 
         canvas.drawRect(0, 0, W, H, fp);
 
@@ -121,7 +121,11 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         fp.setColor(Color.parseColor("#77555555"));
 
         canvas.drawRect(0, 0, xStart, H, fp);
+
         canvas.drawRect(xEnd, 0, W, H, fp);
+
+        fp.setColor(Color.parseColor("#77222222"));
+        canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
 
 //        canvas.drawRect(0, 0, W, H, fp);
 

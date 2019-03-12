@@ -244,6 +244,8 @@ public class ChartView extends View implements View.OnTouchListener {
             int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
             int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
             for (int j = 1; j < quotes.size(); j++) {
+                if(!quotes.get(j).isChecked()) continue;
+
                 int y1 = (int) ((1 - quotes.get(j).values.get(i-1) / maxQuote) * H);
                 int y2 = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
 

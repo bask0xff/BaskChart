@@ -2,6 +2,7 @@ package ru19july.tgchart;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -10,21 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import ru19july.tgchart.R;
 
 public class ChartControlsView extends LinearLayout {
 
     private final ChartViewSlider mSlider;
-    private View mValue;
-    private ChartView mImage;
+    private final Context mContext;
+
+    private ChartView chartView;
     private String TAG = ChartControlsView.class.getSimpleName();
+    private ChartData mChartData;
 
     public ChartControlsView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        mContext = context;
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ChartControlsView, 0, 0);
@@ -44,8 +46,8 @@ public class ChartControlsView extends LinearLayout {
         TextView title = (TextView) getChildAt(0);
         title.setText(titleText);
 
-        mImage = (ChartView) getChildAt(1);
-        //mImage.setVisibility(GONE);
+        chartView = (ChartView) getChildAt(1);
+        //chartView.setVisibility(GONE);
 
         mSlider = (ChartViewSlider) getChildAt(2);
         mSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
@@ -53,17 +55,36 @@ public class ChartControlsView extends LinearLayout {
             public void onSlide(int position) {
                 Log.d(TAG, "onSlide: " + position);
 
-                mImage.updateSlide(position);
+                chartView.updateSlide(position);
             }
         });
 
-        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
-        for(int i=0; i<2; i++) {
-            CheckBox checkBox = new CheckBox(context);
-            checkBox.setText("your text " + (i+1));
-            checkBox.setChecked(i % 2 == 0);
 
-            insertPoint.addView(checkBox, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
+    public ChartControlsView(Context context) {
+        this(context, null);
+    }
+
+    //public void setValueColor(int color) {
+    //    mValue.setBackgroundColor(color);
+    //}
+
+    public void setImageVisible(boolean visible) {
+        chartView.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    public void setData(ChartData chartData) {
+        mChartData = chartData;
+        chartView.setData(mChartData);
+
+        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
+        for (int i = 1; i < mChartData.series.size(); i++) {
+            CheckBox checkBox = new CheckBox(mContext);
+            checkBox.setText(mChartData.series.get(i).title + " ("+ mChartData.series.get(i).color +")");
+            checkBox.setTextColor(getColor(mChartData.series.get(i).color));
+
+            insertPoint.addView(checkBox, i - 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -73,18 +94,10 @@ public class ChartControlsView extends LinearLayout {
             });
         }
 
+        invalidate();
     }
 
-    public ChartControlsView(Context context) {
-        this(context, null);
+    private int getColor(String color) {
+        return Color.parseColor(color);
     }
-
-    public void setValueColor(int color) {
-        mValue.setBackgroundColor(color);
-    }
-
-    public void setImageVisible(boolean visible) {
-        mImage.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
 }

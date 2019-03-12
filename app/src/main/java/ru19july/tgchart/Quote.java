@@ -4,6 +4,6 @@ import java.util.Date;
 
 public class Quote {
     public int unixtime;
-    public Date datetime;
+    //public Date datetime;
     public double value;
 }

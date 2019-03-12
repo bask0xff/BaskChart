@@ -52,6 +52,7 @@ public class ChartView extends View implements View.OnTouchListener {
 
     private boolean drawing = false;
     private float xx = 50.0f;
+    private ChartData mChartData;
 
     public ChartView(Context context) {
         super(context);
@@ -138,22 +139,14 @@ public class ChartView extends View implements View.OnTouchListener {
         return realY;
     }
 
+    List<Quote> quotes = null;
+
     public Canvas PrepareCanvas(Canvas canvas) {
         if(drawing) return canvas;
 
         //long startDrawing = BinaryStationClient.Instance().CurrentTime();
 
         drawing = true;
-
-        List<Quote> quotes = new ArrayList<>();
-        for(int i = 0; i< 100; i++){
-            Quote q = new Quote();
-            q.unixtime = (int) (i + System.currentTimeMillis()/1000);
-            q.value = Math.cos(i/100 * 3.14);
-            q.datetime = new Date();
-
-            quotes.add(q);
-        }
 
         if (quotes == null) return null;
 
@@ -211,7 +204,6 @@ public class ChartView extends View implements View.OnTouchListener {
 
             DrawHorizontalLines(numScale, decimalCount, canvas);
 
-            //пишем Profit
             Paint p = new Paint();
             p.setAntiAlias(true);
             p.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -389,6 +381,22 @@ public class ChartView extends View implements View.OnTouchListener {
 
     public void updateSlide(int position) {
         xx = position;
+        invalidate();
+    }
+
+    public void setData(ChartData chartData) {
+        mChartData = chartData;
+
+        quotes = new ArrayList<>();
+        for(int i = 0; i< mChartData.series.get(0).values.size(); i++){
+            Quote q = new Quote();
+            q.unixtime = (int) ((mChartData.series.get(0).values.get(i))/1000);
+            q.value = mChartData.series.get(1).values.get(i);
+            //q.datetime = new Date();
+
+            quotes.add(q);
+        }
+
         invalidate();
     }
 

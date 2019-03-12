@@ -4,14 +4,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
@@ -29,17 +29,79 @@ public class MainActivity extends AppCompatActivity {
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
-        ChartData chartData = parseJson(json);
+        List<ChartData> charts = readJson(json);
+
+        ChartControlsView chartControlsView = findViewById(R.id.chartControlsView);
+        chartControlsView.setData(charts.get(4));
+    }
+
+    private List<ChartData> readJson(String json) {
+        List<ChartData> charts = new ArrayList<>();// parseJson(json);
 
         try {
-            JSONArray jsonColumns= new JSONArray(json);
-            for (int i=0; i<jsonColumns.length(); i++){
+            JSONArray jsonColumns = new JSONArray(json);
+            for (int i = 0; i < jsonColumns.length(); i++) {
                 JSONObject jsonColumn = jsonColumns.getJSONObject(i);
-                Log.d(TAG, "onCreate: jsonColumn: " + jsonColumn);
+                //Log.d(TAG, "onCreate: jsonColumn(" + i + "): " + jsonColumn);
+
+                ChartData chartData = new ChartData();
+                chartData.series = new ArrayList<>();
+
+                JSONArray columnsArray = jsonColumn.getJSONArray("columns");
+                boolean columnsLengthEquals = true;
+                int columnsLength = 0;
+                for (int j = 0; j < columnsArray.length(); j++) {
+                    JSONArray arrColumns = columnsArray.getJSONArray(j);
+                    //Log.d(TAG, "\t\tarrColumns(" + j + ":" + arrColumns.length() + "): " + arrColumns);
+
+                    Series ser = new Series();
+                    ser.name = arrColumns.getString(0);
+                    ser.values = new ArrayList<>();
+                    for (int k = 1; k < arrColumns.length(); k++) {
+                        ser.values.add(arrColumns.getLong(k));
+                    }
+                    if (columnsLength == 0)
+                        columnsLength = ser.values.size();
+                    columnsLengthEquals = columnsLengthEquals && (ser.values.size() == columnsLength);
+
+                    //Log.d(TAG, "\t\t: " + ser.name + " (" + ser.values.size() + ") " + columnsLengthEquals + " => " + ser.values);
+
+                    if (!columnsLengthEquals) {
+                        Log.e(TAG, "JSON error! columns are different size!");
+                    }
+                    chartData.series.add(ser);
+                    chartData.isColumnsSizeEquals = columnsLengthEquals;
+
+                }
+
+                JSONObject typesObj = jsonColumn.getJSONObject("types");
+                //Log.d(TAG, "\ttypesObj: " + typesObj);
+
+                JSONObject namesObj = jsonColumn.getJSONObject("names");
+                //Log.d(TAG, "\tnamesObj: " + namesObj);
+
+                JSONObject colorsObj = jsonColumn.getJSONObject("colors");
+                //Log.d(TAG, "\tcolorsObj: " + colorsObj);
+
+                Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals);
+                for(int j=0; j<chartData.series.size(); j++){
+                    String seriesName = chartData.series.get(j).name;
+                    if(namesObj.has(seriesName))
+                        chartData.series.get(j).title = namesObj.getString(seriesName);
+                    if(colorsObj.has(seriesName))
+                        chartData.series.get(j).color = colorsObj.getString(seriesName);
+                    if(typesObj.has(seriesName))
+                        chartData.series.get(j).type = typesObj.getString(seriesName);
+
+                    Log.d(TAG, "\t\t:  chartData.series(" + j + ") => " + chartData.series.get(j).toString());
+                }
+
+                charts.add(chartData);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return charts;
     }
 
     private ChartData parseJson(String json) {

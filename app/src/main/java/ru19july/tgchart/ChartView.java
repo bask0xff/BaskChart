@@ -55,6 +55,9 @@ public class ChartView extends View implements View.OnTouchListener {
     private float xx = 50.0f;
     private ChartData mChartData;
 
+    int startIndex = 0;
+    int endIndex = 0;
+
     public ChartView(Context context) {
         super(context);
         Log.d(TAG, "ChartView(Context context)");
@@ -197,7 +200,7 @@ public class ChartView extends View implements View.OnTouchListener {
             DrawChart(mChartData.series, canvas);
 
             DrawHorizontalLines(numScale, decimalCount, canvas);
-
+/*
             Paint p = new Paint();
             p.setAntiAlias(true);
             p.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -207,7 +210,7 @@ public class ChartView extends View implements View.OnTouchListener {
             int xw = (int) p.measureText(str);
             p.setColor(Utils.PROFIT_COLOR);
             canvas.drawText(str, (W - xw) * Utils.PROFIT_TEXT_X_POSITION_RATIO, H * Utils.PROFIT_TEXT_Y_POSITION_RATIO, p);
-
+*/
         }
 
         drawing = false;
@@ -237,9 +240,9 @@ public class ChartView extends View implements View.OnTouchListener {
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
 
-        for (int i = 1; i < quotes.get(0).values.size(); i++) {
-            int x1 = (int) (((i - 1.f) / quotes.get(0).values.size()) * W);
-            int x2 = (int) (((i - 0.f) / quotes.get(0).values.size()) * W);
+        for (int i = startIndex + 1; i < endIndex; i++) {
+            int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
+            int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
             for (int j = 1; j < quotes.size(); j++) {
                 int y1 = (int) ((1 - quotes.get(j).values.get(i-1) / maxQuote) * H);
                 int y2 = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
@@ -256,7 +259,6 @@ public class ChartView extends View implements View.OnTouchListener {
             }
         }
     }
-
 
     private void FindMinMax(List<Long> quotes) {
         for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
@@ -419,11 +421,16 @@ public class ChartView extends View implements View.OnTouchListener {
 
     public void updateSlide(int position) {
         xx = position;
+
+        startIndex = (int) (((xx + 0.f)/W) * mChartData.series.get(0).values.size());
+
         invalidate();
     }
 
     public void setData(ChartData chartData) {
         mChartData = chartData;
+        if(endIndex == 0)
+            endIndex = mChartData.series.get(0).values.size();
 
         invalidate();
     }

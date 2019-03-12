@@ -237,11 +237,12 @@ public class ChartView extends View implements View.OnTouchListener {
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
 
-        for (int i = 0; i < quotes.get(0).values.size(); i++) {
-            int x = (int) (((i + 0.f) / quotes.get(0).values.size()) * W);
-            int y = r.nextInt((int) xx);
+        for (int i = 1; i < quotes.get(0).values.size(); i++) {
+            int x1 = (int) (((i - 1.f) / quotes.get(0).values.size()) * W);
+            int x2 = (int) (((i - 0.f) / quotes.get(0).values.size()) * W);
             for (int j = 1; j < quotes.size(); j++) {
-                y = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
+                int y1 = (int) ((1 - quotes.get(j).values.get(i-1) / maxQuote) * H);
+                int y2 = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
 
                 fp.setColor(Color.parseColor(quotes.get(j).color));
 
@@ -250,11 +251,11 @@ public class ChartView extends View implements View.OnTouchListener {
                 //path.close();
                 //canvas.drawPath(path, paint);
 
-                canvas.drawRect(x - 2, y - 2, x + 2, y + 2, fp);
+                //canvas.drawRect(x - 2, y - 2, x + 2, y + 2, fp);
+                canvas.drawLine(x1, y1, x2, y2, fp);
             }
         }
     }
-
 
 
     private void FindMinMax(List<Long> quotes) {

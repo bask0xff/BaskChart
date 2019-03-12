@@ -1,8 +1,12 @@
 package ru19july.tgchart;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -71,6 +75,7 @@ public class ChartControlsView extends LinearLayout {
         chartView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setData(ChartData chartData) {
         mChartData = chartData;
         chartView.setData(mChartData);
@@ -81,7 +86,21 @@ public class ChartControlsView extends LinearLayout {
         for (int i = 1; i < mChartData.series.size(); i++) {
             CheckBox checkBox = new CheckBox(mContext);
             checkBox.setText(mChartData.series.get(i).title + " ("+ mChartData.series.get(i).color +")");
-            checkBox.setTextColor(getColor(mChartData.series.get(i).color));
+            checkBox.setTextColor(Color.WHITE);
+
+            ColorStateList colorStateList = new ColorStateList(
+                    new int[][] {
+                            new int[] { -android.R.attr.state_checked }, // unchecked
+                            new int[] {  android.R.attr.state_checked }  // checked
+                    },
+                    new int[] {
+                            Color.parseColor("#333333"),//unchecked
+                            Color.parseColor(mChartData.series.get(i).color)//checked
+                    }
+
+            );
+            checkBox.setButtonTintList(colorStateList);
+
             checkBox.setChecked(true);
             mChartData.series.get(i).setChecked(true);
 

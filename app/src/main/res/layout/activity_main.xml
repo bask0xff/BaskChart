@@ -31,7 +31,7 @@
         android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        chart:titleText="Title text"
+        chart:titleText="Followers"
         />
 
     <EditText

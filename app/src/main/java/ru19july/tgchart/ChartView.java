@@ -179,9 +179,15 @@ public class ChartView extends View implements View.OnTouchListener {
 
             //FindMinMaxByHookTimeframe(quotes, htf, optionKind);
 
-            FindMinMax(mChartData.series.get(1).values);
+            MinMax minmax = new MinMax();
+            for(int i=1; i<mChartData.series.size(); i++) {
+                if(!mChartData.series.get(i).isChecked()) continue;
+                MinMax mnmx = FindMinMax(mChartData.series.get(i).values);
+                if (mnmx.min < minmax.min) minmax.min = mnmx.min;
+                if (mnmx.max > minmax.max) minmax.max = mnmx.max;
+            }
 
-            NiceScale numScale = new NiceScale(minQuote, maxQuote);
+            NiceScale numScale = new NiceScale(minmax.min, minmax.max);
             minQuote = numScale.niceMin;
             maxQuote = numScale.niceMax;
 
@@ -262,18 +268,23 @@ public class ChartView extends View implements View.OnTouchListener {
         }
     }
 
-    private void FindMinMax(List<Long> quotes) {
+    private MinMax FindMinMax(List<Long> quotes) {
+        MinMax result = new MinMax();
+        result.min = Float.MAX_VALUE;
+        result.max = Float.MIN_VALUE;
+
         for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
             int k = quotes.size() - i - 1;
             if (k >= 0 && k < quotes.size()) {
                 Long q = quotes.get(k);
-                if (q > maxQuote) maxQuote = q;
-                if (q < minQuote) minQuote = q;
+                if (q > result.max) result.max = q;
+                if (q < result.min) result.min = q;
             } else {
                 Logger.e(TAG, "quote is null, k=" + k + "; quotes=" + quotes.size());
-                return;
+                return null;
             }
         }
+        return result;
     }
 
     private void DrawChartCurve(List<Series> quotes, Canvas canvas) {

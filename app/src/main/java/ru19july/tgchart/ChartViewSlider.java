@@ -166,7 +166,11 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         float xx = event.getX();
         float dx1 = Math.abs(xx - xStart);
         float dx2 = Math.abs(xx - xEnd);
-        if(dx1 < dx2) xStart = xx; else xEnd = xx;
+
+        if(dx1 < 50 && dx1 < dx2) xStart = xx;
+        if(dx2 < 50 && dx2 < dx1) xEnd = xx;
+
+        Log.d(TAG, "onTouchEvent: dx1/dx2: " + (int)dx1 + " / " + (int)dx2);
 
         mOnSliderListener.onSlide((int) xStart, (int)xEnd);
 

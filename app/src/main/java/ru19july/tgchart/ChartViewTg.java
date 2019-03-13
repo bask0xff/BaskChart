@@ -119,17 +119,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.save();
         canvas.scale(mScaleFactor, mScaleFactor);
 
-        //long timeLeft = BinaryStationClient.Instance().CurrentTime() - startTime;
-
-        //if(timeLeft>1000)
         {
             fps = frames;
             frames = 0;
-            //startTime = BinaryStationClient.Instance().CurrentTime();
         }
-        //else
-        //if(timeLeft>0)
-        //    fpt = 1000 * frames / (float)timeLeft;
 
         W = canvas.getWidth();
         H = canvas.getHeight();
@@ -150,18 +143,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     public Canvas PrepareCanvas(Canvas canvas) {
         if (drawing) return canvas;
 
-        //long startDrawing = BinaryStationClient.Instance().CurrentTime();
-
         drawing = true;
 
         if (mChartData == null) return null;
 
-        /*HookTimeframe htf = BinaryStationClient.Instance().CurrentHookTimeframe();
-        int optionKind = BinaryStationClient.Instance().OptionKind();
-        Tool tool = BinaryStationClient.Instance().CurrentTool();
-        int decimalCount = tool == null ? Utils.DEFAULT_DECIMAL_COUNT : tool.DecimalCount;
-        //quotes = GroupBy(60, quotes);//M1:60; M5:300; H1:3600
-*/
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
         //очищаем график
@@ -368,7 +353,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private void DrawMarker(Canvas canvas, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
-
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         paint.setStrokeWidth(2);
@@ -386,10 +370,14 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         //чёрный фон для текста плавающей текущей котировки
         p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
         int xw = 0;
+        int activeCounter = 0;
         for(int i=0; i<values.length; i++) {
+            if(colors[i] == null) continue;
             int sz =(int) p.measureText(values[i] + "");
             if (xw < sz ) xw = sz;
+            activeCounter++;
         }
+
         paint.setColor(Color.parseColor("#222222"));
         RectF rect = new RectF(
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
@@ -402,7 +390,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         for(int i=0; i<values.length; i++) {
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) values[i]);
-
+            if(colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
             canvas.drawText(str, lastX + 70, lastY + 16 + i * 105, p);
         }

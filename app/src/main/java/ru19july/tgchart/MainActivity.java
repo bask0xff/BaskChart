@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initChartView() {
-        //chartView = findViewById(R.id.chartView);
         chartView.setVisibility(View.GONE);
         chartControlsView.setVisibility(View.VISIBLE);
 
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         final List<ChartData> charts = readJson(json);
 
-        //chartControlsView.setData(charts.get(0));
+        chartControlsView.setData(charts.get(0));
 
         dropdown = findViewById(R.id.spinner1);
 
@@ -86,7 +85,12 @@ public class MainActivity extends AppCompatActivity {
 
     @NonNull
     private List<InputData> createChartData() {
+        String json = loadJSONFromAsset();
+        final List<ChartData> charts = readJson(json);
+
+
         List<InputData> dataList = new ArrayList<>();
+/*
         dataList.add(new InputData(10));
         dataList.add(new InputData(25));
         dataList.add(new InputData(20));
@@ -94,6 +98,11 @@ public class MainActivity extends AppCompatActivity {
         dataList.add(new InputData(20));
         dataList.add(new InputData(50));
         dataList.add(new InputData(40));
+*/
+        for(int i=0;i<charts.get(0).series.get(1).values.size(); i++)
+        {
+            dataList.add(new InputData(charts.get(0).series.get(1).values.get(i).intValue()));
+        }
 
         long currMillis = System.currentTimeMillis();
         currMillis -= currMillis % TimeUnit.DAYS.toMillis(1);

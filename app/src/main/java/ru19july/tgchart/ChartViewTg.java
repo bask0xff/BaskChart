@@ -26,10 +26,13 @@ import java.util.TimeZone;
 import ru19july.tgchart.utils.Logger;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
+import ru19july.tgchart.view.ChartManager;
 
-public class ChartViewTg extends View implements View.OnTouchListener {
+public class ChartViewTg extends View implements ChartManager.AnimationListener, View.OnTouchListener {
 
     private final String TAG = ChartViewTg.class.getSimpleName();
+
+    private ChartManager chartManager;
 
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector detector;
@@ -83,8 +86,20 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         initView(context, attrs);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = View.MeasureSpec.getSize(widthMeasureSpec);
+        int height = View.MeasureSpec.getSize(heightMeasureSpec) / 2;
+        chartManager.chart().setWidth(width);
+        chartManager.chart().setHeight(height);
+        setMeasuredDimension(width, height);
+    }
+
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
+
+        chartManager = new ChartManager(getContext(), this);
+
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         detector = new GestureDetector(ChartViewTg.this.getContext(), new MyListener());
 
@@ -415,6 +430,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         touchIndex = -1;
 
         invalidate();
+    }
+
+    @Override
+    public void onAnimationUpdated() {
+
     }
 
     class MyListener extends GestureDetector.SimpleOnGestureListener {

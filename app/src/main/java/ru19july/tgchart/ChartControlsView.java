@@ -84,8 +84,8 @@ public class ChartControlsView extends LinearLayout {
 
         for (int i = 1; i < mChartData.series.size(); i++) {
             CheckBox checkBox = new CheckBox(mContext);
-            checkBox.setText(mChartData.series.get(i).title + " ("+ mChartData.series.get(i).color +")");
-            checkBox.setTextColor(Color.WHITE);
+            checkBox.setText(mChartData.series.get(i).title);
+            checkBox.setTextColor(Color.parseColor(mChartData.series.get(i).color));
 
             ColorStateList colorStateList = new ColorStateList(
                     new int[][] {
@@ -93,7 +93,7 @@ public class ChartControlsView extends LinearLayout {
                             new int[] {  android.R.attr.state_checked }  // checked
                     },
                     new int[] {
-                            Color.parseColor("#555555"),//unchecked
+                            Color.parseColor(mChartData.series.get(i).color),//unchecked
                             Color.parseColor(mChartData.series.get(i).color)//checked
                     }
 

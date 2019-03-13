@@ -59,6 +59,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     float startNormalized = 0.0f;
     float endNormalized = 0.0f;
     private float xTouched = 0.0f;
+    int touchIndex = 0;
+
 
     public ChartViewTg(Context context) {
         super(context);
@@ -258,8 +260,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
 
-        int touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
-
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
             for (int i = startIndex + 1; i < endIndex; i++) {
@@ -458,6 +458,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         boolean result = detector.onTouchEvent(event);
 
         xTouched = event.getX();
+        int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
+        int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
+        touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
+
 
         invalidate();
 

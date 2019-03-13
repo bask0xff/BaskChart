@@ -28,11 +28,16 @@
     <ru19july.tgchart.ChartControlsView
         android:id="@+id/chartControlsView"
         android:background="#333333"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         chart:titleText="Followers"
         />
+
+    <ru19july.tgchart.view.ChartView
+        android:id="@+id/charView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp" />
 
     <EditText
         android:layout_marginTop="10dp"

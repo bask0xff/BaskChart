@@ -6,7 +6,6 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,7 +22,7 @@ public class ChartControlsView extends LinearLayout {
     private final ChartViewSlider mSlider;
     private final Context mContext;
 
-    private ChartView chartView;
+    private ChartViewTg chartView;
     private String TAG = ChartControlsView.class.getSimpleName();
     private ChartData mChartData;
 
@@ -50,7 +49,7 @@ public class ChartControlsView extends LinearLayout {
         TextView title = (TextView) getChildAt(0);
         title.setText(titleText);
 
-        chartView = (ChartView) getChildAt(1);
+        chartView = (ChartViewTg) getChildAt(1);
         //chartView.setVisibility(GONE);
 
         mSlider = (ChartViewSlider) getChildAt(2);

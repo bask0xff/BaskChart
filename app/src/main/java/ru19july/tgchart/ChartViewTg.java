@@ -26,7 +26,7 @@ import ru19july.tgchart.utils.Logger;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 
-public class ChartView extends View implements View.OnTouchListener {
+public class ChartViewTg extends View implements View.OnTouchListener {
 
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector detector;
@@ -56,22 +56,23 @@ public class ChartView extends View implements View.OnTouchListener {
 
     float startNormalized = 0.0f;
     float endNormalized = 0.0f;
+    private float xTouched = 0.0f;
 
-    public ChartView(Context context) {
+    public ChartViewTg(Context context) {
         super(context);
         Log.d(TAG, "ChartView(Context context)");
 
         initView(context, null);
     }
 
-    public ChartView(Context context, AttributeSet attrs) {
+    public ChartViewTg(Context context, AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
 
         initView(context, attrs);
     }
 
-    public ChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ChartViewTg(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
 
@@ -81,7 +82,7 @@ public class ChartView extends View implements View.OnTouchListener {
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        detector = new GestureDetector(ChartView.this.getContext(), new MyListener());
+        detector = new GestureDetector(ChartViewTg.this.getContext(), new MyListener());
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -92,12 +93,12 @@ public class ChartView extends View implements View.OnTouchListener {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
-                    R.styleable.ChartView,
+                    R.styleable.ChartViewTg,
                     0, 0);
 
             try {
-                boolean mShowText = a.getBoolean(R.styleable.ChartView_showLegend, false);
-                int mTextPos = a.getInteger(R.styleable.ChartView_labelPosition, 0);
+                boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
+                int mTextPos = a.getInteger(R.styleable.ChartViewTg_labelPosition, 0);
 
                 Log.d(TAG, "initView: showLegend: " + mShowText);
                 Log.d(TAG, "initView: textPos: " + mTextPos);
@@ -183,6 +184,7 @@ public class ChartView extends View implements View.OnTouchListener {
             for(int i=1; i<mChartData.series.size(); i++) {
                 if(!mChartData.series.get(i).isChecked()) continue;
                 MinMax mnmx = FindMinMax(mChartData.series.get(i).values);
+                Log.d(TAG, "PrepareCanvas: MinMax: " + mnmx.min + " / " + minmax.max);
                 if (mnmx.min < minmax.min) minmax.min = mnmx.min;
                 if (mnmx.max > minmax.max) minmax.max = mnmx.max;
             }
@@ -237,12 +239,15 @@ public class ChartView extends View implements View.OnTouchListener {
         Paint fp = new Paint();
         fp.setAntiAlias(true);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setStrokeWidth(6.0f);
+        fp.setStrokeWidth(5.0f);
 
         Random r = new Random();
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
+
+        float normalizedIndex = startNormalized + xTouched/W;
+        int selectedIndex = (int) (normalizedIndex * mChartData.series.get(0).values.size());
 
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
@@ -268,14 +273,15 @@ public class ChartView extends View implements View.OnTouchListener {
             }
 
             int k = quotes.get(1).values.size()/2;
+            //k = selectedIndex;
 
             float xk = (((k - startIndex - 0.f) / (endIndex - startIndex)) * W);
             float yk = (float) ((1.0f - quotes.get(j).values.get(k) / maxQuote) * H);
 
             fp.setColor(Color.parseColor(quotes.get(j).color));
-            canvas.drawCircle(xk, yk, 12, fp);
+            canvas.drawCircle(xk, yk, 10, fp);
             fp.setColor(Color.parseColor("#333333"));
-            canvas.drawCircle(xk, yk, 6, fp);
+            canvas.drawCircle(xk, yk, 5, fp);
         }
 
 
@@ -493,6 +499,10 @@ public class ChartView extends View implements View.OnTouchListener {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = detector.onTouchEvent(event);
+
+        xTouched = event.getX();
+
+        invalidate();
 
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {

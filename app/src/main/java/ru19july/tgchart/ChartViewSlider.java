@@ -72,12 +72,12 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
-                    R.styleable.ChartView,
+                    R.styleable.ChartViewTg,
                     0, 0);
 
             try {
-                boolean mShowText = a.getBoolean(R.styleable.ChartView_showLegend, false);
-                int mTextPos = a.getInteger(R.styleable.ChartView_labelPosition, 0);
+                boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
+                int mTextPos = a.getInteger(R.styleable.ChartViewTg_labelPosition, 0);
 
                 Log.d(TAG, "initView: showLegend: " + mShowText);
                 Log.d(TAG, "initView: textPos: " + mTextPos);

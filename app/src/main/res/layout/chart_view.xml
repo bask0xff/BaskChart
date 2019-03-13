@@ -14,7 +14,7 @@
         android:textSize="20sp"
         />
 
-    <ru19july.tgchart.ChartView
+    <ru19july.tgchart.ChartViewTg
         android:id="@+id/chartView1"
         android:layout_width="wrap_content"
         android:layout_height="300dp"

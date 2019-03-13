@@ -8,6 +8,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -287,6 +288,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             canvas.drawCircle(xk, yk, 10, fp);
             fp.setColor(Color.parseColor("#333333"));
             canvas.drawCircle(xk, yk, 5, fp);
+
+            DrawMarker(canvas, xk, yk, quotes.get(j).values.get(touchIndex), 0);
         }
 
 
@@ -352,6 +355,55 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         path.lineTo(point[3].x, point[3].y);
         path.close();
         canvas.drawPath(path, paint);
+    }
+
+    private void DrawMarker(Canvas canvas, float lastX, float lastY, double quoteValue, int decimalCount) {
+        //треугольник
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        paint.setStrokeWidth(2);
+        paint.setColor(Utils.MARKER_BG_COLOR);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setAntiAlias(true);
+
+        Point point1_draw = new Point((int) lastX + 15, (int) lastY);
+        Point point2_draw = new Point((int) lastX + 30, (int) lastY - 10);
+        Point point3_draw = new Point((int) lastX + 30, (int) lastY + 10);
+
+        Path path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+        path.moveTo(point1_draw.x, point1_draw.y);
+        path.lineTo(point2_draw.x, point2_draw.y);
+        path.lineTo(point3_draw.x, point3_draw.y);
+        path.lineTo(point1_draw.x, point1_draw.y);
+        path.close();
+
+        canvas.drawPath(path, paint);
+
+        //floating quote
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
+        p.setFakeBoldText(true);
+        p.setStrokeWidth(1);
+        String strFmt = String.format("%%.%df", decimalCount);
+        String str = String.format(strFmt, (float) quoteValue);
+
+        //TODO:сделать функцию авторесайза текста, чтобы текст вписывался в определённый регион
+        p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
+        int xw = (int) p.measureText(str);
+
+        //чёрный фон для текста плавающей текущей котировки
+        p.setColor(Utils.MARKER_BG_COLOR);
+        RectF rect = new RectF(
+                lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
+                lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
+                lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
+                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO);
+        canvas.drawRoundRect(rect, 8, 8, p);
+
+        p.setColor(Utils.MARKER_TEXT_COLOR);
+        canvas.drawText(str, lastX + 30 + 3, lastY + 5, p);
     }
 
     public void updateSlideFrameWindow(int startX, int endX) {

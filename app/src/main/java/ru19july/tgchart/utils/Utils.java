@@ -36,7 +36,6 @@ public class Utils{
     public static final int MARKER_SECOND_BG_COLOR = Color.argb(200, 50, 53, 58);
     public static final int MARKER_SECOND_TEXT_COLOR = Color.argb(200, 255, 255, 255);
     public static final int TAB_NUMBER_BLUE_COLOR = Color.argb(255, 143, 193, 245);
-    public static final int CHART_POINTS = 60;
 
     public static final int DIRECTION_NONE = 0;
     public static final int DIRECTION_PUT = 1;

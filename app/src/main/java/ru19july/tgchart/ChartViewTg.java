@@ -28,6 +28,8 @@ import ru19july.tgchart.utils.Utils;
 
 public class ChartViewTg extends View implements View.OnTouchListener {
 
+    private final String TAG = ChartViewTg.class.getSimpleName();
+
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector detector;
     private float mScaleFactor = 1.f;
@@ -37,7 +39,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private double maxQuote = Double.MIN_VALUE;
 
     private int W, ChartLineWidth, H;
-    private final String TAG = "ChartView";
 
     private int fps;
     private float fpt;
@@ -181,17 +182,24 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             //FindMinMaxByHookTimeframe(quotes, htf, optionKind);
 
             MinMax minmax = new MinMax();
+            minmax.min = Float.MAX_VALUE;
+            minmax.max = Float.MIN_VALUE;
+
             for(int i=1; i<mChartData.series.size(); i++) {
                 if(!mChartData.series.get(i).isChecked()) continue;
                 MinMax mnmx = FindMinMax(mChartData.series.get(i).values);
-                Log.d(TAG, "PrepareCanvas: MinMax: " + mnmx.min + " / " + minmax.max);
+                Log.d(TAG, "PrepareCanvas: mnmx: " + mnmx.min + " / " + mnmx.max);
                 if (mnmx.min < minmax.min) minmax.min = mnmx.min;
                 if (mnmx.max > minmax.max) minmax.max = mnmx.max;
             }
 
+            Log.d(TAG, "PrepareCanvas: minmax: " + minmax.min + " / " + minmax.max);
+
             NiceScale numScale = new NiceScale(minmax.min, minmax.max);
             minQuote = numScale.niceMin;
             maxQuote = numScale.niceMax;
+
+            Log.d(TAG, "PrepareCanvas: minQuote: " + minQuote + " / maxQuote: " + maxQuote);
 
             if (Double.isNaN(minQuote))
                 minQuote = quoteValue - 0.01;
@@ -292,7 +300,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         result.min = Float.MAX_VALUE;
         result.max = Float.MIN_VALUE;
 
-        for (int i = 0; i < quotes.size() && i < Utils.CHART_POINTS; i++) {
+        for (int i = 0; i < quotes.size(); i++) {
             int k = quotes.size() - i - 1;
             if (k >= 0 && k < quotes.size()) {
                 Long q = quotes.get(k);
@@ -304,106 +312,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             }
         }
         return result;
-    }
-
-    private void DrawChartCurve(List<Series> quotes, Canvas canvas) {
-        Paint lp = new Paint();
-        lp.setAntiAlias(false);
-        lp.setStrokeWidth(1);
-        lp.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-
-        Paint p = new Paint();
-        p.setAntiAlias(true);
-        p.setStyle(Paint.Style.FILL_AND_STROKE);
-        p.setColor(Color.BLUE);
-
-        //drawing chart curve
-        //two-pass
-        for (int j = 0; j < 2; j++) {
-            List<Point> points = new ArrayList<Point>();
-            int k = 0;
-            float x0 = -1;
-            float y0 = -1;
-            int startTime = 0;
-            //if(quotes.size()>1)
-            //    startTime = quotes.get(quotes.size()-2).unixtime;
-
-            while (k < Utils.CHART_POINTS && k < quotes.size() && quotes.size() > 0 && quotes.size() > k) {
-                p.setStrokeWidth(1);
-                int indx = quotes.size() - k - 1;
-                if (indx >= 0 && indx < quotes.size()) {
-                    //Quote q = quotes.get(indx);
-
-                    //меняем k на timeIndex
-                    long currentTime = System.currentTimeMillis() / 1000;
-                    int timeIndex = (int) (currentTime - /*q.unixtime*/ currentTime + k * 10);
-                    timeIndex = k;
-                    //if(timeIndex<0) timeIndex = 0;
-
-                    float x = (float) (ChartLineWidth - (ChartLineWidth * timeIndex / (60 * Utils.CHART_POINTS)));
-                    float y = (float) (H * 777/*q.value*/ / (maxQuote - minQuote));
-
-                    points.add(new Point((int) x, (int) y));
-
-                    y = GetY(777/*q.value*/);
-
-                    //линия графика
-                    if (j == 0) {
-                        if (k > 0) {
-                            //chart's background polygon
-                            Point[] pts = new Point[4];
-                            pts[0] = new Point((int) x0, (int) y0);
-                            pts[1] = new Point((int) x, (int) y);
-                            pts[2] = new Point((int) x, H);
-                            pts[3] = new Point((int) x0, H);
-                            p.setColor(Utils.POLYGON_BG_COLOR);
-                            DrawPoly(pts, canvas, p);
-                        }
-                    }
-                    if (j == 1) {
-                        p.setColor(Utils.CHART_LINE_COLOR);
-                        p.setStrokeWidth(4);
-                        if (k > 0)
-                            canvas.drawLine(x0, y0, x, y, p);
-                        p.setStrokeWidth(1);
-                        canvas.drawCircle(x, y, 2, p);
-
-                        //вертикальные линии для шкалы времени
-                        //вычисляем время текущей точки
-                        Date date = new Date( /*q.unixtime*/ (1549756800 + k * 1000) * 1000L);
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        String formattedTime = sdf.format(date);
-                        if (date.getMinutes() % 10 == 0) {
-
-                            Path mPath = new Path();
-                            mPath.moveTo(x, 0);
-                            mPath.quadTo(x, H / 2, x, H);
-                            Paint mPaint = new Paint();
-                            mPaint.setAntiAlias(false);
-                            mPaint.setColor(Utils.MARKER_BG_COLOR);
-                            mPaint.setStyle(Paint.Style.STROKE);
-                            mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-                            canvas.drawPath(mPath, mPaint);
-
-                            p.setColor(Utils.TIME_COLOR);
-                            p.setStrokeWidth(1);
-                            int tw = (int) p.measureText(formattedTime);
-                            p.setTextSize(ChartLineWidth / 50);
-                            canvas.drawText(formattedTime, x + 5, H * 0.95f, p);
-                        }
-                    }
-                    if (k == 0) {
-                        lastY = y;
-                        lastX = x;
-                    }
-
-                    x0 = x;
-                    y0 = y;
-                }
-                k++;
-            }
-        }
     }
 
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {

@@ -260,6 +260,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
 
+        float[] markerValues = new float[quotes.size()-1];
+        String[] markerColors = new String[quotes.size()-1];
+
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
             for (int i = startIndex + 1; i < endIndex; i++) {
@@ -282,6 +285,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             }
 
             if (touchIndex > 0 && touchIndex < quotes.get(j).values.size()) {
+                markerValues[j-1] = quotes.get(j).values.get(touchIndex);
+                markerColors[j-1] = quotes.get(j).color;
+
                 float xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
                 float yk = (float) ((1.0f - quotes.get(j).values.get(touchIndex) / maxQuote) * H);
 
@@ -290,11 +296,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 fp.setColor(Color.parseColor("#333333"));
                 canvas.drawCircle(xk, yk, 5, fp);
 
-                DrawMarker(canvas, quotes.get(j).color, xk, yk, quotes.get(j).values.get(touchIndex), 0);
             }
         }
 
-
+        if(touchIndex > 0)
+            DrawMarker(canvas, markerValues, markerColors, 100, 100);
     }
 
     private MinMax FindMinMax(List<Long> quotes) {
@@ -359,8 +365,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    private void DrawMarker(Canvas canvas, String color, float lastX, float lastY, double quoteValue, int decimalCount) {
-        //треугольник
+    private void DrawMarker(Canvas canvas, float[] values, String[] colors, float lastX, float lastY) {
+        int decimalCount = 0;
+
+
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         paint.setStrokeWidth(2);
@@ -368,44 +376,38 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setAntiAlias(true);
 
-        Point point1_draw = new Point((int) lastX + 15, (int) lastY);
-        Point point2_draw = new Point((int) lastX + 30, (int) lastY - 10);
-        Point point3_draw = new Point((int) lastX + 30, (int) lastY + 10);
-
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(point1_draw.x, point1_draw.y);
-        path.lineTo(point2_draw.x, point2_draw.y);
-        path.lineTo(point3_draw.x, point3_draw.y);
-        path.lineTo(point1_draw.x, point1_draw.y);
-        path.close();
-
-        canvas.drawPath(path, paint);
-
         //floating quote
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL_AND_STROKE);
         p.setFakeBoldText(true);
         p.setStrokeWidth(1);
-        String strFmt = String.format("%%.%df", decimalCount);
-        String str = String.format(strFmt, (float) quoteValue);
-
-        //TODO:сделать функцию авторесайза текста, чтобы текст вписывался в определённый регион
-        p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
-        int xw = (int) p.measureText(str);
 
         //чёрный фон для текста плавающей текущей котировки
-        paint.setColor(Color.parseColor("#cccccc"));
+        p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
+        int xw = 0;
+        for(int i=0; i<values.length; i++) {
+            int sz =(int) p.measureText(values[i] + "");
+            if (xw < sz ) xw = sz;
+        }
+        paint.setColor(Color.parseColor("#222222"));
         RectF rect = new RectF(
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
-                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO);
+                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (values.length-1) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
 
-        p.setColor(Color.parseColor(color));
-        canvas.drawText(str, lastX + 30 + 3, lastY + 5, p);
+
+        for(int i=0; i<values.length; i++) {
+            String strFmt = String.format("%%.%df", decimalCount);
+            String str = String.format(strFmt, (float) values[i]);
+
+            p.setColor(Color.parseColor(colors[i]));
+            canvas.drawText(str, lastX + 70, lastY + 16 + i * 105, p);
+        }
+
+
     }
 
     public void updateSlideFrameWindow(int startX, int endX) {

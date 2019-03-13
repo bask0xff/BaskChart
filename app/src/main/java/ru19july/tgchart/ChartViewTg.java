@@ -28,6 +28,8 @@ import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.ChartManager;
 
+import static ru19july.tgchart.utils.Utils.FindMinMax;
+
 public class ChartViewTg extends View implements ChartManager.AnimationListener, View.OnTouchListener {
 
     private final String TAG = ChartViewTg.class.getSimpleName();
@@ -178,11 +180,8 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         if (mChartData.series.get(0).values.size() > 0) {
             double quoteValue = mChartData.series.get(1).values.get(mChartData.series.get(1).values.size() - 1);
 
-            //find minQuote, maxQuote by last period
             minQuote = Double.MAX_VALUE;
             maxQuote = Double.MIN_VALUE;
-
-            //FindMinMaxByHookTimeframe(quotes, htf, optionKind);
 
             MinMax minmax = new MinMax();
             minmax.min = Float.MAX_VALUE;
@@ -275,12 +274,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
 
                 fp.setColor(Color.parseColor(quotes.get(j).color));
 
-                //path.moveTo(point[0].x, point[0].y);
-                //path.lineTo(point[1].x, point[1].y);
-                //path.close();
-                //canvas.drawPath(path, paint);
-
-                //canvas.drawRect(x - 2, y - 2, x + 2, y + 2, fp);
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
 
@@ -301,25 +294,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
 
         if(touchIndex > 0)
             DrawMarker(canvas, markerValues, markerColors, 100, 100);
-    }
-
-    private MinMax FindMinMax(List<Long> quotes) {
-        MinMax result = new MinMax();
-        result.min = Float.MAX_VALUE;
-        result.max = Float.MIN_VALUE;
-
-        for (int i = 0; i < quotes.size(); i++) {
-            int k = quotes.size() - i - 1;
-            if (k >= 0 && k < quotes.size()) {
-                Long q = quotes.get(k);
-                if (q > result.max) result.max = q;
-                if (q < result.min) result.min = q;
-            } else {
-                Logger.e(TAG, "quote is null, k=" + k + "; quotes=" + quotes.size());
-                return null;
-            }
-        }
-        return result;
     }
 
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {

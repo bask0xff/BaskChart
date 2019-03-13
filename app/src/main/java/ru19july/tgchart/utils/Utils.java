@@ -5,10 +5,13 @@ import android.graphics.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import ru19july.tgchart.MinMax;
 
 public class Utils{
 
@@ -210,5 +213,23 @@ public class Utils{
         SimpleDateFormat sdfDate = new SimpleDateFormat(datetimeFormat);
         sdfDate.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdfDate.format(date);
+    }
+
+    public static MinMax FindMinMax(List<Long> quotes) {
+        MinMax result = new MinMax();
+        result.min = Float.MAX_VALUE;
+        result.max = Float.MIN_VALUE;
+
+        for (int i = 0; i < quotes.size(); i++) {
+            int k = quotes.size() - i - 1;
+            if (k >= 0 && k < quotes.size()) {
+                Long q = quotes.get(k);
+                if (q > result.max) result.max = q;
+                if (q < result.min) result.min = q;
+            } else {
+                return null;
+            }
+        }
+        return result;
     }
 }

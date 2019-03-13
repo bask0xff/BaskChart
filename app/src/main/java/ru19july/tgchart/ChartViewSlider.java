@@ -12,6 +12,10 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import ru19july.tgchart.utils.NiceScale;
+
+import static ru19july.tgchart.utils.Utils.FindMinMax;
+
 public class ChartViewSlider extends View implements View.OnTouchListener {
 
     private ScaleGestureDetector mScaleDetector;
@@ -33,6 +37,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     private float startMoveX = 0.0f;
     private float xStartSaved = 0.0f;
     private float xEndSaved = 0.f;
+    private ChartData chartData;
 
     public ChartViewSlider(Context context) {
         super(context);
@@ -109,6 +114,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         drawing = true;
 
+        //full background
         Paint fp = new Paint();
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -116,18 +122,58 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         canvas.drawRect(0, 0, W, H, fp);
 
+        //left part
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         fp.setColor(Color.parseColor("#77555555"));
 
         canvas.drawRect(0, 0, xStart, H, fp);
 
+        //right part
         canvas.drawRect(xEnd, 0, W, H, fp);
 
+        //slider window
         fp.setColor(Color.parseColor("#77222222"));
         canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
 
-//        canvas.drawRect(0, 0, W, H, fp);
+        double minQuote = Double.MAX_VALUE;
+        double maxQuote = Double.MIN_VALUE;
+
+        MinMax minmax = new MinMax();
+        minmax.min = Float.MAX_VALUE;
+        minmax.max = Float.MIN_VALUE;
+
+        for(int i=1; i<chartData.series.size(); i++) {
+            if(!chartData.series.get(i).isChecked()) continue;
+            MinMax mnmx = FindMinMax(chartData.series.get(i).values);
+            Log.d(TAG, "PrepareCanvas: mnmx: " + mnmx.min + " / " + mnmx.max);
+            if (mnmx.min < minmax.min) minmax.min = mnmx.min;
+            if (mnmx.max > minmax.max) minmax.max = mnmx.max;
+        }
+
+        Log.d(TAG, "PrepareCanvas: minmax: " + minmax.min + " / " + minmax.max);
+
+        NiceScale numScale = new NiceScale(minmax.min, minmax.max);
+        minQuote = numScale.niceMin;
+        maxQuote = numScale.niceMax;
+
+        Log.d(TAG, "PrepareCanvas: minQuote: " + minQuote + " / maxQuote: " + maxQuote);
+
+        for(int i=1; i<chartData.series.get(0).values.size(); i++){
+            for(int j = 1; j<chartData.series.size(); j++){
+                if(!chartData.series.get(j).isChecked()) continue;
+
+                int x1 = (int) (W*((i-1.f)/chartData.series.get(0).values.size()));
+                int x2 = (int) (W*((i-0.f)/chartData.series.get(0).values.size()));
+
+                int y1 = (int) ((1 - chartData.series.get(j).values.get(i - 1) / maxQuote) * H);
+                int y2 = (int) ((1 - chartData.series.get(j).values.get(i) / maxQuote) * H);
+
+                fp.setColor(Color.parseColor(chartData.series.get(j).color));
+
+                canvas.drawLine(x1, y1, x2, y2, fp);
+            }
+        }
 
         drawing = false;
         return canvas;
@@ -135,6 +181,12 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
     public void setSliderListener(ISliderListener sliderListener) {
         mOnSliderListener = sliderListener;
+    }
+
+    public void setData(ChartData chartData) {
+        this.chartData = chartData;
+
+        invalidate();
     }
 
     class MyListener extends GestureDetector.SimpleOnGestureListener {

@@ -19,10 +19,10 @@ import android.widget.TextView;
 
 public class ChartControlsView extends LinearLayout {
 
-    private final ChartViewSlider mSlider;
     private final Context mContext;
 
     private ChartViewTg chartView;
+    private ChartViewSlider chartViewSlider;
     private String TAG = ChartControlsView.class.getSimpleName();
     private ChartData mChartData;
 
@@ -52,8 +52,8 @@ public class ChartControlsView extends LinearLayout {
         chartView = (ChartViewTg) getChildAt(1);
         //chartView.setVisibility(GONE);
 
-        mSlider = (ChartViewSlider) getChildAt(2);
-        mSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
+        chartViewSlider = (ChartViewSlider) getChildAt(2);
+        chartViewSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
             @Override
             public void onSlide(int xStart, int xEnd) {
                 chartView.updateSlideFrameWindow(xStart, xEnd);
@@ -78,6 +78,7 @@ public class ChartControlsView extends LinearLayout {
     public void setData(ChartData chartData) {
         mChartData = chartData;
         chartView.setData(mChartData);
+        chartViewSlider.setData(mChartData);
 
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
         insertPoint.removeAllViews();
@@ -113,6 +114,7 @@ public class ChartControlsView extends LinearLayout {
 
                     mChartData.series.get(finalI).setChecked(isChecked);
                     chartView.invalidate();
+                    chartViewSlider.invalidate();
                 }
             });
         }

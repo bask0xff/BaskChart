@@ -59,7 +59,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     float startNormalized = 0.0f;
     float endNormalized = 0.0f;
     private float xTouched = 0.0f;
-    int touchIndex = 0;
+    int touchIndex = -1;
 
 
     public ChartViewTg(Context context) {
@@ -281,15 +281,17 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
 
-            float xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
-            float yk = (float) ((1.0f - quotes.get(j).values.get(touchIndex) / maxQuote) * H);
+            if (touchIndex > 0 && touchIndex < quotes.get(j).values.size()) {
+                float xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
+                float yk = (float) ((1.0f - quotes.get(j).values.get(touchIndex) / maxQuote) * H);
 
-            fp.setColor(Color.parseColor(quotes.get(j).color));
-            canvas.drawCircle(xk, yk, 10, fp);
-            fp.setColor(Color.parseColor("#333333"));
-            canvas.drawCircle(xk, yk, 5, fp);
+                fp.setColor(Color.parseColor(quotes.get(j).color));
+                canvas.drawCircle(xk, yk, 10, fp);
+                fp.setColor(Color.parseColor("#333333"));
+                canvas.drawCircle(xk, yk, 5, fp);
 
-            DrawMarker(canvas, xk, yk, quotes.get(j).values.get(touchIndex), 0);
+                DrawMarker(canvas, quotes.get(j).color, xk, yk, quotes.get(j).values.get(touchIndex), 0);
+            }
         }
 
 
@@ -357,12 +359,12 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    private void DrawMarker(Canvas canvas, float lastX, float lastY, double quoteValue, int decimalCount) {
+    private void DrawMarker(Canvas canvas, String color, float lastX, float lastY, double quoteValue, int decimalCount) {
         //треугольник
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         paint.setStrokeWidth(2);
-        paint.setColor(Utils.MARKER_BG_COLOR);
+        paint.setColor(Color.parseColor("#cccccc"));
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setAntiAlias(true);
 
@@ -394,15 +396,15 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int xw = (int) p.measureText(str);
 
         //чёрный фон для текста плавающей текущей котировки
-        p.setColor(Utils.MARKER_BG_COLOR);
+        paint.setColor(Color.parseColor("#cccccc"));
         RectF rect = new RectF(
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
                 lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO);
-        canvas.drawRoundRect(rect, 8, 8, p);
+        canvas.drawRoundRect(rect, 8, 8, paint);
 
-        p.setColor(Utils.MARKER_TEXT_COLOR);
+        p.setColor(Color.parseColor(color));
         canvas.drawText(str, lastX + 30 + 3, lastY + 5, p);
     }
 
@@ -420,6 +422,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         mChartData = chartData;
         if (endNormalized <= 0.0E-10)
             endNormalized = 1.0f;
+        touchIndex = -1;
 
         invalidate();
     }

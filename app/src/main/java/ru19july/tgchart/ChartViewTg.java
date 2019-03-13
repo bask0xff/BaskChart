@@ -254,11 +254,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
 
-        float normalizedIndex = startNormalized + xTouched/W;
-        int selectedIndex = (int) (normalizedIndex * mChartData.series.get(0).values.size());
-
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
+
+        int touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
+
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
             for (int i = startIndex + 1; i < endIndex; i++) {
@@ -280,11 +280,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
 
-            int k = quotes.get(1).values.size()/2;
-            //k = selectedIndex;
-
-            float xk = (((k - startIndex - 0.f) / (endIndex - startIndex)) * W);
-            float yk = (float) ((1.0f - quotes.get(j).values.get(k) / maxQuote) * H);
+            float xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
+            float yk = (float) ((1.0f - quotes.get(j).values.get(touchIndex) / maxQuote) * H);
 
             fp.setColor(Color.parseColor(quotes.get(j).color));
             canvas.drawCircle(xk, yk, 10, fp);

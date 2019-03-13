@@ -65,6 +65,7 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
     float endNormalized = 0.0f;
     private float xTouched = 0.0f;
     int touchIndex = -1;
+    private int oldTouchIndex = -111;
 
 
     public ChartViewTg(Context context) {
@@ -438,6 +439,8 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
         touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
+
+        oldTouchIndex = touchIndex;
 
         invalidate();
 

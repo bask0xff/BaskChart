@@ -93,7 +93,7 @@ public class ChartControlsView extends LinearLayout {
                             new int[] {  android.R.attr.state_checked }  // checked
                     },
                     new int[] {
-                            Color.parseColor("#333333"),//unchecked
+                            Color.parseColor("#555555"),//unchecked
                             Color.parseColor(mChartData.series.get(i).color)//checked
                     }
 

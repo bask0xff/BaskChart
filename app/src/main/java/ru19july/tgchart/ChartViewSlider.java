@@ -146,18 +146,13 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         for(int i=1; i<chartData.series.size(); i++) {
             if(!chartData.series.get(i).isChecked()) continue;
             MinMax mnmx = FindMinMax(chartData.series.get(i).values);
-            Log.d(TAG, "PrepareCanvas: mnmx: " + mnmx.min + " / " + mnmx.max);
             if (mnmx.min < minmax.min) minmax.min = mnmx.min;
             if (mnmx.max > minmax.max) minmax.max = mnmx.max;
         }
 
-        Log.d(TAG, "PrepareCanvas: minmax: " + minmax.min + " / " + minmax.max);
-
         NiceScale numScale = new NiceScale(minmax.min, minmax.max);
         minQuote = numScale.niceMin;
         maxQuote = numScale.niceMax;
-
-        Log.d(TAG, "PrepareCanvas: minQuote: " + minQuote + " / maxQuote: " + maxQuote);
 
         for(int i=1; i<chartData.series.get(0).values.size(); i++){
             for(int j = 1; j<chartData.series.size(); j++){

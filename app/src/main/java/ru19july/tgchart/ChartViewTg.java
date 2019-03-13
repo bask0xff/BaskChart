@@ -190,46 +190,28 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
             for(int i=1; i<mChartData.series.size(); i++) {
                 if(!mChartData.series.get(i).isChecked()) continue;
                 MinMax mnmx = FindMinMax(mChartData.series.get(i).values);
-                Log.d(TAG, "PrepareCanvas: mnmx: " + mnmx.min + " / " + mnmx.max);
                 if (mnmx.min < minmax.min) minmax.min = mnmx.min;
                 if (mnmx.max > minmax.max) minmax.max = mnmx.max;
             }
 
-            Log.d(TAG, "PrepareCanvas: minmax: " + minmax.min + " / " + minmax.max);
-
             NiceScale numScale = new NiceScale(minmax.min, minmax.max);
             minQuote = numScale.niceMin;
             maxQuote = numScale.niceMax;
-
-            Log.d(TAG, "PrepareCanvas: minQuote: " + minQuote + " / maxQuote: " + maxQuote);
 
             if (Double.isNaN(minQuote))
                 minQuote = quoteValue - 0.01;
             if (Double.isNaN(maxQuote))
                 maxQuote = quoteValue + 0.01;
 
-            //Log.i("ChartView",  quoteValue + "; min:" + minQuote + ", max:" + maxQuote);
-
             numScale = new NiceScale(minQuote, maxQuote);
 
             DrawChart(mChartData.series, canvas);
 
             DrawHorizontalLines(numScale, decimalCount, canvas);
-/*
-            Paint p = new Paint();
-            p.setAntiAlias(true);
-            p.setStyle(Paint.Style.FILL_AND_STROKE);
-            p.setFakeBoldText(true);
-            String str = xStart + ""; //String.format("+%.0f%%", xStart);
-            p.setTextSize(H / 2);
-            int xw = (int) p.measureText(str);
-            p.setColor(Utils.PROFIT_COLOR);
-            canvas.drawText(str, (W - xw) * Utils.PROFIT_TEXT_X_POSITION_RATIO, H * Utils.PROFIT_TEXT_Y_POSITION_RATIO, p);
-*/
+
         }
 
         drawing = false;
-        //lastDrawTime = BinaryStationClient.Instance().CurrentTime();
         return canvas;
     }
 
@@ -307,7 +289,7 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
             mPath.quadTo(W / 2, yL, W, yL);
             Paint mPaint = new Paint();
             mPaint.setAntiAlias(false);
-            //  `mPaint.setColor(Utils.MARKER_BG_COLOR);
+            //mPaint.setColor(Utils.MARKER_BG_COLOR);
             mPaint.setColor(Color.BLACK);
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
@@ -375,7 +357,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
                 lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (values.length-1) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
 
-
         for(int i=0; i<values.length; i++) {
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) values[i]);
@@ -383,7 +364,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
             p.setColor(Color.parseColor(colors[i]));
             canvas.drawText(str, lastX + 70, lastY + 16 + i * 105, p);
         }
-
 
     }
 
@@ -448,7 +428,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
         touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
-
 
         invalidate();
 

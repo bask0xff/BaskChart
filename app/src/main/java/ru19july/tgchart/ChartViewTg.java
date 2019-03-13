@@ -462,3 +462,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
     }
 
 }
+
+//try it
+//http://www.java2s.com/Code/Android/2D-Graphics/DrawPolygon.htm

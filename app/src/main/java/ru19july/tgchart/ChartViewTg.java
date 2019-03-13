@@ -241,8 +241,15 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
         int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
 
-        float[] markerValues = new float[quotes.size()-1];
-        String[] markerColors = new String[quotes.size()-1];
+        float[] markerValues = new float[quotes.size() - 1];
+        String[] markerColors = new String[quotes.size() - 1];
+
+        float xk = 0;
+        if (touchIndex >= 0)
+            xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
+
+        int yMin = H;
+
 
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
@@ -260,11 +267,12 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
             }
 
             if (touchIndex > 0 && touchIndex < quotes.get(j).values.size()) {
-                markerValues[j-1] = quotes.get(j).values.get(touchIndex);
-                markerColors[j-1] = quotes.get(j).color;
+                markerValues[j - 1] = quotes.get(j).values.get(touchIndex);
+                markerColors[j - 1] = quotes.get(j).color;
 
-                float xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
                 float yk = (float) ((1.0f - quotes.get(j).values.get(touchIndex) / maxQuote) * H);
+                if (yk < yMin && yk > 50)
+                    yMin = (int) yk;
 
                 fp.setColor(Color.parseColor(quotes.get(j).color));
                 canvas.drawCircle(xk, yk, 10, fp);
@@ -274,8 +282,10 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
             }
         }
 
-        if(touchIndex > 0)
-            DrawMarker(canvas, markerValues, markerColors, 100, 100);
+        yMin = yMin - 120;
+        if(yMin < 100) yMin = 100;
+        if (touchIndex > 0)
+            DrawMarker(canvas, markerValues, markerColors, xk + 20, yMin);
     }
 
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {

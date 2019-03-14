@@ -156,17 +156,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     chartData.series.add(ser);
                     chartData.isColumnsSizeEquals = columnsLengthEquals;
-
                 }
 
                 JSONObject typesObj = jsonColumn.getJSONObject("types");
-                //Log.d(TAG, "\ttypesObj: " + typesObj);
-
                 JSONObject namesObj = jsonColumn.getJSONObject("names");
-                //Log.d(TAG, "\tnamesObj: " + namesObj);
-
                 JSONObject colorsObj = jsonColumn.getJSONObject("colors");
-                //Log.d(TAG, "\tcolorsObj: " + colorsObj);
 
                 Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals);
                 for(int j=0; j<chartData.series.size(); j++){

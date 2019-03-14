@@ -10,10 +10,10 @@
 
     <declare-styleable name="ChartControlsView">
         <attr name="titleText" format="string" />
-        <!--attr name="theme" format="enum">
+        <attr name="themeType" format="enum">
             <enum name="dark" value="0"/>
             <enum name="light" value="1"/>
-        </attr-->
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="TouchAreaButton">

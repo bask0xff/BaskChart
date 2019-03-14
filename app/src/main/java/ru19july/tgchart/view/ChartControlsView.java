@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,10 +97,10 @@ public class ChartControlsView extends LinearLayout {
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
         insertPoint.removeAllViews();
 
-        for (int i = 1; i < mChartData.series.size(); i++) {
+        for (int i = 1; i < mChartData.getSeries().size(); i++) {
             CheckBox checkBox = new CheckBox(mContext);
-            checkBox.setText(mChartData.series.get(i).getTitle());
-            checkBox.setTextColor(Color.parseColor(mChartData.series.get(i).getColor()));
+            checkBox.setText(mChartData.getSeries().get(i).getTitle());
+            checkBox.setTextColor(Color.parseColor(mChartData.getSeries().get(i).getColor()));
 
             ColorStateList colorStateList = new ColorStateList(
                     new int[][] {
@@ -107,15 +108,15 @@ public class ChartControlsView extends LinearLayout {
                             new int[] {  android.R.attr.state_checked }  // checked
                     },
                     new int[] {
-                            Color.parseColor(mChartData.series.get(i).getColor()),//unchecked
-                            Color.parseColor(mChartData.series.get(i).getColor())//checked
+                            Color.parseColor(mChartData.getSeries().get(i).getColor()),//unchecked
+                            Color.parseColor(mChartData.getSeries().get(i).getColor())//checked
                     }
 
             );
             checkBox.setButtonTintList(colorStateList);
 
             checkBox.setChecked(true);
-            mChartData.series.get(i).setChecked(true);
+            mChartData.getSeries().get(i).setChecked(true);
 
             insertPoint.addView(checkBox, i - 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -123,10 +124,18 @@ public class ChartControlsView extends LinearLayout {
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                     ChartData oldChartData = new ChartData();
+                    oldChartData.setSeries(mChartData.getSeries());
                     oldChartData.copyFrom(mChartData);
 
-                    mChartData.series.get(finalI).setChecked(isChecked);
+                    for(int i=1; i<oldChartData.getSeries().size(); i++)
+                        Log.d(TAG, "oldChartData.series[" + i + "] => " + oldChartData.getSeries().get(i).toString());
+
+                    mChartData.getSeries().get(finalI).setChecked(isChecked);
+
+                    for(int i=1; i<mChartData.getSeries().size(); i++)
+                        Log.d(TAG, "mChartData.series[" + i + "] => " + mChartData.getSeries().get(i).toString());
 
                     chartView.animateChanges(oldChartData, mChartData);
                     chartViewSlider.animateChanges(oldChartData, mChartData);

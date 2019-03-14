@@ -5,22 +5,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChartData implements Serializable {
-    public List<Series> series;
+
+    private List<Series> mSeries;
     public boolean isColumnsSizeEquals;
 
+    public ChartData(){
+    }
+    /*
+    *  double minQuote = Double.MAX_VALUE;
+        double maxQuote = Double.MIN_VALUE;
+
+        NiceScale numScale = new NiceScale(series);
+        minQuote = numScale.niceMin;
+        maxQuote = numScale.niceMax;
+    * */
+
+    public List<Series> getSeries(){
+        return mSeries;
+    }
+
+    public void setSeries(List<Series> series){
+        mSeries = series;
+    }
+
     public void copyFrom(ChartData mChartData) {
-        series = new ArrayList<>();
-        for (int i = 0; i < mChartData.series.size(); i++) {
-            series.add(new Series(
-                    mChartData.series.get(i).getName(),
-                    mChartData.series.get(i).getTitle(),
-                    mChartData.series.get(i).getType(),
-                    mChartData.series.get(i).getColor(),
-                    mChartData.series.get(i).getValues()
+        mSeries = new ArrayList<>();
+        for (int i = 0; i < mChartData.mSeries.size(); i++) {
+            mSeries.add(new Series(
+                    mChartData.mSeries.get(i).getName(),
+                    mChartData.mSeries.get(i).getTitle(),
+                    mChartData.mSeries.get(i).getType(),
+                    mChartData.mSeries.get(i).getColor(),
+                    mChartData.mSeries.get(i).getValues()
             ));
 
-            series.get(i).setTitle(mChartData.series.get(i).getTitle());
-            series.get(i).setChecked(mChartData.series.get(i).isChecked());
+            mSeries.get(i).setTitle(mChartData.mSeries.get(i).getTitle());
+            mSeries.get(i).setChecked(mChartData.mSeries.get(i).isChecked());
         }
 
     }

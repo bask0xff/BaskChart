@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d(TAG, "onCreate: jsonColumn(" + i + "): " + jsonColumn);
 
                 ChartData chartData = new ChartData();
-                chartData.series = new ArrayList<>();
+                List<Series> series = new ArrayList<>();
 
                 JSONArray columnsArray = jsonColumn.getJSONArray("columns");
                 boolean columnsLengthEquals = true;
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!columnsLengthEquals) {
                         Log.e(TAG, "JSON error! columns are different size!");
                     }
-                    chartData.series.add(ser);
+                    series.add(ser);
                     chartData.isColumnsSizeEquals = columnsLengthEquals;
                 }
 
@@ -115,17 +115,19 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject colorsObj = jsonColumn.getJSONObject("colors");
 
                 Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals);
-                for(int j=0; j<chartData.series.size(); j++){
-                    String seriesName = chartData.series.get(j).getName();
+                for(int j=0; j<series.size(); j++){
+                    String seriesName = series.get(j).getName();
                     if(namesObj.has(seriesName))
-                        chartData.series.get(j).setTitle(namesObj.getString(seriesName));
+                        series.get(j).setTitle(namesObj.getString(seriesName));
                     if(colorsObj.has(seriesName))
-                        chartData.series.get(j).setColor(colorsObj.getString(seriesName));
+                        series.get(j).setColor(colorsObj.getString(seriesName));
                     if(typesObj.has(seriesName))
-                        chartData.series.get(j).setType(typesObj.getString(seriesName));
+                        series.get(j).setType(typesObj.getString(seriesName));
 
-                    Log.d(TAG, "\t\t:  chartData.series(" + j + ") => " + chartData.series.get(j).toString());
+                    Log.d(TAG, "\t\t:  chartData.series(" + j + ") => " + series.get(j).toString());
                 }
+
+                chartData.setSeries(series);
 
                 charts.add(chartData);
             }

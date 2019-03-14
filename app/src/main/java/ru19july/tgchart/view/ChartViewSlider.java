@@ -136,24 +136,25 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         fp.setColor(Color.parseColor("#77222222"));
         canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
 
+        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         double minQuote = Double.MAX_VALUE;
         double maxQuote = Double.MIN_VALUE;
 
-        NiceScale numScale = new NiceScale(chartData.series);
+        NiceScale numScale = new NiceScale(chartData.getSeries());
         minQuote = numScale.niceMin;
         maxQuote = numScale.niceMax;
 
-        for(int i=1; i<chartData.series.get(0).getValues().size(); i++){
-            for(int j = 1; j<chartData.series.size(); j++){
-                if(!chartData.series.get(j).isChecked()) continue;
+        for(int i=1; i<chartData.getSeries().get(0).getValues().size(); i++){
+            for(int j = 1; j<chartData.getSeries().size(); j++){
+                if(!chartData.getSeries().get(j).isChecked()) continue;
 
-                int x1 = (int) (W*((i-1.f)/chartData.series.get(0).getValues().size()));
-                int x2 = (int) (W*((i-0.f)/chartData.series.get(0).getValues().size()));
+                int x1 = (int) (W*((i-1.f)/chartData.getSeries().get(0).getValues().size()));
+                int x2 = (int) (W*((i-0.f)/chartData.getSeries().get(0).getValues().size()));
 
-                int y1 = (int) ((1 - chartData.series.get(j).getValues().get(i - 1) / maxQuote) * H);
-                int y2 = (int) ((1 - chartData.series.get(j).getValues().get(i) / maxQuote) * H);
+                int y1 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i - 1) / maxQuote) * H);
+                int y2 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i) / maxQuote) * H);
 
-                fp.setColor(Color.parseColor(chartData.series.get(j).getColor()));
+                fp.setColor(Color.parseColor(chartData.getSeries().get(j).getColor()));
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }

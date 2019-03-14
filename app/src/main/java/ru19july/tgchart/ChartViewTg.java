@@ -365,15 +365,17 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
-                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (values.length-1) * 105);
+                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter-1) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
 
+        int k = 0;
         for(int i=0; i<values.length; i++) {
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) values[i]);
             if(colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            canvas.drawText(str, lastX + 70, lastY + 16 + i * 105, p);
+            canvas.drawText(str, lastX + 70, lastY + 16 + k * 105, p);
+            k++;
         }
 
     }

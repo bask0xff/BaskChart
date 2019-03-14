@@ -24,13 +24,10 @@ import java.util.Random;
 
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
-import ru19july.tgchart.view.ChartManager;
 
-public class ChartViewTg extends View implements ChartManager.AnimationListener, View.OnTouchListener {
+public class ChartViewTg extends View implements View.OnTouchListener {
 
     private final String TAG = ChartViewTg.class.getSimpleName();
-
-    private ChartManager chartManager;
 
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector detector;
@@ -89,16 +86,12 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = View.MeasureSpec.getSize(widthMeasureSpec);
         int height = View.MeasureSpec.getSize(heightMeasureSpec) / 2;
-        chartManager.chart().setWidth(width);
-        chartManager.chart().setHeight(height);
         setMeasuredDimension(width, height);
     }
 
     @TargetApi(Build.VERSION_CODES.FROYO)
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
-
-        chartManager = new ChartManager(getContext(), this);
 
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         detector = new GestureDetector(ChartViewTg.this.getContext(), new MyListener());
@@ -392,11 +385,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         touchIndex = -1;
 
         invalidate();
-    }
-
-    @Override
-    public void onAnimationUpdated() {
-
     }
 
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {

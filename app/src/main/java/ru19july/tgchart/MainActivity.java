@@ -19,14 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import ru19july.tgchart.view.ChartView;
-import ru19july.tgchart.view.draw.data.InputData;
-
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private ChartData gsonObj;
     private ChartControlsView chartControlsView;
-    ChartView chartView;
     private Spinner dropdown;
     //ChartView chartView;
 
@@ -35,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        chartView = findViewById(R.id.charView);
         chartControlsView = findViewById(R.id.chartControlsView);
 
         //initViews();
@@ -43,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initChartView() {
-        chartView.setVisibility(View.GONE);
         chartControlsView.setVisibility(View.VISIBLE);
 
         String json = loadJSONFromAsset();
@@ -73,49 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void initViews() {
-        chartView.setVisibility(View.VISIBLE);
-        chartControlsView.setVisibility(View.GONE);
-
-        List<InputData> dataList = createChartData();
-        chartView.setData(dataList);
-    }
-
-    @NonNull
-    private List<InputData> createChartData() {
-        String json = loadJSONFromAsset();
-        final List<ChartData> charts = readJson(json);
-
-
-        List<InputData> dataList = new ArrayList<>();
-/*
-        dataList.add(new InputData(10));
-        dataList.add(new InputData(25));
-        dataList.add(new InputData(20));
-        dataList.add(new InputData(30));
-        dataList.add(new InputData(20));
-        dataList.add(new InputData(50));
-        dataList.add(new InputData(40));
-*/
-        for(int i=0;i<charts.get(0).series.get(1).getValues().size(); i++)
-        {
-            dataList.add(new InputData(charts.get(0).series.get(1).getValues().get(i).intValue()));
-        }
-
-        long currMillis = System.currentTimeMillis();
-        currMillis -= currMillis % TimeUnit.DAYS.toMillis(1);
-
-        for (int i = 0; i < dataList.size(); i++) {
-            long position = dataList.size() - 1 - i;
-            long offsetMillis = TimeUnit.DAYS.toMillis(position);
-
-            long millis = currMillis - offsetMillis;
-            dataList.get(i).setMillis(millis);
-        }
-
-        return dataList;
     }
 
     private List<ChartData> readJson(String json) {

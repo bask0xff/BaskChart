@@ -175,7 +175,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         }
 * */
 
-
         canvas.drawRect(0, 0, W, H, fp);
 
         //drawing graph quote
@@ -188,7 +187,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         drawing = false;
         return canvas;
     }
-
 
     private void DrawChart(List<Series> quotes, Canvas canvas) {
         Paint lp = new Paint();
@@ -231,7 +229,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             for (int i = startIndex + 1; i < endIndex; i++) {
                 int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
                 int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
-
 
                 int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
                 int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
@@ -378,11 +375,19 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         post(new Runnable() {
             @Override
             public void run() {
-                for(int i = 1; i< oldChartData.getSeries().size(); i++)
-                    Log.d(TAG, "run: oldChartData " + oldChartData.getSeries().get(i).getTitle() + ": " + oldChartData.getSeries().get(i).isChecked());
+                oldChartData.getNiceScale();
+                newChartData.getNiceScale();
 
+                //logging
+                Log.d(TAG, "oldChartData [" + oldChartData.getMinQuote() + "; " + oldChartData.getMaxQuote() + "]");
+                for(int i = 1; i< oldChartData.getSeries().size(); i++)
+                    Log.d(TAG, "run: oldChartData " + oldChartData.getSeries().get(i).getTitle() + ": " + oldChartData.getSeries().get(i).isChecked() + " => " + oldChartData.getSeries().get(i).toString());
+
+                Log.d(TAG, "newChartData [" + newChartData.getMinQuote() + "; " + newChartData.getMaxQuote() + "]");
                 for(int i = 1; i< newChartData.getSeries().size(); i++)
-                    Log.d(TAG, "run: newChartData " + newChartData.getSeries().get(i).getTitle() + ": " + newChartData.getSeries().get(i).isChecked());
+                    Log.d(TAG, "run: newChartData " + newChartData.getSeries().get(i).getTitle() + ": " + newChartData.getSeries().get(i).isChecked() + " => " + newChartData.getSeries().get(i).toString());
+
+
             }
         });
 

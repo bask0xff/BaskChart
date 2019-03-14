@@ -108,7 +108,6 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
 
-        //startTime = BinaryStationClient.Instance().CurrentTime();
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
@@ -311,7 +310,7 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Utils.NICESCALE_TEXT_COLOR);
-            canvas.drawText(str, W * 0.90f, yL - textSize * 0.3f, p);
+            canvas.drawText(str, 40f, yL - textSize * 0.3f, p);
 
             yLine += numScale.tickSpacing;
         }

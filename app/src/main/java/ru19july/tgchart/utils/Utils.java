@@ -76,7 +76,7 @@ public class Utils{
     public static final float TAB_NUMBER_TEXT_SIZE_RATIO = 0.333f;
     public static final float TAB_NUMBER_Y_POSITION_RATIO = 0.333f;
     public static final float TAB_TEXT_Y_POSITION_RATIO = 0.75f;
-    public static final int DEFAULT_DECIMAL_COUNT = 5;
+    public static final int DEFAULT_DECIMAL_COUNT = 0;
     public static final float PROFIT_TEXT_X_POSITION_RATIO = 0.5f;
     public static final float PROFIT_TEXT_Y_POSITION_RATIO = 2.0f/3.0f;
     public static final int FLOATING_QUOTE_MARGIN_LEFT = 25;

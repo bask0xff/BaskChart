@@ -1,5 +1,10 @@
 package ru19july.tgchart.utils;
 
+import java.util.List;
+
+import ru19july.tgchart.MinMax;
+import ru19july.tgchart.Series;
+
 public class NiceScale
 {
 
@@ -22,6 +27,22 @@ public class NiceScale
     {
         this.minPoint = min;
         this.maxPoint = max;
+        calculate();
+    }
+
+    public NiceScale(List<Series> series) {
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+
+        for(int i=1; i<series.size(); i++) {
+            if(!series.get(i).isChecked()) continue;
+            if (series.get(i).getMinValue() < min) min = series.get(i).getMinValue();
+            if (series.get(i).getMaxValue() > max) max = series.get(i).getMaxValue();
+        }
+
+        this.minPoint = min;
+        this.maxPoint = max;
+
         calculate();
     }
 

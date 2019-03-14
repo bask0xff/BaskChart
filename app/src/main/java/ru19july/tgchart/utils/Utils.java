@@ -215,21 +215,5 @@ public class Utils{
         return sdfDate.format(date);
     }
 
-    public static MinMax FindMinMax(List<Long> quotes) {
-        MinMax result = new MinMax();
-        result.min = Float.MAX_VALUE;
-        result.max = Float.MIN_VALUE;
 
-        for (int i = 0; i < quotes.size(); i++) {
-            int k = quotes.size() - i - 1;
-            if (k >= 0 && k < quotes.size()) {
-                Long q = quotes.get(k);
-                if (q > result.max) result.max = q;
-                if (q < result.min) result.min = q;
-            } else {
-                return null;
-            }
-        }
-        return result;
-    }
 }

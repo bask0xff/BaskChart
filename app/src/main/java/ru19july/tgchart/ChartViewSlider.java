@@ -14,8 +14,6 @@ import android.view.View;
 
 import ru19july.tgchart.utils.NiceScale;
 
-import static ru19july.tgchart.utils.Utils.FindMinMax;
-
 public class ChartViewSlider extends View implements View.OnTouchListener {
 
     private ScaleGestureDetector mScaleDetector;
@@ -139,18 +137,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         double minQuote = Double.MAX_VALUE;
         double maxQuote = Double.MIN_VALUE;
 
-        MinMax minmax = new MinMax();
-        minmax.min = Float.MAX_VALUE;
-        minmax.max = Float.MIN_VALUE;
-
-        for(int i=1; i<chartData.series.size(); i++) {
-            if(!chartData.series.get(i).isChecked()) continue;
-            MinMax mnmx = FindMinMax(chartData.series.get(i).getValues());
-            if (mnmx.min < minmax.min) minmax.min = mnmx.min;
-            if (mnmx.max > minmax.max) minmax.max = mnmx.max;
-        }
-
-        NiceScale numScale = new NiceScale(minmax.min, minmax.max);
+        NiceScale numScale = new NiceScale(chartData.series);
         minQuote = numScale.niceMin;
         maxQuote = numScale.niceMax;
 

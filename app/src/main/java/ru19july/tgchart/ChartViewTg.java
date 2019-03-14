@@ -18,19 +18,13 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.TimeZone;
 
-import ru19july.tgchart.utils.Logger;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.ChartManager;
-
-import static ru19july.tgchart.utils.Utils.FindMinMax;
 
 public class ChartViewTg extends View implements ChartManager.AnimationListener, View.OnTouchListener {
 
@@ -193,9 +187,8 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
 
             for(int i=1; i<mChartData.series.size(); i++) {
                 if(!mChartData.series.get(i).isChecked()) continue;
-                MinMax mnmx = FindMinMax(mChartData.series.get(i).getValues());
-                if (mnmx.min < minmax.min) minmax.min = mnmx.min;
-                if (mnmx.max > minmax.max) minmax.max = mnmx.max;
+                if (mChartData.series.get(i).getMinValue() < minmax.min) minmax.min = mChartData.series.get(i).getMinValue();
+                if (mChartData.series.get(i).getMaxValue() > minmax.max) minmax.max = mChartData.series.get(i).getMaxValue();
             }
 
             NiceScale numScale = new NiceScale(minmax.min, minmax.max);

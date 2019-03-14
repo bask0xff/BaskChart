@@ -8,7 +8,6 @@ class ChartData implements Serializable {
     public List<Series> series;
     public boolean isColumnsSizeEquals;
 
-
     public void copyFrom(ChartData mChartData) {
         series = new ArrayList<>();
         for (int i = 0; i < mChartData.series.size(); i++) {

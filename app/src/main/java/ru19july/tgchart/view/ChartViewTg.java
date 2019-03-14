@@ -38,9 +38,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float mScaleFactor = 1.f;
     Paint paint;
 
-    private double minQuote = Double.MAX_VALUE;
-    private double maxQuote = Double.MIN_VALUE;
-
     private int W, ChartLineWidth, H;
 
     private int fps;
@@ -146,8 +143,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
     private float GetY(double y) {
         float realY = 0;
-        if ((maxQuote - minQuote) > 0)
-            realY = (float) (H * (1 - 0.2 - 0.6 * (y - minQuote) / (maxQuote - minQuote)));
+        if ((mChartData.getMaxQuote() - mChartData.getMinQuote()) > 0)
+            realY = (float) (H * (1 - 0.2 - 0.6 * (y - mChartData.getMinQuote()) / (mChartData.getMaxQuote() - mChartData.getMinQuote())));
         return realY;
     }
 
@@ -183,30 +180,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         //drawing graph quote
         if (mChartData.getSeries().get(0).getValues().size() > 0) {
-
-            minQuote = Double.MAX_VALUE;
-            maxQuote = Double.MIN_VALUE;
-
-            MinMax minmax = new MinMax();
-            minmax.min = Float.MAX_VALUE;
-            minmax.max = Float.MIN_VALUE;
-
-            for(int i=1; i<mChartData.getSeries().size(); i++) {
-                if(!mChartData.getSeries().get(i).isChecked()) continue;
-                if (mChartData.getSeries().get(i).getMinValue() < minmax.min) minmax.min = mChartData.getSeries().get(i).getMinValue();
-                if (mChartData.getSeries().get(i).getMaxValue() > minmax.max) minmax.max = mChartData.getSeries().get(i).getMaxValue();
-            }
-
-            NiceScale numScale = new NiceScale(minmax.min, minmax.max);
-            minQuote = numScale.niceMin;
-            maxQuote = numScale.niceMax;
-
-            numScale = new NiceScale(minQuote, maxQuote);
-
+            NiceScale numScale = mChartData.getNiceScale();
             DrawChart(mChartData.getSeries(), canvas);
-
             DrawHorizontalLines(numScale, decimalCount, canvas);
-
         }
 
         drawing = false;
@@ -257,8 +233,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
 
 
-                int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / maxQuote) * H);
-                int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / maxQuote) * H);
+                int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
+                int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
 
                 fp.setColor(Color.parseColor(quotes.get(j).getColor()));
 
@@ -269,7 +245,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 markerValues[j - 1] = quotes.get(j).getValues().get(touchIndex);
                 markerColors[j - 1] = quotes.get(j).getColor();
 
-                float yk = (float) ((1.0f - quotes.get(j).getValues().get(touchIndex) / maxQuote) * H);
+                float yk = (float) ((1.0f - quotes.get(j).getValues().get(touchIndex) / mChartData.getMaxQuote()) * H);
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 

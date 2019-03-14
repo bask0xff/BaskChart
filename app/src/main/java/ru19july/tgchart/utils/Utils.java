@@ -5,13 +5,10 @@ import android.graphics.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import ru19july.tgchart.MinMax;
 
 public class Utils{
 

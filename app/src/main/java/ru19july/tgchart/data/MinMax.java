@@ -1,4 +1,4 @@
-package ru19july.tgchart;
+package ru19july.tgchart.data;
 
 public class MinMax {
     public float min;

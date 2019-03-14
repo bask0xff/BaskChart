@@ -2,8 +2,7 @@ package ru19july.tgchart.utils;
 
 import java.util.List;
 
-import ru19july.tgchart.MinMax;
-import ru19july.tgchart.Series;
+import ru19july.tgchart.data.Series;
 
 public class NiceScale
 {

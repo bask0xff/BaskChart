@@ -16,8 +16,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import ru19july.tgchart.ChartData;
 import ru19july.tgchart.R;
+import ru19july.tgchart.data.ChartData;
 
 public class ChartControlsView extends LinearLayout {
 

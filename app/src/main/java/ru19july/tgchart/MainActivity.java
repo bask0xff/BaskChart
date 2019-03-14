@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.data.Series;
 import ru19july.tgchart.view.ChartControlsView;
 
 public class MainActivity extends AppCompatActivity {
@@ -131,42 +133,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return charts;
-    }
-
-    private ChartData parseJson(String json) {
-        Log.d(TAG, "json(" + json.length() + "): " + json + "");
-        int arrays = 0;
-        int structs = 0;
-        for(int i=0; i<json.length(); i++) {
-            String s = json.substring(i, i + 1);
-            //Log.d(TAG, "s: " + s);
-            if (s.equals("[")) {
-                arrays++;
-
-            }
-            if (s.equals("]")) {
-                Log.d(TAG, "parseJson: ARRAYS: " + arrays);
-                arrays--;
-            }
-            if (s.equals("{")) {
-                structs++;
-
-            }
-            if (s.equals("}")) {
-                Log.d(TAG, "parseJson: STRUCTS: " + structs);
-                structs--;
-            }
-                //Gson gson = new Gson();
-            //Reader reader = new InputStreamReader(ims);
-
-            //gsonObj = gson.fromJson(json, ChartData.class);
-            //Log.d(TAG, "parseJson: " + gsonObj);
-        }
-
-
-
-
-        return null;
     }
 
     public String loadJSONFromAsset() {

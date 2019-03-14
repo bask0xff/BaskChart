@@ -22,10 +22,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import ru19july.tgchart.ChartData;
-import ru19july.tgchart.MinMax;
+import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.data.MinMax;
 import ru19july.tgchart.R;
-import ru19july.tgchart.Series;
+import ru19july.tgchart.data.Series;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 

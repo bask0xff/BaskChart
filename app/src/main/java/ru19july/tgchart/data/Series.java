@@ -1,4 +1,4 @@
-package ru19july.tgchart;
+package ru19july.tgchart.data;
 
 import java.io.Serializable;
 import java.util.Arrays;

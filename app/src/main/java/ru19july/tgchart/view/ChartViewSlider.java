@@ -12,8 +12,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import ru19july.tgchart.ChartData;
 import ru19july.tgchart.R;
+import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.utils.NiceScale;
 
 public class ChartViewSlider extends View implements View.OnTouchListener {

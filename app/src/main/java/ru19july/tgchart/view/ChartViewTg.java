@@ -167,13 +167,22 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         long ms = (new Date()).getTime();
 
         fp.setColor(Color.parseColor("#333333"));
+/*
+* switch (mTheme) {
+            case 1:
+                setBackgroundColor(getResources().getColor(R.color.light_bg));
+                break;
+            default:
+                setBackgroundColor(getResources().getColor(R.color.dark_bg));
+                break;
+        }
+* */
+
 
         canvas.drawRect(0, 0, W, H, fp);
 
         //drawing graph quote
         if (mChartData.getSeries().get(0).getValues().size() > 0) {
-
-            //double quoteValue = mChartData.getSeries().get(1).getValues().get(mChartData.getSeries().get(1).getValues().size() - 1);
 
             minQuote = Double.MAX_VALUE;
             maxQuote = Double.MIN_VALUE;
@@ -191,12 +200,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             NiceScale numScale = new NiceScale(minmax.min, minmax.max);
             minQuote = numScale.niceMin;
             maxQuote = numScale.niceMax;
-
-            /*if (Double.isNaN(minQuote))
-                minQuote = quoteValue - 0.01;
-            if (Double.isNaN(maxQuote))
-                maxQuote = quoteValue + 0.01;
-            */
 
             numScale = new NiceScale(minQuote, maxQuote);
 

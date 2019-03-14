@@ -23,6 +23,7 @@ import ru19july.tgchart.data.ChartData;
 public class ChartControlsView extends LinearLayout {
 
     private final Context mContext;
+    private int mTheme = 0;
 
     private ChartViewTg chartView;
     private ChartViewSlider chartViewSlider;
@@ -53,7 +54,7 @@ public class ChartControlsView extends LinearLayout {
             try {
                 String titleText = a.getString(R.styleable.ChartControlsView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
-                //int theme = a.getInteger(R.styleable.ChartControlsView_theme, 0);
+                mTheme = a.getInteger(R.styleable.ChartControlsView_themeType, 0);
 
                 TextView title = (TextView) getChildAt(0);
                 title.setText(titleText);
@@ -62,6 +63,15 @@ public class ChartControlsView extends LinearLayout {
             }
         }
 
+
+        switch (mTheme) {
+            case 1:
+                setBackgroundColor(getResources().getColor(R.color.light_bg));
+                break;
+            default:
+                setBackgroundColor(getResources().getColor(R.color.dark_bg));
+                break;
+        }
 
         chartView = (ChartViewTg) getChildAt(1);
         //chartView.setVisibility(GONE);
@@ -149,5 +159,9 @@ public class ChartControlsView extends LinearLayout {
 
     private int getColor(String color) {
         return Color.parseColor(color);
+    }
+
+    public int getTheme() {
+        return mTheme;
     }
 }

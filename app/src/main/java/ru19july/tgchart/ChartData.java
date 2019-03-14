@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-class ChartData implements Serializable {
+public class ChartData implements Serializable {
     public List<Series> series;
     public boolean isColumnsSizeEquals;
 

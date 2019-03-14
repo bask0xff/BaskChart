@@ -1,4 +1,4 @@
-package ru19july.tgchart;
+package ru19july.tgchart.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import ru19july.tgchart.ChartData;
+import ru19july.tgchart.R;
 import ru19july.tgchart.utils.NiceScale;
 
 public class ChartViewSlider extends View implements View.OnTouchListener {

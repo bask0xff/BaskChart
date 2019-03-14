@@ -1,4 +1,4 @@
-package ru19july.tgchart;
+package ru19july.tgchart.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import ru19july.tgchart.ChartData;
+import ru19july.tgchart.R;
 
 public class ChartControlsView extends LinearLayout {
 

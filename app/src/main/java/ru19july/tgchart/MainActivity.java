@@ -1,6 +1,5 @@
 package ru19july.tgchart;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
+import ru19july.tgchart.view.ChartControlsView;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = MainActivity.class.getSimpleName();
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         chartControlsView = findViewById(R.id.chartControlsView);
 
-        //initViews();
         initChartView();
     }
 

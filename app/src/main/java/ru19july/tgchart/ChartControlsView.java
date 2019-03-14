@@ -17,6 +17,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class ChartControlsView extends LinearLayout {
 
     private final Context mContext;
@@ -31,23 +33,34 @@ public class ChartControlsView extends LinearLayout {
 
         mContext = context;
 
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.ChartControlsView, 0, 0);
-        String titleText = a.getString(R.styleable.ChartControlsView_titleText);
-        //@SuppressWarnings("ResourceAsColor")
-        //int valueColor = a.getColor(R.styleable.ChartControlsView_valueColor,
-        //        android.R.color.holo_blue_light);
-        a.recycle();
 
-        setOrientation(LinearLayout.VERTICAL);
-        setGravity(Gravity.TOP);
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs,
+                    R.styleable.ChartControlsView, 0, 0);
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.chart_view, this, true);
+            //@SuppressWarnings("ResourceAsColor")
+            //int valueColor = a.getColor(R.styleable.ChartControlsView_valueColor,
+            //        android.R.color.holo_blue_light);
 
-        TextView title = (TextView) getChildAt(0);
-        title.setText(titleText);
+            setOrientation(LinearLayout.VERTICAL);
+            setGravity(Gravity.TOP);
+
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater.inflate(R.layout.chart_view, this, true);
+
+            try {
+                String titleText = a.getString(R.styleable.ChartControlsView_titleText);
+                boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
+                //int theme = a.getInteger(R.styleable.ChartControlsView_theme, 0);
+
+                TextView title = (TextView) getChildAt(0);
+                title.setText(titleText);
+            } finally {
+                a.recycle();
+            }
+        }
+
 
         chartView = (ChartViewTg) getChildAt(1);
         //chartView.setVisibility(GONE);
@@ -85,8 +98,8 @@ public class ChartControlsView extends LinearLayout {
 
         for (int i = 1; i < mChartData.series.size(); i++) {
             CheckBox checkBox = new CheckBox(mContext);
-            checkBox.setText(mChartData.series.get(i).title);
-            checkBox.setTextColor(Color.parseColor(mChartData.series.get(i).color));
+            checkBox.setText(mChartData.series.get(i).getTitle());
+            checkBox.setTextColor(Color.parseColor(mChartData.series.get(i).getColor()));
 
             ColorStateList colorStateList = new ColorStateList(
                     new int[][] {
@@ -94,8 +107,8 @@ public class ChartControlsView extends LinearLayout {
                             new int[] {  android.R.attr.state_checked }  // checked
                     },
                     new int[] {
-                            Color.parseColor(mChartData.series.get(i).color),//unchecked
-                            Color.parseColor(mChartData.series.get(i).color)//checked
+                            Color.parseColor(mChartData.series.get(i).getColor()),//unchecked
+                            Color.parseColor(mChartData.series.get(i).getColor())//checked
                     }
 
             );
@@ -110,11 +123,14 @@ public class ChartControlsView extends LinearLayout {
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.d(TAG, "onCheckedChanged: " + isChecked);
+                    ChartData oldChartData = new ChartData();
+                    oldChartData.copyFrom(mChartData);
 
                     mChartData.series.get(finalI).setChecked(isChecked);
-                    chartView.invalidate();
-                    chartViewSlider.invalidate();
+
+                    chartView.animateChanges(oldChartData, mChartData);
+                    chartViewSlider.animateChanges(oldChartData, mChartData);
+
                 }
             });
         }

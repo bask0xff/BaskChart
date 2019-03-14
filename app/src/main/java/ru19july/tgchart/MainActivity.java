@@ -99,9 +99,9 @@ public class MainActivity extends AppCompatActivity {
         dataList.add(new InputData(50));
         dataList.add(new InputData(40));
 */
-        for(int i=0;i<charts.get(0).series.get(1).values.size(); i++)
+        for(int i=0;i<charts.get(0).series.get(1).getValues().size(); i++)
         {
-            dataList.add(new InputData(charts.get(0).series.get(1).values.get(i).intValue()));
+            dataList.add(new InputData(charts.get(0).series.get(1).getValues().get(i).intValue()));
         }
 
         long currMillis = System.currentTimeMillis();
@@ -138,14 +138,16 @@ public class MainActivity extends AppCompatActivity {
                     //Log.d(TAG, "\t\tarrColumns(" + j + ":" + arrColumns.length() + "): " + arrColumns);
 
                     Series ser = new Series();
-                    ser.name = arrColumns.getString(0);
-                    ser.values = new ArrayList<>();
+                    ser.setName(arrColumns.getString(0));
+                    List<Long> vals = new ArrayList<>();
                     for (int k = 1; k < arrColumns.length(); k++) {
-                        ser.values.add(arrColumns.getLong(k));
+                        vals.add(arrColumns.getLong(k));
                     }
+                    ser.setValues(vals);
+
                     if (columnsLength == 0)
-                        columnsLength = ser.values.size();
-                    columnsLengthEquals = columnsLengthEquals && (ser.values.size() == columnsLength);
+                        columnsLength = ser.getValues().size();
+                    columnsLengthEquals = columnsLengthEquals && (ser.getValues().size() == columnsLength);
 
                     //Log.d(TAG, "\t\t: " + ser.name + " (" + ser.values.size() + ") " + columnsLengthEquals + " => " + ser.values);
 
@@ -168,13 +170,13 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals);
                 for(int j=0; j<chartData.series.size(); j++){
-                    String seriesName = chartData.series.get(j).name;
+                    String seriesName = chartData.series.get(j).getName();
                     if(namesObj.has(seriesName))
-                        chartData.series.get(j).title = namesObj.getString(seriesName);
+                        chartData.series.get(j).setTitle(namesObj.getString(seriesName));
                     if(colorsObj.has(seriesName))
-                        chartData.series.get(j).color = colorsObj.getString(seriesName);
+                        chartData.series.get(j).setColor(colorsObj.getString(seriesName));
                     if(typesObj.has(seriesName))
-                        chartData.series.get(j).type = typesObj.getString(seriesName);
+                        chartData.series.get(j).setType(typesObj.getString(seriesName));
 
                     Log.d(TAG, "\t\t:  chartData.series(" + j + ") => " + chartData.series.get(j).toString());
                 }

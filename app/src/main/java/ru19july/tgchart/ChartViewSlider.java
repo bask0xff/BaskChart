@@ -145,7 +145,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         for(int i=1; i<chartData.series.size(); i++) {
             if(!chartData.series.get(i).isChecked()) continue;
-            MinMax mnmx = FindMinMax(chartData.series.get(i).values);
+            MinMax mnmx = FindMinMax(chartData.series.get(i).getValues());
             if (mnmx.min < minmax.min) minmax.min = mnmx.min;
             if (mnmx.max > minmax.max) minmax.max = mnmx.max;
         }
@@ -154,17 +154,17 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         minQuote = numScale.niceMin;
         maxQuote = numScale.niceMax;
 
-        for(int i=1; i<chartData.series.get(0).values.size(); i++){
+        for(int i=1; i<chartData.series.get(0).getValues().size(); i++){
             for(int j = 1; j<chartData.series.size(); j++){
                 if(!chartData.series.get(j).isChecked()) continue;
 
-                int x1 = (int) (W*((i-1.f)/chartData.series.get(0).values.size()));
-                int x2 = (int) (W*((i-0.f)/chartData.series.get(0).values.size()));
+                int x1 = (int) (W*((i-1.f)/chartData.series.get(0).getValues().size()));
+                int x2 = (int) (W*((i-0.f)/chartData.series.get(0).getValues().size()));
 
-                int y1 = (int) ((1 - chartData.series.get(j).values.get(i - 1) / maxQuote) * H);
-                int y2 = (int) ((1 - chartData.series.get(j).values.get(i) / maxQuote) * H);
+                int y1 = (int) ((1 - chartData.series.get(j).getValues().get(i - 1) / maxQuote) * H);
+                int y2 = (int) ((1 - chartData.series.get(j).getValues().get(i) / maxQuote) * H);
 
-                fp.setColor(Color.parseColor(chartData.series.get(j).color));
+                fp.setColor(Color.parseColor(chartData.series.get(j).getColor()));
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
@@ -181,6 +181,10 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     public void setData(ChartData chartData) {
         this.chartData = chartData;
 
+        invalidate();
+    }
+
+    public void animateChanges(ChartData oldChartData, ChartData newChartData) {
         invalidate();
     }
 

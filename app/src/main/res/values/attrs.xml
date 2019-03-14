@@ -10,21 +10,15 @@
 
     <declare-styleable name="ChartControlsView">
         <attr name="titleText" format="string" />
+        <!--attr name="theme" format="enum">
+            <enum name="dark" value="0"/>
+            <enum name="light" value="1"/>
+        </attr-->
     </declare-styleable>
 
     <declare-styleable name="TouchAreaButton">
     	<attr name="toucharea" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="CircularImageView">
-        <attr name="border" format="boolean"></attr>
-        <attr name="border_width" format="dimension"></attr>
-        <attr name="border_color" format="color"></attr>
-        <attr name="shadow" format="boolean"></attr>
-    </declare-styleable>
-
-    <declare-styleable name="Theme">
-        <attr name="circularImageViewStyle" format="reference"></attr>
-    </declare-styleable>
 
 </resources>

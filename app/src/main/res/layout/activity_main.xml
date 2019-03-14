@@ -40,6 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 chart:titleText="Followers"
+
                 />
 
             <ru19july.tgchart.view.ChartView

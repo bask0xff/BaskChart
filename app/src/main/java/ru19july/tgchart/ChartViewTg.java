@@ -1,5 +1,6 @@
 package ru19july.tgchart;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -9,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -98,6 +100,7 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         setMeasuredDimension(width, height);
     }
 
+    @TargetApi(Build.VERSION_CODES.FROYO)
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
 
@@ -178,8 +181,8 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         canvas.drawRect(0, 0, W, H, fp);
 
         //drawing graph quote
-        if (mChartData.series.get(0).values.size() > 0) {
-            double quoteValue = mChartData.series.get(1).values.get(mChartData.series.get(1).values.size() - 1);
+        if (mChartData.series.get(0).getValues().size() > 0) {
+            double quoteValue = mChartData.series.get(1).getValues().get(mChartData.series.get(1).getValues().size() - 1);
 
             minQuote = Double.MAX_VALUE;
             maxQuote = Double.MIN_VALUE;
@@ -190,7 +193,7 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
 
             for(int i=1; i<mChartData.series.size(); i++) {
                 if(!mChartData.series.get(i).isChecked()) continue;
-                MinMax mnmx = FindMinMax(mChartData.series.get(i).values);
+                MinMax mnmx = FindMinMax(mChartData.series.get(i).getValues());
                 if (mnmx.min < minmax.min) minmax.min = mnmx.min;
                 if (mnmx.max > minmax.max) minmax.max = mnmx.max;
             }
@@ -239,8 +242,8 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
 
-        int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
-        int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
+        int startIndex = (int) (startNormalized * mChartData.series.get(0).getValues().size());
+        int endIndex = (int) (endNormalized * mChartData.series.get(0).getValues().size());
 
         float[] markerValues = new float[quotes.size() - 1];
         String[] markerColors = new String[quotes.size() - 1];
@@ -259,23 +262,23 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
                 int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
 
 
-                int y1 = (int) ((1 - quotes.get(j).values.get(i - 1) / maxQuote) * H);
-                int y2 = (int) ((1 - quotes.get(j).values.get(i) / maxQuote) * H);
+                int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / maxQuote) * H);
+                int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / maxQuote) * H);
 
-                fp.setColor(Color.parseColor(quotes.get(j).color));
+                fp.setColor(Color.parseColor(quotes.get(j).getColor()));
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
 
-            if (touchIndex > 0 && touchIndex < quotes.get(j).values.size()) {
-                markerValues[j - 1] = quotes.get(j).values.get(touchIndex);
-                markerColors[j - 1] = quotes.get(j).color;
+            if (touchIndex > 0 && touchIndex < quotes.get(j).getValues().size()) {
+                markerValues[j - 1] = quotes.get(j).getValues().get(touchIndex);
+                markerColors[j - 1] = quotes.get(j).getColor();
 
-                float yk = (float) ((1.0f - quotes.get(j).values.get(touchIndex) / maxQuote) * H);
+                float yk = (float) ((1.0f - quotes.get(j).getValues().get(touchIndex) / maxQuote) * H);
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 
-                fp.setColor(Color.parseColor(quotes.get(j).color));
+                fp.setColor(Color.parseColor(quotes.get(j).getColor()));
                 canvas.drawCircle(xk, yk, 10, fp);
                 fp.setColor(Color.parseColor("#333333"));
                 canvas.drawCircle(xk, yk, 5, fp);
@@ -404,6 +407,22 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
 
     }
 
+    public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 1; i< oldChartData.series.size(); i++)
+                    Log.d(TAG, "run: oldChartData " + oldChartData.series.get(i).getTitle() + ": " + oldChartData.series.get(i).isChecked());
+
+                for(int i = 1; i< newChartData.series.size(); i++)
+                    Log.d(TAG, "run: newChartData " + newChartData.series.get(i).getTitle() + ": " + newChartData.series.get(i).isChecked());
+            }
+        });
+
+        invalidate();
+    }
+
     class MyListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onDown(MotionEvent e) {
@@ -411,6 +430,7 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.FROYO)
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
@@ -438,8 +458,8 @@ public class ChartViewTg extends View implements ChartManager.AnimationListener,
         boolean result = detector.onTouchEvent(event);
 
         xTouched = event.getX();
-        int startIndex = (int) (startNormalized * mChartData.series.get(0).values.size());
-        int endIndex = (int) (endNormalized * mChartData.series.get(0).values.size());
+        int startIndex = (int) (startNormalized * mChartData.series.get(0).getValues().size());
+        int endIndex = (int) (endNormalized * mChartData.series.get(0).getValues().size());
         touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
 
         oldTouchIndex = touchIndex;

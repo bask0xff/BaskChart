@@ -63,7 +63,6 @@ public class ChartControlsView extends LinearLayout {
             }
         }
 
-
         switch (mTheme) {
             case 1:
                 setBackgroundColor(getResources().getColor(R.color.light_bg));
@@ -139,13 +138,7 @@ public class ChartControlsView extends LinearLayout {
                     oldChartData.setSeries(mChartData.getSeries());
                     oldChartData.copyFrom(mChartData);
 
-                    for(int i=1; i<oldChartData.getSeries().size(); i++)
-                        Log.d(TAG, "oldChartData.series[" + i + "] => " + oldChartData.getSeries().get(i).toString());
-
                     mChartData.getSeries().get(finalI).setChecked(isChecked);
-
-                    for(int i=1; i<mChartData.getSeries().size(); i++)
-                        Log.d(TAG, "mChartData.series[" + i + "] => " + mChartData.getSeries().get(i).toString());
 
                     chartView.animateChanges(oldChartData, mChartData);
                     chartViewSlider.animateChanges(oldChartData, mChartData);
@@ -165,3 +158,5 @@ public class ChartControlsView extends LinearLayout {
         return mTheme;
     }
 }
+
+//read

@@ -61,7 +61,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     int touchIndex = -1;
     private int oldTouchIndex = -111;
     private float realW = 1.0f;
-    private float leftMinValue =0;
+    private float leftMinValue = 0;
     private float rightMaxValue = 1;
 
 
@@ -213,9 +213,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
 
-        //TODO change it
-        //int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
-        //int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
         MinMaxIndex minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
         float[] markerValues = new float[quotes.size() - 1];
@@ -223,16 +220,17 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         float xk = 0;
         if (touchIndex >= 0)
-            xk = (((touchIndex - minmaxIndexes.min - 0.f) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
+            //xk = (((touchIndex - minmaxIndexes.min - 0.f) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
+            xk = (int) (((quotes.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
 
         int yMin = H;
 
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
-            for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max+1; i++) {
+            for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
                 //float deltaX = ()
-                int x1 = (int) (((quotes.get(0).getValues().get(i-1) - leftMinValue) / (rightMaxValue-leftMinValue))*W);
-                int x2 = (int) (((quotes.get(0).getValues().get(i) - leftMinValue) / (rightMaxValue-leftMinValue))*W);
+                int x1 = (int) (((quotes.get(0).getValues().get(i - 1) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
+                int x2 = (int) (((quotes.get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
 
                 int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
                 int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
@@ -259,7 +257,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         }
 
         yMin = yMin - 120;
-        if(yMin < 100) yMin = 100;
+        if (yMin < 100) yMin = 100;
         if (touchIndex > 0)
             DrawMarker(canvas, markerValues, markerColors, xk + 20, yMin);
     }
@@ -277,7 +275,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             if (values.getValues().get(i) <= leftMinValue && values.getValues().get(i + 1) > leftMinValue)
                 result.min = i;
             if (values.getValues().get(i) < rightMaxValue && values.getValues().get(i + 1) >= rightMaxValue)
-                result.max = i+1;
+                result.max = i + 1;
         }
 
         Log.d(TAG, "findIndexes: [" + values.getMinValue() + ";" + values.getMaxValue() + "] -> [(" + leftMinValue + "," + rightMaxValue + ")] => {" + result.min + "," + result.max + "}");
@@ -349,10 +347,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
         int xw = 0;
         int activeCounter = 0;
-        for(int i=0; i<values.length; i++) {
-            if(colors[i] == null) continue;
-            int sz =(int) p.measureText(values[i] + "");
-            if (xw < sz ) xw = sz;
+        for (int i = 0; i < values.length; i++) {
+            if (colors[i] == null) continue;
+            int sz = (int) p.measureText(values[i] + "");
+            if (xw < sz) xw = sz;
             activeCounter++;
         }
 
@@ -361,14 +359,14 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
-                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter-1) * 105);
+                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter - 1) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
 
         int k = 0;
-        for(int i=0; i<values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) values[i]);
-            if(colors[i] == null) continue;
+            if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
             canvas.drawText(str, lastX + 70, lastY + 16 + k * 105, p);
             k++;
@@ -405,11 +403,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
                 //logging
                 Log.d(TAG, "oldChartData [" + oldChartData.getMinQuote() + "; " + oldChartData.getMaxQuote() + "]");
-                for(int i = 1; i< oldChartData.getSeries().size(); i++)
+                for (int i = 1; i < oldChartData.getSeries().size(); i++)
                     Log.d(TAG, "run: oldChartData " + oldChartData.getSeries().get(i).getTitle() + ": " + oldChartData.getSeries().get(i).isChecked() + " => " + oldChartData.getSeries().get(i).toString());
 
                 Log.d(TAG, "newChartData [" + newChartData.getMinQuote() + "; " + newChartData.getMaxQuote() + "]");
-                for(int i = 1; i< newChartData.getSeries().size(); i++)
+                for (int i = 1; i < newChartData.getSeries().size(); i++)
                     Log.d(TAG, "run: newChartData " + newChartData.getSeries().get(i).getTitle() + ": " + newChartData.getSeries().get(i).isChecked() + " => " + newChartData.getSeries().get(i).toString());
 
 
@@ -456,7 +454,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         xTouched = event.getX();
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
-        touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex)/W);
+        touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex) / W);
 
         oldTouchIndex = touchIndex;
 

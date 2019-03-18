@@ -18,9 +18,13 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.TimeZone;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.MinMax;
@@ -217,6 +221,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         float[] markerValues = new float[quotes.size() - 1];
         String[] markerColors = new String[quotes.size() - 1];
+        long timestamp = 0L;
 
         float xk = 0;
         if (touchIndex >= 0)
@@ -240,6 +245,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             }
 
             if (touchIndex > 0 && touchIndex < quotes.get(j).getValues().size()) {
+                timestamp = quotes.get(0).getValues().get(touchIndex);
                 markerValues[j - 1] = quotes.get(j).getValues().get(touchIndex);
                 markerColors[j - 1] = quotes.get(j).getColor();
 
@@ -258,7 +264,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         yMin = yMin - 120;
         if (yMin < 100) yMin = 100;
         if (touchIndex > 0)
-            DrawMarker(canvas, markerValues, markerColors, xk + 20, yMin);
+            DrawMarker(canvas, timestamp, markerValues, markerColors, xk + 20, yMin);
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
@@ -323,7 +329,14 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    private void DrawMarker(Canvas canvas, float[] values, String[] colors, float lastX, float lastY) {
+    public String convertTime(long time){
+        Date date = new Date(time);
+        SimpleDateFormat format = new SimpleDateFormat("MMM dd HH:mm", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return format.format(date);
+    }
+
+    private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -340,9 +353,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         p.setFakeBoldText(true);
         p.setStrokeWidth(1);
 
-        //чёрный фон для текста плавающей текущей котировки
+        String dat = convertTime(timestamp);
+
         p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
-        int xw = 0;
+        int xw = (int) p.measureText(dat);
         int activeCounter = 0;
         for (int i = 0; i < values.length; i++) {
             if (colors[i] == null) continue;
@@ -356,8 +370,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
-                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter - 1) * 105);
+                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
+
+        p.setColor(Color.parseColor("#AAAAAA"));
+        canvas.drawText(dat, lastX + 70, lastY + 16, p);
 
         int k = 0;
         for (int i = 0; i < values.length; i++) {
@@ -365,7 +382,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            canvas.drawText(str, lastX + 70, lastY + 16 + k * 105, p);
+            canvas.drawText(str, lastX + 70, lastY + 16 + (k+1) * 105, p);
             k++;
         }
 

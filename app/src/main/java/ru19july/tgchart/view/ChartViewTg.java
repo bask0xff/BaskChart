@@ -277,8 +277,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 result.max = i + 1;
         }
 
-        Log.d(TAG, "findIndexes: [" + values.getMinValue() + ";" + values.getMaxValue() + "] -> [(" + leftMinValue + "," + rightMaxValue + ")] => {" + result.min + "," + result.max + "}");
-
         return result;
     }
 

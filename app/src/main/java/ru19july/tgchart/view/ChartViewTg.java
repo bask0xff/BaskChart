@@ -211,6 +211,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         fp.setAntiAlias(true);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         fp.setStrokeWidth(5.0f);
+        Paint fpc = new Paint();
+        fpc.setAntiAlias(true);
+        fpc.setStyle(Paint.Style.FILL_AND_STROKE);
+        fpc.setStrokeWidth(1.0f);
 
         Random r = new Random();
 
@@ -240,8 +244,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
 
                 fp.setColor(Color.parseColor(quotes.get(j).getColor()));
+                fpc.setColor(Color.parseColor(quotes.get(j).getColor()));
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
+                canvas.drawCircle(x1, y1, 2.0f, fpc);
             }
 
             if (touchIndex > 0 && touchIndex < quotes.get(j).getValues().size()) {

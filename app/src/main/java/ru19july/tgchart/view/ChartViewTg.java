@@ -60,6 +60,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float xTouched = 0.0f;
     int touchIndex = -1;
     private int oldTouchIndex = -111;
+    private float realW = 1.0f;
+    private float leftMinValue =0;
+    private float rightMaxValue = 1;
 
 
     public ChartViewTg(Context context) {
@@ -226,9 +229,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
-            for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max; i++) {
-                int x1 = (int) (((i - 1.f - minmaxIndexes.min) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
-                int x2 = (int) (((i - 0.f - minmaxIndexes.min) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
+            for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max+1; i++) {
+                //float deltaX = ()
+                int x1 = (int) (((quotes.get(0).getValues().get(i-1) - leftMinValue) / (rightMaxValue-leftMinValue))*W);
+                int x2 = (int) (((quotes.get(0).getValues().get(i) - leftMinValue) / (rightMaxValue-leftMinValue))*W);
 
                 int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
                 int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
@@ -265,8 +269,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         result.min = 0;
         result.max = values.getValues().size() - 1;
 
-        float leftMinValue = (values.getMaxValue() - values.getMinValue()) * start + values.getMinValue();
-        float rightMaxValue = (values.getMaxValue() - values.getMinValue()) * end + values.getMinValue();
+        leftMinValue = (values.getMaxValue() - values.getMinValue()) * start + values.getMinValue();
+        rightMaxValue = (values.getMaxValue() - values.getMinValue()) * end + values.getMinValue();
+        realW = (rightMaxValue - leftMinValue) / W;
 
         for (int i = 0; i < values.getValues().size() - 1; i++) {
             if (values.getValues().get(i) <= leftMinValue && values.getValues().get(i + 1) > leftMinValue)

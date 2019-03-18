@@ -455,7 +455,18 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
 
         //xk = ((quotes.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
-        touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex) / W);
+        //touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex) / W);
+
+        float min = Float.MAX_VALUE;
+        touchIndex =0;
+
+        for(int i=startIndex; i<endIndex; i++) {
+            float xt = ((mChartData.getSeries().get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
+            if (Math.abs(xt - xTouched) <= min) {
+                min = Math.abs(xt - xTouched);
+                touchIndex = i;
+            }
+        }
 
         oldTouchIndex = touchIndex;
 

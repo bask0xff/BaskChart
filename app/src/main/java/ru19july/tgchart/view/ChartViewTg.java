@@ -220,7 +220,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         float xk = 0;
         if (touchIndex >= 0)
-            //xk = (((touchIndex - minmaxIndexes.min - 0.f) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
             xk = (int) (((quotes.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
 
         int yMin = H;
@@ -454,6 +453,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         xTouched = event.getX();
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
+
+        //xk = ((quotes.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
         touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex) / W);
 
         oldTouchIndex = touchIndex;

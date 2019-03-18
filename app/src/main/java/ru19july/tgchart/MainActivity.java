@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         serie.setTitle("x");
         serie.setType("x");
         serie.setChecked(true);
-        Long[] arr = new Long[]{1542412800000L,1542499200000L,1542585600000L,1542672000000L,1542758400000L,1542844800000L,1542931200000L};
+        Long[] arr = new Long[]{1542412800000L, 1542499200000L, 1542585600000L, 1542844800000L, 1542931200000L, 1543190400000L, 1543276800000L};
         List<Long> values = Arrays.asList(arr);
         serie.setValues(values);
         series.add(serie);
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         serie.setType("line");
         serie.setChecked(true);
         serie.setColor("#aa0000");
-        arr = new Long[]{5173L,5145L,5209L,4967L,5030L,5120L,5030L};
+        arr = new Long[]{5173L, 5145L, 5209L, 4967L, 5030L, 5120L, 5030L};
         values = Arrays.asList(arr);
         serie.setValues(values);
         series.add(serie);
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         serie.setType("line");
         serie.setChecked(true);
         serie.setColor("#007700");
-        arr = new Long[]{4497L,503L,520L,2530L,3173L,5514L,529L};
+        arr = new Long[]{4497L, 503L, 520L, 2530L, 3173L, 5514L, 529L};
         values = Arrays.asList(arr);
         serie.setValues(values);
         series.add(serie);
@@ -165,13 +165,13 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject colorsObj = jsonColumn.getJSONObject("colors");
 
                 Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals);
-                for(int j=0; j<series.size(); j++){
+                for (int j = 0; j < series.size(); j++) {
                     String seriesName = series.get(j).getName();
-                    if(namesObj.has(seriesName))
+                    if (namesObj.has(seriesName))
                         series.get(j).setTitle(namesObj.getString(seriesName));
-                    if(colorsObj.has(seriesName))
+                    if (colorsObj.has(seriesName))
                         series.get(j).setColor(colorsObj.getString(seriesName));
-                    if(typesObj.has(seriesName))
+                    if (typesObj.has(seriesName))
                         series.get(j).setType(typesObj.getString(seriesName));
 
                     Log.d(TAG, "\t\t:  chartData.series(" + j + ") => " + series.get(j).toString());

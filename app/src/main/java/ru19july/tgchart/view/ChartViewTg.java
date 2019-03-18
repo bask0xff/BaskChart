@@ -211,24 +211,24 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         path.setFillType(Path.FillType.EVEN_ODD);
 
         //TODO change it
-        int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
-        int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
+        //int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
+        //int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
+        MinMaxIndex minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
         float[] markerValues = new float[quotes.size() - 1];
         String[] markerColors = new String[quotes.size() - 1];
 
         float xk = 0;
         if (touchIndex >= 0)
-            xk = (((touchIndex - startIndex - 0.f) / (endIndex - startIndex)) * W);
+            xk = (((touchIndex - minmaxIndexes.min - 0.f) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
 
         int yMin = H;
 
-
         for (int j = 1; j < quotes.size(); j++) {
             if (!quotes.get(j).isChecked()) continue;
-            for (int i = startIndex + 1; i < endIndex; i++) {
-                int x1 = (int) (((i - 1.f - startIndex) / (endIndex - startIndex)) * W);
-                int x2 = (int) (((i - 0.f - startIndex) / (endIndex - startIndex)) * W);
+            for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max; i++) {
+                int x1 = (int) (((i - 1.f - minmaxIndexes.min) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
+                int x2 = (int) (((i - 0.f - minmaxIndexes.min) / (minmaxIndexes.max - minmaxIndexes.min)) * W);
 
                 int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
                 int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
@@ -258,6 +258,26 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         if(yMin < 100) yMin = 100;
         if (touchIndex > 0)
             DrawMarker(canvas, markerValues, markerColors, xk + 20, yMin);
+    }
+
+    private MinMaxIndex findIndexes(Series values, float start, float end) {
+        MinMaxIndex result = new MinMaxIndex();
+        result.min = 0;
+        result.max = values.getValues().size() - 1;
+
+        float leftMinValue = (values.getMaxValue() - values.getMinValue()) * start + values.getMinValue();
+        float rightMaxValue = (values.getMaxValue() - values.getMinValue()) * end + values.getMinValue();
+
+        for (int i = 0; i < values.getValues().size() - 1; i++) {
+            if (values.getValues().get(i) <= leftMinValue && values.getValues().get(i + 1) > leftMinValue)
+                result.min = i;
+            if (values.getValues().get(i) < rightMaxValue && values.getValues().get(i + 1) >= rightMaxValue)
+                result.max = i+1;
+        }
+
+        Log.d(TAG, "findIndexes: [" + values.getMinValue() + ";" + values.getMaxValue() + "] -> [(" + leftMinValue + "," + rightMaxValue + ")] => {" + result.min + "," + result.max + "}");
+
+        return result;
     }
 
     private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {

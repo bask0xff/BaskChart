@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ru19july.tgchart.data.ChartData;
@@ -44,7 +45,13 @@ public class MainActivity extends AppCompatActivity {
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
-        final List<ChartData> charts = readJson(json);
+        final List<ChartData> charts = new ArrayList<>();
+
+
+        ChartData chartData = createTestChart();
+        charts.add(chartData);
+
+        charts.addAll(readJson(json));
 
         chartControlsView.setData(charts.get(0));
 
@@ -68,6 +75,49 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private ChartData createTestChart() {
+        ChartData chartData = new ChartData();
+        List<Series> series = new ArrayList<>();
+
+        Series serie = new Series();
+        serie.setName("x");
+        serie.setTitle("x");
+        serie.setType("x");
+        serie.setChecked(true);
+        Long[] arr = new Long[]{1542412800000L,1542499200000L,1542585600000L,1542672000000L,1542758400000L,1542844800000L,1542931200000L};
+        List<Long> values = Arrays.asList(arr);
+        serie.setValues(values);
+        series.add(serie);
+
+        serie = new Series();
+        serie.setName("y1");
+        serie.setTitle("y1");
+        serie.setType("line");
+        serie.setChecked(true);
+        serie.setColor("#aa0000");
+        arr = new Long[]{5173L,5145L,5209L,4967L,5030L,5120L,5030L};
+        values = Arrays.asList(arr);
+        serie.setValues(values);
+        series.add(serie);
+
+        serie = new Series();
+        serie.setName("y2");
+        serie.setTitle("y2");
+        serie.setType("line");
+        serie.setChecked(true);
+        serie.setColor("#007700");
+        arr = new Long[]{4497L,503L,520L,2530L,3173L,5514L,529L};
+        values = Arrays.asList(arr);
+        serie.setValues(values);
+        series.add(serie);
+
+        chartData.setSeries(series);
+        chartData.isColumnsSizeEquals = true;
+
+        return chartData;
+
     }
 
     private List<ChartData> readJson(String json) {

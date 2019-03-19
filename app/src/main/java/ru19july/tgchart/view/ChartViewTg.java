@@ -18,7 +18,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Random;
 import java.util.TimeZone;
 
 import ru19july.tgchart.data.ChartData;
-import ru19july.tgchart.data.MinMax;
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.Series;
 import ru19july.tgchart.utils.NiceScale;
@@ -250,7 +248,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 canvas.drawCircle(x1, y1, 2.0f, fpc);
             }
 
-            if (touchIndex > 0 && touchIndex < quotes.get(j).getValues().size()) {
+            if (touchIndex >= 0 && touchIndex < quotes.get(j).getValues().size()) {
                 timestamp = quotes.get(0).getValues().get(touchIndex);
                 markerValues[j - 1] = quotes.get(j).getValues().get(touchIndex);
                 markerColors[j - 1] = quotes.get(j).getColor();

@@ -77,6 +77,26 @@ public class ChartData implements Serializable {
         maxQuote = numScale.niceMax;
 
         return new NiceScale(minQuote, maxQuote);
+    }
 
+    public NiceScale getNiceScale(float leftMinValue, float rightMaxValue) {
+        minQuote = Double.MAX_VALUE;
+        maxQuote = Double.MIN_VALUE;
+
+        MinMax minmax = new MinMax();
+        minmax.min = Float.MAX_VALUE;
+        minmax.max = Float.MIN_VALUE;
+
+        for(int i=1; i<getSeries().size(); i++) {
+            if(!getSeries().get(i).isChecked()) continue;
+            if (getSeries().get(i).getMinValue() < minmax.min) minmax.min = getSeries().get(i).getMinValue();
+            if (getSeries().get(i).getMaxValue() > minmax.max) minmax.max = getSeries().get(i).getMaxValue();
+        }
+
+        NiceScale numScale = new NiceScale(minmax.min, minmax.max);
+        minQuote = numScale.niceMin;
+        maxQuote = numScale.niceMax;
+
+        return new NiceScale(minQuote, maxQuote);
     }
 }

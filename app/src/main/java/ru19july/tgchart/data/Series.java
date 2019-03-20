@@ -1,10 +1,13 @@
 package ru19july.tgchart.data;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 public class Series implements Serializable {
+    private static final String TAG = Series.class.getSimpleName();
     private String mName;
     private String mTitle;
     private String mType;
@@ -83,15 +86,13 @@ public class Series implements Serializable {
         result.max = Float.MIN_VALUE;
 
         for (int i = 0; i < values.size(); i++) {
-            int k = values.size() - i - 1;
-            if (k >= 0 && k < values.size()) {
-                Long q = values.get(k);
-                if (q > result.max) result.max = q;
-                if (q < result.min) result.min = q;
-            } else {
-                return null;
-            }
+            Long q = values.get(i);
+            if (q > result.max) result.max = q;
+            if (q < result.min) result.min = q;
         }
+
+        Log.d(TAG, "FindMinMax: " + result.min + "/" + result.max + " => " + Arrays.toString(values.toArray()));
+
         return result;
     }
 

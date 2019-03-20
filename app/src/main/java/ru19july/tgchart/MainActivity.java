@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
         serie.setType("line");
         serie.setChecked(true);
         serie.setColor("#007700");
-        arr = new Long[]{4497L, 503L, 520L, 2530L, 3173L, 5514L, 529L};
+        arr = new Long[]{4497L, 1703L, 1720L, 2530L, 3173L, 5514L, 1729L};
         values = Arrays.asList(arr);
         serie.setValues(values);
         series.add(serie);

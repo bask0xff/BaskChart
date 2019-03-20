@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import java.util.Random;
+
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.utils.NiceScale;
@@ -114,27 +116,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         drawing = true;
 
-        //full background
         Paint fp = new Paint();
-        fp.setAntiAlias(false);
-        fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setColor(Color.parseColor("#777777"));
-
-        canvas.drawRect(0, 0, W, H, fp);
-
-        //left part
-        fp.setAntiAlias(false);
-        fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setColor(Color.parseColor("#77555555"));
-
-        canvas.drawRect(0, 0, xStart, H, fp);
-
-        //right part
-        canvas.drawRect(xEnd, 0, W, H, fp);
-
-        //slider window
-        fp.setColor(Color.parseColor("#77222222"));
-        canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
 
         //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         double minQuote = Double.MAX_VALUE;
@@ -143,6 +125,8 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         NiceScale numScale = new NiceScale(chartData.getSeries());
         minQuote = numScale.niceMin;
         maxQuote = numScale.niceMax;
+
+        Log.d(TAG, "PrepareCanvas: min/max: " + minQuote + " / " + maxQuote);
 
         for(int i=1; i<chartData.getSeries().get(0).getValues().size(); i++){
             for(int j = 1; j<chartData.getSeries().size(); j++){
@@ -159,6 +143,20 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
                 canvas.drawLine(x1, y1, x2, y2, fp);
             }
         }
+
+        //left part
+        fp.setAntiAlias(false);
+        fp.setStyle(Paint.Style.FILL_AND_STROKE);
+        fp.setColor(Color.parseColor("#77555555"));
+
+        canvas.drawRect(0, 0, xStart, H, fp);
+
+        //right part
+        canvas.drawRect(xEnd, 0, W, H, fp);
+
+        //slider window
+        fp.setColor(Color.parseColor("#77222222"));
+        canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
 
         drawing = false;
         return canvas;

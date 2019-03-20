@@ -1,5 +1,7 @@
 package ru19july.tgchart.utils;
 
+import android.util.Log;
+
 import java.util.List;
 
 import ru19july.tgchart.data.Series;
@@ -7,8 +9,9 @@ import ru19july.tgchart.data.Series;
 public class NiceScale
 {
 
-    private double minPoint;
-    private double maxPoint;
+    private static final String TAG = NiceScale.class.getSimpleName();
+    public double minPoint;
+    public double maxPoint;
     private double maxTicks = 10;
     public double tickSpacing;
     public double range;
@@ -35,10 +38,12 @@ public class NiceScale
 
         for(int i=1; i<series.size(); i++) {
             if(!series.get(i).isChecked()) continue;
+            Log.d(TAG, "NiceScale (" + i + "): " + series.get(i).toString());
             if (series.get(i).getMinValue() < min) min = series.get(i).getMinValue();
             if (series.get(i).getMaxValue() > max) max = series.get(i).getMaxValue();
         }
 
+        Log.d(TAG, "NiceScale: " + min + " / " + max);
         this.minPoint = min;
         this.maxPoint = max;
 

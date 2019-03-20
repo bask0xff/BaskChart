@@ -182,9 +182,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         canvas.drawRect(0, 0, W, H, fp);
 
-        //drawing graph quote
         if (mChartData.getSeries().get(0).getValues().size() > 0) {
-            NiceScale numScale = mChartData.getNiceScale();
+            //NiceScale numScale = mChartData.getNiceScale();
+            NiceScale numScale = mChartData.getNiceScale(leftMinValue, rightMaxValue);
+
             DrawChart(mChartData.getSeries(), canvas);
             DrawHorizontalLines(numScale, decimalCount, canvas);
         }
@@ -433,6 +434,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         });
 
         invalidate();
+    }
+
+    public void drawText(String text) {
     }
 
     class MyListener extends GestureDetector.SimpleOnGestureListener {

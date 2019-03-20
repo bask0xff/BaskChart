@@ -65,7 +65,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float realW = 1.0f;
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
-
+    private int mTheme = 0;
+    private String bgColor = "#333333";
 
     public ChartViewTg(Context context) {
         super(context);
@@ -168,17 +169,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         long ms = (new Date()).getTime();
 
-        fp.setColor(Color.parseColor("#333333"));
-/*
-* switch (mTheme) {
-            case 1:
-                setBackgroundColor(getResources().getColor(R.color.light_bg));
-                break;
-            default:
-                setBackgroundColor(getResources().getColor(R.color.dark_bg));
-                break;
-        }
-* */
+        fp.setColor(Color.parseColor(bgColor));
 
         canvas.drawRect(0, 0, W, H, fp);
 
@@ -437,6 +428,24 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     }
 
     public void drawText(String text) {
+    }
+
+    public void setTheme(int theme) {
+        mTheme = theme;
+
+        updateTheme();
+    }
+
+    private void updateTheme() {
+        switch (mTheme) {
+            case 0:
+                bgColor = "#333333";
+                break;
+            default:
+                bgColor = "#ffffff";
+                break;
+        }
+        invalidate();
     }
 
     class MyListener extends GestureDetector.SimpleOnGestureListener {

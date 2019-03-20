@@ -155,6 +155,8 @@ public class ChartControlsView extends LinearLayout {
 
         updateTheme();
 
+        chartView.setTheme(mTheme);
+
         invalidate();
     }
 

@@ -114,4 +114,5 @@ public class ChartData implements Serializable {
 
         return new NiceScale(minQuote, maxQuote);
     }
+
 }

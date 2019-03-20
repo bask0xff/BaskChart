@@ -38,12 +38,12 @@ public class NiceScale
 
         for(int i=1; i<series.size(); i++) {
             if(!series.get(i).isChecked()) continue;
-            Log.d(TAG, "NiceScale (" + i + "): " + series.get(i).toString());
+            //Log.d(TAG, "NiceScale (" + i + "): " + series.get(i).toString());
             if (series.get(i).getMinValue() < min) min = series.get(i).getMinValue();
             if (series.get(i).getMaxValue() > max) max = series.get(i).getMaxValue();
         }
 
-        Log.d(TAG, "NiceScale: " + min + " / " + max);
+        //Log.d(TAG, "NiceScale: " + min + " / " + max);
         this.minPoint = min;
         this.maxPoint = max;
 

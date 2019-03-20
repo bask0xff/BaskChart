@@ -13,13 +13,10 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -60,6 +57,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float rightMaxValue = 1;
     private int mTheme = 0;
     private String bgColor = "#333333";
+    private String bgMarker = "#222222";
+    private String markerFontColor = "#aaaaaa";
 
     public ChartViewTg(Context context) {
         super(context);
@@ -137,6 +136,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.restore();
     }
 
+    private int GetX(double x) {
+        return (int) (((x - leftMinValue) / (rightMaxValue - leftMinValue)) * W * 1f + W * 0.0f);
+    }
+
     private float GetY(double y) {
         float realY = 0;
         if ((mChartData.getMaxQuote() - mChartData.getMinQuote()) > 0)
@@ -164,17 +167,51 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawRect(0, 0, W, H, fp);
 
         if (mChartData.getSeries().get(0).getValues().size() > 0) {
-            //NiceScale numScale = mChartData.getNiceScale();
-            NiceScale numScale = mChartData.getNiceScale(leftMinValue, rightMaxValue);
 
-            //Log.d(TAG, "NiceScale: ["+leftMinValue+"] ");
-
+            NiceScale numScaleV = mChartData.getNiceScale(leftMinValue, rightMaxValue);
             DrawChart(mChartData.getSeries(), canvas);
-            DrawHorizontalLines(numScale, decimalCount, canvas);
+            DrawHorizontalLines(numScaleV, decimalCount, canvas);
+
+            NiceScale numScaleH = new NiceScale(leftMinValue, rightMaxValue);
+            DrawVerticalLines(numScaleH, canvas);
         }
 
         drawing = false;
         return canvas;
+    }
+
+    private void DrawVerticalLines(NiceScale numScale, Canvas canvas) {
+        double xLine = numScale.niceMin;
+
+        Log.d(TAG, "DrawVerticalLines: " + numScale.niceMin + "/" + numScale.niceMax);
+        
+        while (xLine <= numScale.niceMax) {
+            float xL = GetX(xLine);
+
+            Log.d(TAG, "xLine: " + xLine + " => " + xL);
+
+            Path mPath = new Path();
+            mPath.moveTo(0, xL);
+            mPath.quadTo(W / 2, xL, W, xL);
+            Paint mPaint = new Paint();
+            mPaint.setAntiAlias(false);
+            mPaint.setColor(Color.BLACK);
+            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
+            canvas.drawPath(mPath, mPaint);
+
+            String str = convertTime((long)xLine, "MMM dd");
+
+            Paint p = new Paint();
+            float textSize = H * 0.033f;
+            int xw = (int) p.measureText(str);
+            p.setTextSize(textSize);
+            p.setAntiAlias(true);
+            p.setColor(Utils.NICESCALE_TEXT_COLOR);
+            canvas.drawText(str, xL - xw/2, H* 0.85f, p);
+
+            xLine += numScale.tickSpacing;
+        }
     }
 
     private void DrawChart(List<Series> series, Canvas canvas) {
@@ -211,7 +248,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         float xk = 0;
         if (touchIndex >= 0)
-            xk = (int) (((series.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
+            xk = GetX(series.get(0).getValues().get(touchIndex));
 
         int yMin = H;
 
@@ -219,14 +256,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             if (!series.get(j).isChecked()) continue;
             for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
                 //float deltaX = ()
-                int x1 = (int) (((series.get(0).getValues().get(i - 1) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
-                int x2 = (int) (((series.get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
+                int x1 = GetX(series.get(0).getValues().get(i - 1));
+                int x2 = GetX(series.get(0).getValues().get(i));
 
-                int y1 = (int) ((1 - series.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
-                int y2 = (int) ((1 - series.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
-
-                y1 = (int) GetY(series.get(j).getValues().get(i - 1));
-                y2 = (int) GetY(series.get(j).getValues().get(i));
+                int y1 = (int) GetY(series.get(j).getValues().get(i - 1));
+                int y2 = (int) GetY(series.get(j).getValues().get(i));
 
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
@@ -240,15 +274,14 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 markerValues[j - 1] = series.get(j).getValues().get(touchIndex);
                 markerColors[j - 1] = series.get(j).getColor();
 
-                float yk = (float) ((1.0f - series.get(j).getValues().get(touchIndex) / mChartData.getMaxQuote()) * H);
-                yk = GetY(series.get(j).getValues().get(touchIndex));
+                float yk = GetY(series.get(j).getValues().get(touchIndex));
 
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 canvas.drawCircle(xk, yk, 10, fp);
-                fp.setColor(Color.parseColor("#333333"));
+                fp.setColor(Color.parseColor(bgColor));
                 canvas.drawCircle(xk, yk, 5, fp);
 
             }
@@ -335,6 +368,13 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         return format.format(date);
     }
 
+    public String convertTime(long time, String fmt) {
+        Date date = new Date(time);
+        SimpleDateFormat format = new SimpleDateFormat(fmt, Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return format.format(date);
+    }
+
     private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
@@ -365,7 +405,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             activeCounter++;
         }
 
-        paint.setColor(Color.parseColor("#222222"));
+        paint.setColor(Color.parseColor(bgMarker));
         RectF rect = new RectF(
                 lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
@@ -373,7 +413,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
 
-        p.setColor(Color.parseColor("#AAAAAA"));
+        p.setColor(Color.parseColor(markerFontColor));
         canvas.drawText(dat, lastX + 70, lastY + 16, p);
 
         int k = 0;
@@ -444,9 +484,13 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         switch (mTheme) {
             case 0:
                 bgColor = "#333333";
+                bgMarker = "#222222";
+                markerFontColor = "#aaaaaa";
                 break;
             default:
                 bgColor = "#ffffff";
+                bgMarker = "#eeeeee";
+                markerFontColor = "#999999";
                 break;
         }
         invalidate();

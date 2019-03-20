@@ -169,11 +169,12 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         if (mChartData.getSeries().get(0).getValues().size() > 0) {
 
             NiceScale numScaleV = mChartData.getNiceScale(leftMinValue, rightMaxValue);
-            DrawChart(mChartData.getSeries(), canvas);
             DrawHorizontalLines(numScaleV, decimalCount, canvas);
 
             NiceScale numScaleH = new NiceScale(leftMinValue, rightMaxValue);
             DrawVerticalLines(numScaleH, canvas);
+
+            DrawChart(mChartData.getSeries(), canvas);
         }
 
         drawing = false;
@@ -183,22 +184,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private void DrawVerticalLines(NiceScale numScale, Canvas canvas) {
         double xLine = numScale.niceMin;
 
-        Log.d(TAG, "DrawVerticalLines: " + numScale.niceMin + "/" + numScale.niceMax);
-        
         while (xLine <= numScale.niceMax) {
             float xL = GetX(xLine);
-
-            Log.d(TAG, "xLine: " + xLine + " => " + xL);
-
-            Path mPath = new Path();
-            mPath.moveTo(0, xL);
-            mPath.quadTo(W / 2, xL, W, xL);
-            Paint mPaint = new Paint();
-            mPaint.setAntiAlias(false);
-            mPaint.setColor(Color.BLACK);
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-            canvas.drawPath(mPath, mPaint);
 
             String str = convertTime((long)xLine, "MMM dd");
 

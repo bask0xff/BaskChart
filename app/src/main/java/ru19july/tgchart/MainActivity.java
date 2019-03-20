@@ -3,6 +3,8 @@ package ru19july.tgchart;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +29,7 @@ public class MainActivity extends Activity {
     private ChartData gsonObj;
     private ChartControlsView chartControlsView;
     private Spinner dropdown;
+    private boolean nightTheme = true;
     //ChartView chartView;
 
     @Override
@@ -201,5 +204,28 @@ public class MainActivity extends Activity {
             return null;
         }
         return json;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.item_theme:
+                toggleTheme();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void toggleTheme() {
+        nightTheme = !nightTheme;
+        chartControlsView.setTheme(nightTheme? 0 : 1);
     }
 }

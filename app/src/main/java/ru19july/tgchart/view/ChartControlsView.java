@@ -62,15 +62,7 @@ public class ChartControlsView extends LinearLayout {
             }
         }
 
-        /*
-        switch (mTheme) {
-            case 1:
-                setBackgroundColor(getResources().getColor(R.color.light_bg));
-                break;
-            default:
-                setBackgroundColor(getResources().getColor(R.color.dark_bg));
-                break;
-        }*/
+        updateTheme();
 
         chartView = (ChartViewTg) getChildAt(1);
         //chartView.setVisibility(GONE);
@@ -156,6 +148,25 @@ public class ChartControlsView extends LinearLayout {
 
     public int getTheme() {
         return mTheme;
+    }
+
+    public void setTheme(int i) {
+        mTheme = i;
+
+        updateTheme();
+
+        invalidate();
+    }
+
+    private void updateTheme() {
+        switch (mTheme) {
+            case 1:
+                setBackgroundColor(Color.parseColor("#ffffff"));
+                break;
+            default:
+                setBackgroundColor(Color.parseColor("#333333"));
+                break;
+        }
     }
 }
 

@@ -35,8 +35,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
     private final String TAG = ChartViewTg.class.getSimpleName();
 
-    private ScaleGestureDetector mScaleDetector;
-    private GestureDetector detector;
     private float mScaleFactor = 1.f;
     Paint paint;
 
@@ -45,12 +43,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private int fps;
     private float fpt;
     private int frames = 0;
-    private long startTime = 0;
-
-    private float lastX = 0;
-    private float lastY = 0;
-
-    private long lastDrawTime = 0;
 
     private boolean drawing = false;
     private float xStart = 50.0f;
@@ -99,9 +91,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     @TargetApi(Build.VERSION_CODES.FROYO)
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
-
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        detector = new GestureDetector(ChartViewTg.this.getContext(), new MyListener());
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -455,20 +444,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
-
-            // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-
-            invalidate();
-            return true;
-        }
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getX();
@@ -480,7 +455,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean result = detector.onTouchEvent(event);
 
         xTouched = event.getX();
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
@@ -504,13 +478,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         invalidate();
 
-        if (!result) {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                //stopScrolling();
-                result = true;
-            }
-        }
-        return result;
+        return true;
     }
 
 }

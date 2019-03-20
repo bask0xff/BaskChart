@@ -221,6 +221,17 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         int yMin = H;
 
+        Path mPath = new Path();
+        mPath.moveTo(xk, 0);
+        mPath.quadTo(xk, H/2, xk, H);
+        Paint mPaint = new Paint();
+        mPaint.setAntiAlias(false);
+        mPaint.setColor(Color.BLACK);
+        mPaint.setStrokeWidth(3f);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
+        canvas.drawPath(mPath, mPaint);
+
         for (int j = 1; j < series.size(); j++) {
             if (!series.get(j).isChecked()) continue;
             for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
@@ -252,7 +263,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 canvas.drawCircle(xk, yk, 10, fp);
                 fp.setColor(Color.parseColor(bgColor));
                 canvas.drawCircle(xk, yk, 5, fp);
-
             }
         }
 

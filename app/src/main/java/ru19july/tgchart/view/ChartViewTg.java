@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.Series;
+import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 
@@ -171,7 +172,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             NiceScale numScaleV = mChartData.getNiceScale(leftMinValue, rightMaxValue);
             DrawHorizontalLines(numScaleV, decimalCount, canvas);
 
-            NiceScale numScaleH = new NiceScale(leftMinValue, rightMaxValue);
+            NiceDate numScaleH = new NiceDate(leftMinValue, rightMaxValue);
             DrawVerticalLines(numScaleH, canvas);
 
             DrawChart(mChartData.getSeries(), canvas);
@@ -181,25 +182,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         return canvas;
     }
 
-    private void DrawVerticalLines(NiceScale numScale, Canvas canvas) {
-        double xLine = numScale.niceMin;
-
-        while (xLine <= numScale.niceMax) {
-            float xL = GetX(xLine);
-
-            String str = convertTime((long)xLine, "MMM dd");
-
-            Paint p = new Paint();
-            float textSize = H * 0.033f;
-            int xw = (int) p.measureText(str);
-            p.setTextSize(textSize);
-            p.setAntiAlias(true);
-            p.setColor(Utils.NICESCALE_TEXT_COLOR);
-            canvas.drawText(str, xL - xw/2, H* 0.85f, p);
-
-            xLine += numScale.tickSpacing;
-        }
-    }
 
     private void DrawChart(List<Series> series, Canvas canvas) {
         Paint lp = new Paint();
@@ -334,6 +316,35 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             canvas.drawText(str, 40f, yL - textSize * 0.3f, p);
 
             yLine += numScale.tickSpacing;
+        }
+    }
+
+    private void DrawVerticalLines(NiceDate numScale, Canvas canvas) {
+        double xLine = numScale.niceMin;
+
+        while (xLine <= numScale.niceMax) {
+            float xL = GetX(xLine);
+
+            Path mPath = new Path();
+            mPath.moveTo(xL, 0);
+            mPath.quadTo(xL, H/2, xL, H);
+            Paint mPaint = new Paint();
+            mPaint.setAntiAlias(false);
+            mPaint.setColor(Color.BLACK);
+            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
+            //canvas.drawPath(mPath, mPaint);
+
+            String str = convertTime((long)xLine, "MMM dd");
+            Paint p = new Paint();
+            float textSize = H * 0.033f;
+            int xw = (int) p.measureText(str);
+            p.setTextSize(textSize);
+            p.setAntiAlias(true);
+            p.setColor(Utils.NICESCALE_TEXT_COLOR);
+            canvas.drawText(str, xL - xw, H* 0.85f, p);
+
+            xLine += numScale.tickSpacing;
         }
     }
 

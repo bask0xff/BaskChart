@@ -225,6 +225,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 int y1 = (int) ((1 - series.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
                 int y2 = (int) ((1 - series.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
 
+                y1 = (int) GetY(series.get(j).getValues().get(i - 1));
+                y2 = (int) GetY(series.get(j).getValues().get(i));
+
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
 
@@ -238,6 +241,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 markerColors[j - 1] = series.get(j).getColor();
 
                 float yk = (float) ((1.0f - series.get(j).getValues().get(touchIndex) / mChartData.getMaxQuote()) * H);
+                yk = GetY(series.get(j).getValues().get(touchIndex));
+
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 
@@ -270,6 +275,12 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             if (values.getValues().get(i) < rightMaxValue && values.getValues().get(i + 1) >= rightMaxValue)
                 result.max = i + 1;
         }
+
+        //result.min--;
+        //result.max++;
+
+        if (result.min < 0) result.min = 0;
+        if (result.max >= values.getValues().size()) result.max = values.getValues().size() - 1;
 
         return result;
     }

@@ -336,8 +336,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             float xL = GetX(xLine);
 
             Path mPath = new Path();
-            mPath.moveTo(xL, 0);
-            mPath.quadTo(xL, H/2, xL, H);
+            mPath.moveTo(xL, H* 0.2f);
+            mPath.quadTo(xL, H/2, xL, H * 0.8f);
             Paint mPaint = new Paint();
             mPaint.setAntiAlias(false);
             mPaint.setColor(Color.BLACK);

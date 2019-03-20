@@ -19,6 +19,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -166,6 +167,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             //NiceScale numScale = mChartData.getNiceScale();
             NiceScale numScale = mChartData.getNiceScale(leftMinValue, rightMaxValue);
 
+            //Log.d(TAG, "NiceScale: ["+leftMinValue+"] ");
+
             DrawChart(mChartData.getSeries(), canvas);
             DrawHorizontalLines(numScale, decimalCount, canvas);
         }
@@ -174,7 +177,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         return canvas;
     }
 
-    private void DrawChart(List<Series> quotes, Canvas canvas) {
+    private void DrawChart(List<Series> series, Canvas canvas) {
         Paint lp = new Paint();
         lp.setAntiAlias(false);
         lp.setStrokeWidth(1);
@@ -202,43 +205,43 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         MinMaxIndex minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
-        float[] markerValues = new float[quotes.size() - 1];
-        String[] markerColors = new String[quotes.size() - 1];
+        float[] markerValues = new float[series.size() - 1];
+        String[] markerColors = new String[series.size() - 1];
         long timestamp = 0L;
 
         float xk = 0;
         if (touchIndex >= 0)
-            xk = (int) (((quotes.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
+            xk = (int) (((series.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
 
         int yMin = H;
 
-        for (int j = 1; j < quotes.size(); j++) {
-            if (!quotes.get(j).isChecked()) continue;
+        for (int j = 1; j < series.size(); j++) {
+            if (!series.get(j).isChecked()) continue;
             for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
                 //float deltaX = ()
-                int x1 = (int) (((quotes.get(0).getValues().get(i - 1) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
-                int x2 = (int) (((quotes.get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
+                int x1 = (int) (((series.get(0).getValues().get(i - 1) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
+                int x2 = (int) (((series.get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W);
 
-                int y1 = (int) ((1 - quotes.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
-                int y2 = (int) ((1 - quotes.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
+                int y1 = (int) ((1 - series.get(j).getValues().get(i - 1) / mChartData.getMaxQuote()) * H);
+                int y2 = (int) ((1 - series.get(j).getValues().get(i) / mChartData.getMaxQuote()) * H);
 
-                fp.setColor(Color.parseColor(quotes.get(j).getColor()));
-                fpc.setColor(Color.parseColor(quotes.get(j).getColor()));
+                fp.setColor(Color.parseColor(series.get(j).getColor()));
+                fpc.setColor(Color.parseColor(series.get(j).getColor()));
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
                 canvas.drawCircle(x1, y1, 2.0f, fpc);
             }
 
-            if (touchIndex >= 0 && touchIndex < quotes.get(j).getValues().size()) {
-                timestamp = quotes.get(0).getValues().get(touchIndex);
-                markerValues[j - 1] = quotes.get(j).getValues().get(touchIndex);
-                markerColors[j - 1] = quotes.get(j).getColor();
+            if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
+                timestamp = series.get(0).getValues().get(touchIndex);
+                markerValues[j - 1] = series.get(j).getValues().get(touchIndex);
+                markerColors[j - 1] = series.get(j).getColor();
 
-                float yk = (float) ((1.0f - quotes.get(j).getValues().get(touchIndex) / mChartData.getMaxQuote()) * H);
+                float yk = (float) ((1.0f - series.get(j).getValues().get(touchIndex) / mChartData.getMaxQuote()) * H);
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 
-                fp.setColor(Color.parseColor(quotes.get(j).getColor()));
+                fp.setColor(Color.parseColor(series.get(j).getColor()));
                 canvas.drawCircle(xk, yk, 10, fp);
                 fp.setColor(Color.parseColor("#333333"));
                 canvas.drawCircle(xk, yk, 5, fp);
@@ -314,7 +317,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    public String convertTime(long time){
+    public String convertTime(long time) {
         Date date = new Date(time);
         SimpleDateFormat format = new SimpleDateFormat("MMM dd HH:mm", Locale.ENGLISH);
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -340,6 +343,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
         String dat = convertTime(timestamp);
 
+        //calculate text width
         p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
         int xw = (int) p.measureText(dat);
         int activeCounter = 0;
@@ -367,7 +371,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            canvas.drawText(str, lastX + 70, lastY + 16 + (k+1) * 105, p);
+            canvas.drawText(str, lastX + 70, lastY + 16 + (k + 1) * 105, p);
             k++;
         }
 
@@ -437,13 +441,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         invalidate();
     }
 
-    class MyListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getX();
@@ -464,9 +461,9 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         //touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex) / W);
 
         float min = Float.MAX_VALUE;
-        touchIndex =0;
+        touchIndex = 0;
 
-        for(int i=startIndex; i<endIndex; i++) {
+        for (int i = startIndex; i < endIndex; i++) {
             float xt = ((mChartData.getSeries().get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
             if (Math.abs(xt - xTouched) <= min) {
                 min = Math.abs(xt - xTouched);

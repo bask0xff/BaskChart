@@ -16,7 +16,8 @@ public class Series implements Serializable {
     private float mMinValue;
     private float mMaxValue;
     private boolean mChecked;
-    private float mAlpha = 1.0f;
+    private float mAlpha = 1.f;
+    private float mScale = 1.f;
 
     public Series() {
     }
@@ -121,4 +122,11 @@ public class Series implements Serializable {
         return mAlpha;
     }
 
+    public float getScale() {
+        return mScale;
+    }
+
+    public void setScale(float scale){
+        mScale = scale;
+    }
 }

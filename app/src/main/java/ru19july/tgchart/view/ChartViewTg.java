@@ -60,6 +60,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
     private IChartTheme mTheme;
+    private float minVal = 0f;
+    private float maxVal = 0f;
 
     public ChartViewTg(Context context) {
         super(context);
@@ -135,10 +137,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         return (int) (((x - leftMinValue) / (rightMaxValue - leftMinValue)) * W * 1f + W * 0.0f);
     }
 
-    private float GetY(double y) {
+    private float GetY(double y, float scale) {
         float realY = 0;
         if ((mChartData.getMaxQuote() - mChartData.getMinQuote()) > 0)
-            realY = (float) (H * (1 - 0.2 - 0.6 * (y - mChartData.getMinQuote()) / (mChartData.getMaxQuote() - mChartData.getMinQuote())));
+            realY = (float) (H * (1 - 0.2 - 0.6 * scale * (y - mChartData.getMinQuote()) / (mChartData.getMaxQuote() - mChartData.getMinQuote())));
         return realY;
     }
 
@@ -232,8 +234,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 int x1 = GetX(series.get(0).getValues().get(i - 1));
                 int x2 = GetX(series.get(0).getValues().get(i));
 
-                int y1 = (int) GetY(series.get(j).getValues().get(i - 1));
-                int y2 = (int) GetY(series.get(j).getValues().get(i));
+                int y1 = (int) GetY(series.get(j).getValues().get(i - 1), series.get(j).getScale());
+                int y2 = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
@@ -251,15 +253,17 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 markerValues[j - 1] = series.get(j).getValues().get(touchIndex);
                 markerColors[j - 1] = series.get(j).getColor();
 
-                float yk = GetY(series.get(j).getValues().get(touchIndex));
+                float yk = GetY(series.get(j).getValues().get(touchIndex), series.get(j).getScale());
 
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 
-                fp.setColor(Color.parseColor(series.get(j).getColor()));
-                canvas.drawCircle(xk, yk, 10, fp);
-                fp.setColor(Color.parseColor(mTheme.backgroundColor()));
-                canvas.drawCircle(xk, yk, 5, fp);
+                if(series.get(j).isChecked()) {
+                    fp.setColor(Color.parseColor(series.get(j).getColor()));
+                    canvas.drawCircle(xk, yk, 10, fp);
+                    fp.setColor(Color.parseColor(mTheme.backgroundColor()));
+                    canvas.drawCircle(xk, yk, 5, fp);
+                }
             }
         }
 
@@ -297,7 +301,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
         while (yLine <= numScale.niceMax) {
-            float yL = GetY(yLine);
+            float yL = GetY(yLine, 1f);
 
             Path mPath = new Path();
             mPath.moveTo(0, yL);
@@ -492,26 +496,39 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
 
-        ValueAnimator va = ValueAnimator.ofFloat(0f, 3f);
+        oldChartData.getNiceScale();
+        newChartData.getNiceScale();
+
+        minVal = (float) oldChartData.getMinQuote();
+        maxVal = (float) oldChartData.getMaxQuote();
+
+        float scaleFrom = (float) (oldChartData.getMaxQuote() - (oldChartData.getMinQuote() + 0f));
+        float scaleTo = (float) (newChartData.getMaxQuote() - (newChartData.getMinQuote() + 0f));
+        float ratio = scaleTo / scaleFrom;
+        Log.d(TAG, "animateChanges: scaleTo/scaleFrom: " + ratio);
+
+        ValueAnimator va = ValueAnimator.ofFloat(ratio, 1f);
         int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                //view.setTranslationX((float)animation.getAnimatedValue());
-                Log.d(TAG, "onAnimationUpdate: " + (float)animation.getAnimatedValue());
-                //mAlpha = (float)animation.getAnimatedValue();
+                minVal = (float) animation.getAnimatedValue();
+
+                //NiceScale ns = new NiceScale(minVal, maxVal);
+                //Log.d(TAG, "onAnimationUpdate-1: " + minVal + " / " + maxVal);
+
+                for (int i = 1; i < mChartData.getSeries().size(); i++)
+                    mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
+
                 invalidate();
             }
         });
-        //va.setRepeatCount(1);
-        va.start();
 
+        va.start();
 
         post(new Runnable() {
             @Override
             public void run() {
-                oldChartData.getNiceScale();
-                newChartData.getNiceScale();
 
                 //logging
                 Log.d(TAG, "oldChartData [" + oldChartData.getMinQuote() + "; " + oldChartData.getMaxQuote() + "]");

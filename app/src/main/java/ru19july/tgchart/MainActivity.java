@@ -52,9 +52,7 @@ public class MainActivity extends Activity {
 
         final List<ChartData> charts = new ArrayList<>();
 
-
-        ChartData chartData = createTestChart();
-        charts.add(chartData);
+        //charts.add(createTestChart());
 
         charts.addAll(readJson(json));
 

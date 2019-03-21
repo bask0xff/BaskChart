@@ -505,7 +505,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         float scaleFrom = (float) (oldChartData.getMaxQuote() - (oldChartData.getMinQuote() + 0f));
         float scaleTo = (float) (newChartData.getMaxQuote() - (newChartData.getMinQuote() + 0f));
         float ratio = scaleTo / scaleFrom;
-        Log.d(TAG, "animateChanges: scaleTo/scaleFrom: " + ratio);
 
         ValueAnimator va = ValueAnimator.ofFloat(ratio, 1f);
         int mDuration = 1000;
@@ -513,10 +512,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
                 minVal = (float) animation.getAnimatedValue();
-
-                //NiceScale ns = new NiceScale(minVal, maxVal);
-                //Log.d(TAG, "onAnimationUpdate-1: " + minVal + " / " + maxVal);
-
                 for (int i = 1; i < mChartData.getSeries().size(); i++)
                     mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
 

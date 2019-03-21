@@ -127,6 +127,11 @@ public class ChartControlsView extends LinearLayout {
 
                     mChartData.getSeries().get(finalI).setChecked(isChecked);
 
+                    if(!isChecked)
+                        chartView.showChart(finalI, 1f, 0f);
+                    if(isChecked)
+                        chartView.showChart(finalI, 0f, 1f);
+
                     chartView.animateChanges(oldChartData, mChartData);
                     chartViewSlider.animateChanges(oldChartData, mChartData);
 

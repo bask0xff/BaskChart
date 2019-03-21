@@ -60,7 +60,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
     private IChartTheme mTheme;
-    private float mAlpha = 0.0f;
 
     public ChartViewTg(Context context) {
         super(context);
@@ -227,7 +226,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawPath(mPath, mPaint);
 
         for (int j = 1; j < series.size(); j++) {
-            if (!series.get(j).isChecked()) continue;
+            //if (!series.get(j).isChecked()) continue;
             for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
                 //float deltaX = ()
                 int x1 = GetX(series.get(0).getValues().get(i - 1));
@@ -236,12 +235,13 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 int y1 = (int) GetY(series.get(j).getValues().get(i - 1));
                 int y2 = (int) GetY(series.get(j).getValues().get(i));
 
-                y1 = (int) (y1 + mAlpha * 100);
-                y2 = (int) (y2 + mAlpha * 100);
-                Log.d(TAG, "DrawChart: " + mAlpha*100 + " => " + y1);
-
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
+
+                //if(!series.get(j).isChecked()){
+                    fp.setAlpha((int) (series.get(j).getAlpha() *255));
+                    fpc.setAlpha((int) (series.get(j).getAlpha() *255));
+                //}
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
                 canvas.drawCircle(x1, y1, 2.0f, fpc);
@@ -494,13 +494,13 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
 
         ValueAnimator va = ValueAnimator.ofFloat(0f, 3f);
-        int mDuration = 1000; //in millis
+        int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
                 //view.setTranslationX((float)animation.getAnimatedValue());
                 Log.d(TAG, "onAnimationUpdate: " + (float)animation.getAnimatedValue());
-                mAlpha = (float)animation.getAnimatedValue();
+                //mAlpha = (float)animation.getAnimatedValue();
                 invalidate();
             }
         });
@@ -580,6 +580,21 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         return true;
     }
 
+    public void showChart(final int k, float from, float to) {
+        Log.d(TAG, "showChart: " + k);
+        ValueAnimator va = ValueAnimator.ofFloat(from, to);
+        int mDuration = 1000;
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //view.setTranslationX((float)animation.getAnimatedValue());
+                Log.d(TAG, "hideChart, onAnimationUpdate: " + (float)animation.getAnimatedValue());
+                mChartData.getSeries().get(k).setAlpha((float)animation.getAnimatedValue());
+                invalidate();
+            }
+        });
+        va.start();
+    }
 }
 
 //try it

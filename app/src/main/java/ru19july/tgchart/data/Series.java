@@ -16,6 +16,7 @@ public class Series implements Serializable {
     private float mMinValue;
     private float mMaxValue;
     private boolean mChecked;
+    private float mAlpha = 1.0f;
 
     public Series() {
     }
@@ -111,4 +112,13 @@ public class Series implements Serializable {
     public float getMaxValue() {
         return mMaxValue;
     }
+
+    public void setAlpha(float alpha) {
+        mAlpha = alpha;
+    }
+
+    public float getAlpha() {
+        return mAlpha;
+    }
+
 }

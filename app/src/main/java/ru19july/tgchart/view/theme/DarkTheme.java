@@ -26,16 +26,16 @@ public class DarkTheme implements IChartTheme {
 
     @Override
     public String sliderBackground() {
-        return "#1119232E";
+        return "#77000000";
     }
 
     @Override
     public String sliderBorder() {
-        return "#222B4256";
+        return "#11000000";
     }
 
     @Override
     public String sliderInner() {
-        return "#1D2733";
+        return "#88000000";
     }
 }

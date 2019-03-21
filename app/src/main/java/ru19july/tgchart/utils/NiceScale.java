@@ -38,22 +38,15 @@ public class NiceScale
 
         for(int i=1; i<series.size(); i++) {
             if(!series.get(i).isChecked()) continue;
-            //Log.d(TAG, "NiceScale (" + i + "): " + series.get(i).toString());
             if (series.get(i).getMinValue() < min) min = series.get(i).getMinValue();
             if (series.get(i).getMaxValue() > max) max = series.get(i).getMaxValue();
         }
 
-        //Log.d(TAG, "NiceScale: " + min + " / " + max);
         this.minPoint = min;
         this.maxPoint = max;
 
         calculate();
     }
-
-    /**
-     * Calculate and update values for tick spacing and nice
-     * minimum and maximum data points on the axis.
-     */
 
     private void calculate()
     {
@@ -64,15 +57,6 @@ public class NiceScale
         this.niceMax =
                 Math.ceil(maxPoint / tickSpacing) * tickSpacing;
     }
-
-    /**
-     * Returns a "nice" number approximately equal to range Rounds
-     * the number if round = true Takes the ceiling if round = false.
-     *
-     * @param range the data range
-     * @param round whether to round the result
-     * @return a "nice" number to be used for the data range
-     */
 
     private double niceNum(double range, boolean round)
     {

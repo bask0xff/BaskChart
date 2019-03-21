@@ -90,8 +90,6 @@ public class ChartData implements Serializable {
         minmax.min = Float.MAX_VALUE;
         minmax.max = Float.MIN_VALUE;
 
-        Log.d(TAG, "getNiceScale: " + leftMinValue + "/" + rightMaxValue);
-
         for(int i=1; i<getSeries().size(); i++) {
             if(!getSeries().get(i).isChecked()) continue;
 

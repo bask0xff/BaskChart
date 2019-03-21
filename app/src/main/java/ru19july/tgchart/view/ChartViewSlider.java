@@ -120,15 +120,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         Paint fp = new Paint();
 
-        //TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        double minQuote = Double.MAX_VALUE;
-        double maxQuote = Double.MIN_VALUE;
-
         NiceScale numScale = new NiceScale(chartData.getSeries());
-        minQuote = numScale.niceMin;
-        maxQuote = numScale.niceMax;
-
-        Log.d(TAG, "PrepareCanvas: min/max: " + minQuote + " / " + maxQuote);
 
         for(int i=1; i<chartData.getSeries().get(0).getValues().size(); i++){
             for(int j = 1; j<chartData.getSeries().size(); j++){
@@ -137,8 +129,8 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
                 int x1 = (int) (W*((i-1.f)/(chartData.getSeries().get(0).getValues().size()-1)));
                 int x2 = (int) (W*((i-0.f)/(chartData.getSeries().get(0).getValues().size()-1)));
 
-                int y1 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i - 1) / maxQuote) * H);
-                int y2 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i) / maxQuote) * H);
+                int y1 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * H);
+                int y2 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * H);
 
                 fp.setColor(Color.parseColor(chartData.getSeries().get(j).getColor()));
 

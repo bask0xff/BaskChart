@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 chart:titleText="Followers"
-                chart:themeType="dark"
+                chart:themeType="light"
                 />
 
         </LinearLayout>

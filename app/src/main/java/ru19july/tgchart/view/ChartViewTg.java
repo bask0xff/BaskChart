@@ -1,5 +1,6 @@
 package ru19july.tgchart.view;
 
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -59,6 +60,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
     private IChartTheme mTheme;
+    private float mAlpha = 0.0f;
 
     public ChartViewTg(Context context) {
         super(context);
@@ -113,6 +115,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 a.recycle();
             }
         }
+
     }
 
     @Override
@@ -232,6 +235,10 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
                 int y1 = (int) GetY(series.get(j).getValues().get(i - 1));
                 int y2 = (int) GetY(series.get(j).getValues().get(i));
+
+                y1 = (int) (y1 + mAlpha * 100);
+                y2 = (int) (y2 + mAlpha * 100);
+                Log.d(TAG, "DrawChart: " + mAlpha*100 + " => " + y1);
 
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
@@ -485,6 +492,21 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     }
 
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
+
+        ValueAnimator va = ValueAnimator.ofFloat(0f, 3f);
+        int mDuration = 1000; //in millis
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //view.setTranslationX((float)animation.getAnimatedValue());
+                Log.d(TAG, "onAnimationUpdate: " + (float)animation.getAnimatedValue());
+                mAlpha = (float)animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+        //va.setRepeatCount(1);
+        va.start();
+
 
         post(new Runnable() {
             @Override

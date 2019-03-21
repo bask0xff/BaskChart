@@ -18,22 +18,14 @@ import android.widget.TextView;
 
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.view.theme.DarkTheme;
+import ru19july.tgchart.view.theme.IChartTheme;
+import ru19july.tgchart.view.theme.LightTheme;
 
 public class ChartControlsView extends LinearLayout {
 
     private final Context mContext;
-    private int mTheme = 0;
-
-    //Color:Night/Day
-    //font:     #506372     #96A2AA
-    //bg:       #1D2733     #FFFFFF
-    //lines:    #131C26     #E5EBEF
-    //marker bg:#202B38     #FFFFFF
-    //marker font:#E5EFF5   #222222
-
-    //dark slider:#19232E   #F5F8F9
-    //slider border:#2B4256 #DBE7F0
-    //slider inner:#1D2733  #FFFFFF
+    private IChartTheme mTheme;
 
     private ChartViewTg chartView;
     private ChartViewSlider chartViewSlider;
@@ -45,14 +37,9 @@ public class ChartControlsView extends LinearLayout {
 
         mContext = context;
 
-
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
                     R.styleable.ChartControlsView, 0, 0);
-
-            //@SuppressWarnings("ResourceAsColor")
-            //int valueColor = a.getColor(R.styleable.ChartControlsView_valueColor,
-            //        android.R.color.holo_blue_light);
 
             setOrientation(LinearLayout.VERTICAL);
             setGravity(Gravity.TOP);
@@ -61,10 +48,28 @@ public class ChartControlsView extends LinearLayout {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             inflater.inflate(R.layout.chart_view, this, true);
 
+            chartView = (ChartViewTg) getChildAt(1);
+
+            chartViewSlider = (ChartViewSlider) getChildAt(2);
+            chartViewSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
+                @Override
+                public void onSlide(int xStart, int xEnd) {
+                    chartView.updateSlideFrameWindow(xStart, xEnd);
+                }
+            });
+
             try {
                 String titleText = a.getString(R.styleable.ChartControlsView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
-                mTheme = a.getInteger(R.styleable.ChartControlsView_themeType, 0);
+                int themeId = a.getInteger(R.styleable.ChartControlsView_themeType, 0);
+                switch (themeId) {
+                    case 1:
+                        mTheme = new DarkTheme();
+                    default:
+                        mTheme = new LightTheme();
+                }
+
+                setTheme(mTheme);
 
                 TextView title = (TextView) getChildAt(0);
                 title.setText(titleText);
@@ -73,31 +78,10 @@ public class ChartControlsView extends LinearLayout {
             }
         }
 
-        updateTheme();
-
-        chartView = (ChartViewTg) getChildAt(1);
-        //chartView.setVisibility(GONE);
-
-        chartViewSlider = (ChartViewSlider) getChildAt(2);
-        chartViewSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
-            @Override
-            public void onSlide(int xStart, int xEnd) {
-                chartView.updateSlideFrameWindow(xStart, xEnd);
-            }
-        });
-
     }
 
     public ChartControlsView(Context context) {
         this(context, null);
-    }
-
-    //public void setValueColor(int color) {
-    //    mValue.setBackgroundColor(color);
-    //}
-
-    public void setImageVisible(boolean visible) {
-        chartView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -157,29 +141,20 @@ public class ChartControlsView extends LinearLayout {
         return Color.parseColor(color);
     }
 
-    public int getTheme() {
+    public IChartTheme getTheme() {
         return mTheme;
     }
 
-    public void setTheme(int i) {
-        mTheme = i;
-
+    public void setTheme(IChartTheme theme) {
+        mTheme = theme;
         updateTheme();
-
         chartView.setTheme(mTheme);
-
+        chartViewSlider.setTheme(mTheme);
         invalidate();
     }
 
     private void updateTheme() {
-        switch (mTheme) {
-            case 1:
-                setBackgroundColor(Color.parseColor("#ffffff"));
-                break;
-            default:
-                setBackgroundColor(Color.parseColor("#333333"));
-                break;
-        }
+        setBackgroundColor(Color.parseColor(mTheme.backgroundColor()));
     }
 }
 

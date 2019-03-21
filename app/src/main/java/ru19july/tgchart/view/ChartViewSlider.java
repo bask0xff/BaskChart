@@ -17,6 +17,7 @@ import java.util.Random;
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.utils.NiceScale;
+import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartViewSlider extends View implements View.OnTouchListener {
 
@@ -40,6 +41,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     private float xStartSaved = 0.0f;
     private float xEndSaved = 0.f;
     private ChartData chartData;
+    private IChartTheme mTheme;
 
     public ChartViewSlider(Context context) {
         super(context);
@@ -147,7 +149,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         //left part
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setColor(Color.parseColor("#77555555"));
+        fp.setColor(Color.parseColor(mTheme.sliderBackground()));
 
         canvas.drawRect(0, 0, xStart, H, fp);
 
@@ -155,7 +157,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         canvas.drawRect(xEnd, 0, W, H, fp);
 
         //slider window
-        fp.setColor(Color.parseColor("#77222222"));
+        fp.setColor(Color.parseColor(mTheme.sliderInner()));
         canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
 
         drawing = false;
@@ -173,6 +175,11 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     }
 
     public void animateChanges(ChartData oldChartData, ChartData newChartData) {
+        invalidate();
+    }
+
+    public void setTheme(IChartTheme theme) {
+        mTheme = theme;
         invalidate();
     }
 

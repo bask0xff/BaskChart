@@ -23,6 +23,8 @@ import java.util.List;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
 import ru19july.tgchart.view.ChartControlsView;
+import ru19july.tgchart.view.theme.DarkTheme;
+import ru19july.tgchart.view.theme.LightTheme;
 
 public class MainActivity extends Activity {
     private String TAG = MainActivity.class.getSimpleName();
@@ -226,6 +228,6 @@ public class MainActivity extends Activity {
 
     private void toggleTheme() {
         nightTheme = !nightTheme;
-        chartControlsView.setTheme(nightTheme? 0 : 1);
+        chartControlsView.setTheme(nightTheme? new DarkTheme() : new LightTheme());
     }
 }

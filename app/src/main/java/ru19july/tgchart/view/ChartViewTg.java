@@ -29,6 +29,7 @@ import ru19july.tgchart.data.Series;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
+import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartViewTg extends View implements View.OnTouchListener {
 
@@ -56,10 +57,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float realW = 1.0f;
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
-    private int mTheme = 0;
-    private String bgColor = "#333333";
-    private String bgMarker = "#222222";
-    private String markerFontColor = "#aaaaaa";
+    private IChartTheme mTheme;
 
     public ChartViewTg(Context context) {
         super(context);
@@ -163,7 +161,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         long ms = (new Date()).getTime();
 
-        fp.setColor(Color.parseColor(bgColor));
+        fp.setColor(Color.parseColor(mTheme.backgroundColor()));
 
         canvas.drawRect(0, 0, W, H, fp);
 
@@ -261,7 +259,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 canvas.drawCircle(xk, yk, 10, fp);
-                fp.setColor(Color.parseColor(bgColor));
+                fp.setColor(Color.parseColor(mTheme.backgroundColor()));
                 canvas.drawCircle(xk, yk, 5, fp);
             }
         }
@@ -386,9 +384,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int decimalCount = 0;
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
         paint.setStrokeWidth(2);
-        paint.setColor(Color.parseColor("#cccccc"));
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setAntiAlias(true);
 
@@ -420,7 +416,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         }
 
         //TODO hide on click legend
-        paint.setColor(Color.parseColor(bgMarker));
+        paint.setColor(Color.parseColor(mTheme.backgroundColor()));
         RectF rect = new RectF(
                 leftX,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
@@ -429,7 +425,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawRoundRect(rect, 8, 8, paint);
 
         //date
-        p.setColor(Color.parseColor(markerFontColor));
+        p.setColor(Color.parseColor(mTheme.markerFontColor()));
         canvas.drawText(dat, leftX + 50, lastY + 16, p);
 
         int k = 0;
@@ -490,25 +486,13 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     public void drawText(String text) {
     }
 
-    public void setTheme(int theme) {
+    public void setTheme(IChartTheme theme) {
         mTheme = theme;
 
         updateTheme();
     }
 
     private void updateTheme() {
-        switch (mTheme) {
-            case 0:
-                bgColor = "#333333";
-                bgMarker = "#222222";
-                markerFontColor = "#aaaaaa";
-                break;
-            default:
-                bgColor = "#ffffff";
-                bgMarker = "#eeeeee";
-                markerFontColor = "#999999";
-                break;
-        }
         invalidate();
     }
 

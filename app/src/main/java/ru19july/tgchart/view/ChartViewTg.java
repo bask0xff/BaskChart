@@ -581,14 +581,11 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     }
 
     public void showChart(final int k, float from, float to) {
-        Log.d(TAG, "showChart: " + k);
         ValueAnimator va = ValueAnimator.ofFloat(from, to);
         int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                //view.setTranslationX((float)animation.getAnimatedValue());
-                Log.d(TAG, "hideChart, onAnimationUpdate: " + (float)animation.getAnimatedValue());
                 mChartData.getSeries().get(k).setAlpha((float)animation.getAnimatedValue());
                 invalidate();
             }

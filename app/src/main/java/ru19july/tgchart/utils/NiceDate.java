@@ -36,22 +36,15 @@ public class NiceDate
 
         for(int i=1; i<series.size(); i++) {
             if(!series.get(i).isChecked()) continue;
-            //Log.d(TAG, "NiceDate (" + i + "): " + series.get(i).toString());
             if (series.get(i).getMinValue() < min) min = series.get(i).getMinValue();
             if (series.get(i).getMaxValue() > max) max = series.get(i).getMaxValue();
         }
 
-        //Log.d(TAG, "NiceDate: " + min + " / " + max);
         this.minPoint = min;
         this.maxPoint = max;
 
         calculate();
     }
-
-    /**
-     * Calculate and update values for tick spacing and nice
-     * minimum and maximum data points on the axis.
-     */
 
     private void calculate()
     {
@@ -89,8 +82,16 @@ public class NiceDate
                 niceFraction = 2;
             else if (fraction < 8)
                 niceFraction = 7;
-            else
+            else if (fraction < 11)
+                niceFraction = 10;
+            else if (fraction < 13)
+                niceFraction = 12;
+            else if (fraction < 15)
                 niceFraction = 14;
+            else if (fraction < 22)
+                niceFraction = 21;
+            else
+                niceFraction = 30;
         }
         else
         {
@@ -100,8 +101,16 @@ public class NiceDate
                 niceFraction = 2;
             else if (fraction <= 7)
                 niceFraction = 7;
-            else
+            else if (fraction <= 10)
+                niceFraction = 10;
+            else if (fraction <= 12)
+                niceFraction = 12;
+            else if (fraction <= 14)
                 niceFraction = 14;
+            else if (fraction <= 21)
+                niceFraction = 21;
+            else
+                niceFraction = 30;
         }
 
         return niceFraction * Math.pow(10, exponent);

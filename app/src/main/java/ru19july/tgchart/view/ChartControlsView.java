@@ -24,6 +24,17 @@ public class ChartControlsView extends LinearLayout {
     private final Context mContext;
     private int mTheme = 0;
 
+    //Color:Night/Day
+    //font:     #506372     #96A2AA
+    //bg:       #1D2733     #FFFFFF
+    //lines:    #131C26     #E5EBEF
+    //marker bg:#202B38     #FFFFFF
+    //marker font:#E5EFF5   #222222
+
+    //dark slider:#19232E   #F5F8F9
+    //slider border:#2B4256 #DBE7F0
+    //slider inner:#1D2733  #FFFFFF
+
     private ChartViewTg chartView;
     private ChartViewSlider chartViewSlider;
     private String TAG = ChartControlsView.class.getSimpleName();

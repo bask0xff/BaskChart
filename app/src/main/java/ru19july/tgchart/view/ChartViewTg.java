@@ -222,8 +222,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int yMin = H;
 
         Path mPath = new Path();
-        mPath.moveTo(xk, 0);
-        mPath.quadTo(xk, H/2, xk, H);
+        mPath.moveTo(xk, H* 0.f);
+        mPath.quadTo(xk, H/2, xk, H * 0.8f);
         Paint mPaint = new Paint();
         mPaint.setAntiAlias(false);
         mPaint.setColor(Color.BLACK);
@@ -266,8 +266,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             }
         }
 
-        yMin = yMin - 120;
-        if (yMin < 100) yMin = 100;
+        yMin = 50;
         if (touchIndex > 0)
             DrawMarker(canvas, timestamp, markerValues, markerColors, xk + 20, yMin);
     }
@@ -413,16 +412,25 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             activeCounter++;
         }
 
+        int leftX = (int) (lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT);
+        int rightX = (int) (leftX + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO);
+        if(rightX > W) {
+            rightX = W - 30;
+            leftX = (int) (rightX - xw * Utils.FLOATING_QUOTE_WIDTH_RATIO);
+        }
+
+        //TODO hide on click legend
         paint.setColor(Color.parseColor(bgMarker));
         RectF rect = new RectF(
-                lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT,
+                leftX,
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
-                lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO,
+                rightX,
                 lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
         canvas.drawRoundRect(rect, 8, 8, paint);
 
+        //date
         p.setColor(Color.parseColor(markerFontColor));
-        canvas.drawText(dat, lastX + 70, lastY + 16, p);
+        canvas.drawText(dat, leftX + 50, lastY + 16, p);
 
         int k = 0;
         for (int i = 0; i < values.length; i++) {
@@ -430,7 +438,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            canvas.drawText(str, lastX + 70, lastY + 16 + (k + 1) * 105, p);
+            canvas.drawText(str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
             k++;
         }
 

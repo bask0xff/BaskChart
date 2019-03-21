@@ -215,8 +215,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         int yMin = H;
 
         Path mPath = new Path();
-        mPath.moveTo(xk, H* 0.f);
-        mPath.quadTo(xk, H/2, xk, H * 0.8f);
+        mPath.moveTo(xk, H * 0.f);
+        mPath.quadTo(xk, H / 2, xk, H * 0.8f);
         Paint mPaint = new Paint();
         mPaint.setAntiAlias(false);
         mPaint.setColor(Color.BLACK);
@@ -238,13 +238,12 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
 
-                //if(!series.get(j).isChecked()){
-                    fp.setAlpha((int) (series.get(j).getAlpha() *255));
-                    fpc.setAlpha((int) (series.get(j).getAlpha() *255));
-                //}
+                fp.setAlpha((int) (series.get(j).getAlpha() * 255));
+                fpc.setAlpha((int) (series.get(j).getAlpha() * 255));
 
                 canvas.drawLine(x1, y1, x2, y2, fp);
-                canvas.drawCircle(x1, y1, 2.0f, fpc);
+                if(series.get(j).getAlpha() > 0.95)
+                    canvas.drawCircle(x1, y1, 2.0f, fpc);
             }
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
@@ -319,7 +318,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             int xw = (int) p.measureText(str);
             p.setTextSize(textSize);
             p.setAntiAlias(true);
-            p.setColor(Utils.NICESCALE_TEXT_COLOR);
+            p.setColor(Color.parseColor(mTheme.fontColor()));
             canvas.drawText(str, 40f, yL - textSize * 0.3f, p);
 
             yLine += numScale.tickSpacing;
@@ -348,7 +347,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             int xw = (int) p.measureText(str);
             p.setTextSize(textSize);
             p.setAntiAlias(true);
-            p.setColor(Utils.NICESCALE_TEXT_COLOR);
+            p.setColor(Color.parseColor(mTheme.fontColor()));
             canvas.drawText(str, xL - xw, H* 0.85f, p);
 
             xLine += numScale.tickSpacing;
@@ -558,9 +557,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         xTouched = event.getX();
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
-
-        //xk = ((quotes.get(0).getValues().get(touchIndex) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
-        //touchIndex = (int) (startIndex + xTouched * (endIndex - startIndex) / W);
 
         float min = Float.MAX_VALUE;
         touchIndex = 0;

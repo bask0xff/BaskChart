@@ -54,11 +54,12 @@ public class MainActivity extends Activity {
 
         charts.addAll(readJson(json));
 
-        ChartControlsView chartControlsView = new ChartControlsView(this);
-        chartsLayout.addView(chartControlsView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        for (int i = 0; i < charts.size(); i++) {
+            ChartControlsView chartControlsView = new ChartControlsView(this);
+            chartsLayout.addView(chartControlsView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        chartControlsView.setData(charts.get(0));
-
+            chartControlsView.setData(charts.get(i));
+        }
     }
 
     private List<ChartData> readJson(String json) {

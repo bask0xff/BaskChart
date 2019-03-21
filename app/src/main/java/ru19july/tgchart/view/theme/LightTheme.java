@@ -24,7 +24,7 @@ public class LightTheme implements IChartTheme {
 
     @Override
     public String sliderBackground() {
-        return "#ee777777";
+        return "#77777777";
     }
 
     @Override
@@ -34,6 +34,6 @@ public class LightTheme implements IChartTheme {
 
     @Override
     public String sliderInner() {
-        return "#77777777";
+        return "#00ffffff";
     }
 }

@@ -3,12 +3,17 @@ package ru19july.tgchart.view;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -39,10 +44,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     Paint paint;
 
     private int W, ChartLineWidth, H;
-
-    private int fps;
-    private float fpt;
-    private int frames = 0;
 
     private boolean drawing = false;
     private float xStart = 50.0f;
@@ -116,15 +117,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
     @Override
     protected void onDraw(final Canvas canvas) {
-        frames++;
-
         canvas.save();
         canvas.scale(mScaleFactor, mScaleFactor);
-
-        {
-            fps = frames;
-            frames = 0;
-        }
 
         W = canvas.getWidth();
         H = canvas.getHeight();
@@ -179,7 +173,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         drawing = false;
         return canvas;
     }
-
 
     private void DrawChart(List<Series> series, Canvas canvas) {
         Paint lp = new Paint();
@@ -422,6 +415,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
                 rightX,
                 lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
+
         canvas.drawRoundRect(rect, 8, 8, paint);
 
         //date
@@ -437,7 +431,38 @@ public class ChartViewTg extends View implements View.OnTouchListener {
             canvas.drawText(str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
             k++;
         }
+    }
 
+    public Bitmap addShadow(final Bitmap bm, final int dstHeight, final int dstWidth, int color, int size, float dx, float dy) {
+        final Bitmap mask = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ALPHA_8);
+
+        final Matrix scaleToFit = new Matrix();
+        final RectF src = new RectF(0, 0, bm.getWidth(), bm.getHeight());
+        final RectF dst = new RectF(0, 0, dstWidth - dx, dstHeight - dy);
+        scaleToFit.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
+
+        final Matrix dropShadow = new Matrix(scaleToFit);
+        dropShadow.postTranslate(dx, dy);
+
+        final Canvas maskCanvas = new Canvas(mask);
+        final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        maskCanvas.drawBitmap(bm, scaleToFit, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
+        maskCanvas.drawBitmap(bm, dropShadow, paint);
+
+        final BlurMaskFilter filter = new BlurMaskFilter(size, BlurMaskFilter.Blur.NORMAL);
+        paint.reset();
+        paint.setAntiAlias(true);
+        paint.setColor(color);
+        paint.setMaskFilter(filter);
+        paint.setFilterBitmap(true);
+
+        final Bitmap ret = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ARGB_8888);
+        final Canvas retCanvas = new Canvas(ret);
+        retCanvas.drawBitmap(mask, 0, 0, paint);
+        retCanvas.drawBitmap(bm, scaleToFit, null);
+        mask.recycle();
+        return ret;
     }
 
     public void updateSlideFrameWindow(int startX, int endX) {

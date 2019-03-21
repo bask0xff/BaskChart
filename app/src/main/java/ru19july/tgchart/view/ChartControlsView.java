@@ -32,31 +32,19 @@ public class ChartControlsView extends LinearLayout {
     private String TAG = ChartControlsView.class.getSimpleName();
     private ChartData mChartData;
 
+    public ChartControlsView(Context context) {
+        this(context, null);
+        init(context);
+    }
+
     public ChartControlsView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         mContext = context;
+        init(context);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
                     R.styleable.ChartControlsView, 0, 0);
-
-            setOrientation(LinearLayout.VERTICAL);
-            setGravity(Gravity.TOP);
-
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            inflater.inflate(R.layout.chart_view, this, true);
-
-            chartView = (ChartViewTg) getChildAt(1);
-
-            chartViewSlider = (ChartViewSlider) getChildAt(2);
-            chartViewSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
-                @Override
-                public void onSlide(int xStart, int xEnd) {
-                    chartView.updateSlideFrameWindow(xStart, xEnd);
-                }
-            });
 
             try {
                 String titleText = a.getString(R.styleable.ChartControlsView_titleText);
@@ -80,8 +68,25 @@ public class ChartControlsView extends LinearLayout {
 
     }
 
-    public ChartControlsView(Context context) {
-        this(context, null);
+    private void init(Context context) {
+        setOrientation(LinearLayout.VERTICAL);
+        setGravity(Gravity.TOP);
+
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.chart_view, this, true);
+
+        chartView = (ChartViewTg) getChildAt(1);
+
+        chartViewSlider = (ChartViewSlider) getChildAt(2);
+        chartViewSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
+            @Override
+            public void onSlide(int xStart, int xEnd) {
+                chartView.updateSlideFrameWindow(xStart, xEnd);
+            }
+        });
+
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

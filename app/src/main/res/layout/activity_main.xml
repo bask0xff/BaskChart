@@ -14,24 +14,10 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/chartsLayout"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <Spinner
-                android:id="@+id/spinner1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:drawable/btn_dropdown"
-                android:spinnerMode="dropdown"/>
-
-            <ru19july.tgchart.view.ChartControlsView
-                android:id="@+id/chartControlsView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                chart:titleText="Followers"
-                chart:themeType="light"
-                />
 
         </LinearLayout>
 

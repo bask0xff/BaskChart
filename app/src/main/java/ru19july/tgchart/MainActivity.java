@@ -6,8 +6,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import org.json.JSONArray;
@@ -29,8 +31,7 @@ import ru19july.tgchart.view.theme.LightTheme;
 public class MainActivity extends Activity {
     private String TAG = MainActivity.class.getSimpleName();
     private ChartData gsonObj;
-    private ChartControlsView chartControlsView;
-    private Spinner dropdown;
+    private List<ChartControlsView> chartControlsViews = new ArrayList<>();
     private boolean nightTheme = true;
     //ChartView chartView;
 
@@ -39,87 +40,24 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        chartControlsView = findViewById(R.id.chartControlsView);
-
         initChartView();
     }
 
     private void initChartView() {
-        chartControlsView.setVisibility(View.VISIBLE);
+
+        LinearLayout chartsLayout = findViewById(R.id.chartsLayout);
 
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
         final List<ChartData> charts = new ArrayList<>();
 
-        //charts.add(createTestChart());
-
         charts.addAll(readJson(json));
 
+        ChartControlsView chartControlsView = new ChartControlsView(this);
+        chartsLayout.addView(chartControlsView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         chartControlsView.setData(charts.get(0));
-
-        dropdown = findViewById(R.id.spinner1);
-
-        String[] items = new String[charts.size()];
-        for (int i = 0; i < charts.size(); i++)
-            items[i] = "Chart #" + (i + 1);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        dropdown.setAdapter(adapter);
-
-        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                chartControlsView.setData(charts.get(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    private ChartData createTestChart() {
-        ChartData chartData = new ChartData();
-        List<Series> series = new ArrayList<>();
-
-        Series serie = new Series();
-        serie.setName("x");
-        serie.setTitle("x");
-        serie.setType("x");
-        serie.setChecked(true);
-        Long[] arr = new Long[]{1542412800000L, 1542499200000L, 1542585600000L, 1542844800000L, 1542931200000L, 1543190400000L, 1543276800000L};
-        List<Long> values = Arrays.asList(arr);
-        serie.setValues(values);
-        series.add(serie);
-
-        serie = new Series();
-        serie.setName("y1");
-        serie.setTitle("y1");
-        serie.setType("line");
-        serie.setChecked(true);
-        serie.setColor("#aa0000");
-        arr = new Long[]{5173L, 5145L, 5209L, 4967L, 5030L, 5120L, 5030L};
-        values = Arrays.asList(arr);
-        serie.setValues(values);
-        series.add(serie);
-
-        serie = new Series();
-        serie.setName("y2");
-        serie.setTitle("y2");
-        serie.setType("line");
-        serie.setChecked(true);
-        serie.setColor("#007700");
-        arr = new Long[]{4497L, 1703L, 1720L, 2530L, 3173L, 5514L, 1729L};
-        values = Arrays.asList(arr);
-        serie.setValues(values);
-        series.add(serie);
-
-        chartData.setSeries(series);
-        chartData.isColumnsSizeEquals = true;
-
-        return chartData;
 
     }
 
@@ -226,6 +164,6 @@ public class MainActivity extends Activity {
 
     private void toggleTheme() {
         nightTheme = !nightTheme;
-        chartControlsView.setTheme(nightTheme? new DarkTheme() : new LightTheme());
+        //chartControlsView.setTheme(nightTheme? new DarkTheme() : new LightTheme());
     }
 }

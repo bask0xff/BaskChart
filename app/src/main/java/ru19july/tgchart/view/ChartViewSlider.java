@@ -17,6 +17,7 @@ import java.util.Random;
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.utils.NiceScale;
+import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartViewSlider extends View implements View.OnTouchListener {
@@ -41,7 +42,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     private float xStartSaved = 0.0f;
     private float xEndSaved = 0.f;
     private ChartData chartData;
-    private IChartTheme mTheme;
+    private IChartTheme mTheme = new DarkTheme();
 
     public ChartViewSlider(Context context) {
         super(context);
@@ -95,10 +96,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
             }
         }
     }
-/*
-    @Override
-    protected void onMeasure() {}
-*/
+
     @Override
     protected void onDraw(final Canvas canvas) {
 
@@ -108,7 +106,8 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         W = canvas.getWidth();
         H = canvas.getHeight();
 
-        PrepareCanvas(canvas);
+        if(chartData != null)
+            PrepareCanvas(canvas);
 
         canvas.restore();
     }

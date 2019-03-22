@@ -14,7 +14,7 @@
         android:textSize="20sp"
         />
 
-    <ru19july.tgchart.view.ChartViewTg
+    <ru19july.tgchart.view.ChartCanvasView
         android:id="@+id/chartView1"
         android:layout_width="wrap_content"
         android:layout_height="500dp"
@@ -23,7 +23,7 @@
         android:visibility="visible"
         />
 
-    <ru19july.tgchart.view.ChartViewSlider
+    <ru19july.tgchart.view.ChartSliderView
         android:id="@+id/chartViewSlider"
         android:layout_marginTop="1dp"
         android:layout_width="wrap_content"

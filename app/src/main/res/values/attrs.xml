@@ -1,6 +1,6 @@
 <resources>
 
-    <declare-styleable name="ChartViewTg">
+    <declare-styleable name="ChartCanvasView">
         <attr name="showLegend" format="boolean" />
         <attr name="labelPosition" format="enum">
             <enum name="left" value="0"/>

@@ -7,12 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
-
-import java.util.Random;
 
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
@@ -20,7 +16,7 @@ import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 
-public class ChartViewSlider extends View implements View.OnTouchListener {
+public class ChartSliderView extends View implements View.OnTouchListener {
 
     Paint paint;
 
@@ -41,21 +37,21 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     private ChartData chartData;
     private IChartTheme mTheme = new DarkTheme();
 
-    public ChartViewSlider(Context context) {
+    public ChartSliderView(Context context) {
         super(context);
         Log.d(TAG, "ChartView(Context context)");
 
         initView(context, null);
     }
 
-    public ChartViewSlider(Context context, AttributeSet attrs) {
+    public ChartSliderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
 
         initView(context, attrs);
     }
 
-    public ChartViewSlider(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ChartSliderView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
 
@@ -77,12 +73,12 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
-                    R.styleable.ChartViewTg,
+                    R.styleable.ChartCanvasView,
                     0, 0);
 
             try {
-                boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
-                int mTextPos = a.getInteger(R.styleable.ChartViewTg_labelPosition, 0);
+                boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
+                int mTextPos = a.getInteger(R.styleable.ChartCanvasView_labelPosition, 0);
 
                 Log.d(TAG, "initView: showLegend: " + mShowText);
                 Log.d(TAG, "initView: textPos: " + mTextPos);

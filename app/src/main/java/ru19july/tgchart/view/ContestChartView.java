@@ -26,8 +26,8 @@ public class ContestChartView extends LinearLayout {
     private final Context mContext;
     private IChartTheme mTheme;
 
-    private ChartViewTg chartView;
-    private ChartViewSlider chartViewSlider;
+    private ChartCanvasView chartView;
+    private ChartSliderView chartSliderView;
     private String TAG = ContestChartView.class.getSimpleName();
     private ChartData mChartData;
 
@@ -47,7 +47,7 @@ public class ContestChartView extends LinearLayout {
 
             try {
                 String titleText = a.getString(R.styleable.ContestChartView_titleText);
-                boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
+                boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
                 int themeId = a.getInteger(R.styleable.ContestChartView_themeType, 0);
                 switch (themeId) {
                     case 1:
@@ -75,10 +75,10 @@ public class ContestChartView extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.chart_view, this, true);
 
-        chartView = (ChartViewTg) getChildAt(1);
+        chartView = (ChartCanvasView) getChildAt(1);
 
-        chartViewSlider = (ChartViewSlider) getChildAt(2);
-        chartViewSlider.setSliderListener(new ChartViewSlider.ISliderListener() {
+        chartSliderView = (ChartSliderView) getChildAt(2);
+        chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {
             @Override
             public void onSlide(int xStart, int xEnd) {
                 chartView.updateSlideFrameWindow(xStart, xEnd);
@@ -92,7 +92,7 @@ public class ContestChartView extends LinearLayout {
     public void setData(ChartData chartData) {
         mChartData = chartData;
         chartView.setData(mChartData);
-        chartViewSlider.setData(mChartData);
+        chartSliderView.setData(mChartData);
 
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
         insertPoint.removeAllViews();
@@ -137,7 +137,7 @@ public class ContestChartView extends LinearLayout {
                         chartView.showChart(finalI, 0f, 1f);
 
                     chartView.animateChanges(oldChartData, mChartData);
-                    chartViewSlider.animateChanges(oldChartData, mChartData);
+                    chartSliderView.animateChanges(oldChartData, mChartData);
 
                 }
             });
@@ -159,7 +159,7 @@ public class ContestChartView extends LinearLayout {
         mTheme = theme;
         updateTheme();
         chartView.setTheme(mTheme);
-        chartViewSlider.setTheme(mTheme);
+        chartSliderView.setTheme(mTheme);
         invalidate();
     }
 

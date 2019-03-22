@@ -487,6 +487,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     }
 
     public void setData(ChartData chartData) {
+        Log.d(TAG, "setData: " + chartData);
         mChartData = chartData;
         if (endNormalized <= 0.0E-10)
             endNormalized = 1.0f;
@@ -566,6 +567,8 @@ public class ChartViewTg extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, "onTouchEvent: " + mChartData);
+        if(mChartData == null) return false;
 
         xTouched = event.getX();
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
@@ -575,6 +578,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         touchIndex = 0;
 
         for (int i = startIndex; i < endIndex; i++) {
+            //FIXIT: java.lang.IndexOutOfBoundsException: Index: 112, Size: 112
             float xt = ((mChartData.getSeries().get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
             if (Math.abs(xt - xTouched) <= min) {
                 min = Math.abs(xt - xTouched);

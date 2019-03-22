@@ -144,6 +144,7 @@ public class ChartControlsView extends LinearLayout {
             });
         }
 
+        chartView.invalidate();
         invalidate();
     }
 

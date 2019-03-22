@@ -22,9 +22,6 @@ import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartViewSlider extends View implements View.OnTouchListener {
 
-    private ScaleGestureDetector mScaleDetector;
-    private GestureDetector detector;
-    private float mScaleFactor = 1.f;
     Paint paint;
 
     int slLeft;
@@ -67,11 +64,9 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        detector = new GestureDetector(ChartViewSlider.this.getContext(), new MyListener());
 
         slRight = W;
-        slLeft = W * 3/4;
+        slLeft = W * 3 / 4;
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -101,19 +96,18 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
     protected void onDraw(final Canvas canvas) {
 
         canvas.save();
-        canvas.scale(mScaleFactor, mScaleFactor);
 
         W = canvas.getWidth();
         H = canvas.getHeight();
 
-        if(chartData != null)
+        if (chartData != null)
             PrepareCanvas(canvas);
 
         canvas.restore();
     }
 
     public Canvas PrepareCanvas(Canvas canvas) {
-        if(drawing) return canvas;
+        if (drawing) return canvas;
 
         drawing = true;
 
@@ -121,12 +115,12 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         NiceScale numScale = new NiceScale(chartData.getSeries());
 
-        for(int i=1; i<chartData.getSeries().get(0).getValues().size(); i++){
-            for(int j = 1; j<chartData.getSeries().size(); j++){
-                if(!chartData.getSeries().get(j).isChecked()) continue;
+        for (int i = 1; i < chartData.getSeries().get(0).getValues().size(); i++) {
+            for (int j = 1; j < chartData.getSeries().size(); j++) {
+                if (!chartData.getSeries().get(j).isChecked()) continue;
 
-                int x1 = (int) (W*((i-1.f)/(chartData.getSeries().get(0).getValues().size()-1)));
-                int x2 = (int) (W*((i-0.f)/(chartData.getSeries().get(0).getValues().size()-1)));
+                int x1 = (int) (W * ((i - 1.f) / (chartData.getSeries().get(0).getValues().size() - 1)));
+                int x2 = (int) (W * ((i - 0.f) / (chartData.getSeries().get(0).getValues().size() - 1)));
 
                 int y1 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * H);
                 int y2 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * H);
@@ -149,7 +143,7 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         //slider window
         fp.setColor(Color.parseColor(mTheme.sliderInner()));
-        canvas.drawRect(xStart+16, 4, xEnd-16, H-4, fp);
+        canvas.drawRect(xStart + 16, 4, xEnd - 16, H - 4, fp);
 
         drawing = false;
         return canvas;
@@ -174,29 +168,9 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         invalidate();
     }
 
-    class MyListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
-
-            // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-
-            invalidate();
-            return true;
-        }
-    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_MOVE) {
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
             invalidate();
         }
         return false;
@@ -204,7 +178,6 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean result = detector.onTouchEvent(event);
         int x = (int) event.getX();
         //Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
 
@@ -212,10 +185,10 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
         float dx1 = Math.abs(xx - xStart);
         float dx2 = Math.abs(xx - xEnd);
 
-        if(dx1 < 50 && dx1 < dx2) xStart = xx;
-        if(dx2 < 50 && dx2 < dx1) xEnd = xx;
+        if (dx1 < 50 && dx1 < dx2) xStart = xx;
+        if (dx2 < 50 && dx2 < dx1) xEnd = xx;
 
-        if (((dx1> 50 && (dx1 < dx2)) || (dx2> 50 && (dx2 < dx1))) && event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (((dx1 > 50 && (dx1 < dx2)) || (dx2 > 50 && (dx2 < dx1))) && event.getAction() == MotionEvent.ACTION_DOWN) {
             slideMoving = true;
             xStartSaved = xStart;
             xEndSaved = xEnd;
@@ -225,28 +198,22 @@ public class ChartViewSlider extends View implements View.OnTouchListener {
 
         if (event.getAction() == MotionEvent.ACTION_MOVE && slideMoving) {
             xStart = xStartSaved + (xx - startMoveX);
-            if(xStart<0) xStart = 0;
+            if (xStart < 0) xStart = 0;
             xEnd = xEndSaved + (xx - startMoveX);
-            if(xEnd>=W) xEnd = W;
+            if (xEnd >= W) xEnd = W;
         }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             slideMoving = false;
         }
 
-        mOnSliderListener.onSlide((int) xStart, (int)xEnd);
+        if (mOnSliderListener != null)
+            mOnSliderListener.onSlide((int) xStart, (int) xEnd);
 
-        if (!result) {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                //stopScrolling();
-                result = true;
-            }
-        }
-        
-        return result;
+        return true;
     }
 
-    interface ISliderListener{
+    interface ISliderListener {
         void onSlide(int xStart, int xEnd);
     }
 

@@ -56,9 +56,10 @@ public class MainActivity extends Activity {
 
         for (int i = 0; i < charts.size(); i++) {
             ChartControlsView chartControlsView = new ChartControlsView(this);
-            chartsLayout.addView(chartControlsView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
             chartControlsView.setData(charts.get(i));
+
+            chartsLayout.addView(chartControlsView, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         }
     }
 

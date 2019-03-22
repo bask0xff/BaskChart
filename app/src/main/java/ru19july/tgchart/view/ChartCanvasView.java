@@ -28,6 +28,7 @@ import java.util.Random;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.R;
+import ru19july.tgchart.data.MinMaxIndex;
 import ru19july.tgchart.data.Series;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;

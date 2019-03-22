@@ -1,6 +1,7 @@
 package ru19july.tgchart;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +29,7 @@ import ru19july.tgchart.view.ChartControlsView;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private ChartData gsonObj;
     private List<ChartControlsView> chartControlsViews = new ArrayList<>();
@@ -45,22 +46,22 @@ public class MainActivity extends Activity {
 
     private void initChartView() {
 
-        LinearLayout chartsLayout = findViewById(R.id.chartsLayout);
-
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
         final List<ChartData> charts = new ArrayList<>();
-
         charts.addAll(readJson(json));
 
-        for (int i = 0; i < charts.size(); i++) {
+        /*for (int i = 0; i < charts.size(); i++) {
             ChartControlsView chartControlsView = new ChartControlsView(this);
             chartControlsView.setData(charts.get(i));
 
-            chartsLayout.addView(chartControlsView, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            //chartsLayout.addView(chartControlsView, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        }
+        }*/
+
+        MyPerformanceArrayAdapter adapter = new MyPerformanceArrayAdapter(this, charts);
+        setListAdapter(adapter);
     }
 
     private List<ChartData> readJson(String json) {

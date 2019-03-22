@@ -19,14 +19,6 @@ public class ChartData implements Serializable {
 
     public ChartData(){
     }
-    /*
-    *  double minQuote = Double.MAX_VALUE;
-        double maxQuote = Double.MIN_VALUE;
-
-        NiceScale numScale = new NiceScale(series);
-        minQuote = numScale.niceMin;
-        maxQuote = numScale.niceMax;
-    * */
 
     public List<Series> getSeries(){
         return mSeries;

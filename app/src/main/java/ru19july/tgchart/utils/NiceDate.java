@@ -16,33 +16,10 @@ public class NiceDate
     public double niceMin;
     public double niceMax;
 
-    /**
-     * Instantiates a new instance of the NiceDate class.
-     *
-     * @param min the minimum data point on the axis
-     * @param max the maximum data point on the axis
-     */
-
     public NiceDate(double min, double max)
     {
         this.minPoint = min;
         this.maxPoint = max;
-        calculate();
-    }
-
-    public NiceDate(List<Series> series) {
-        float min = Float.MAX_VALUE;
-        float max = Float.MIN_VALUE;
-
-        for(int i=1; i<series.size(); i++) {
-            if(!series.get(i).isChecked()) continue;
-            if (series.get(i).getMinValue() < min) min = series.get(i).getMinValue();
-            if (series.get(i).getMaxValue() > max) max = series.get(i).getMaxValue();
-        }
-
-        this.minPoint = min;
-        this.maxPoint = max;
-
         calculate();
     }
 
@@ -55,15 +32,6 @@ public class NiceDate
         this.niceMax =
                 Math.ceil(maxPoint / tickSpacing) * tickSpacing;
     }
-
-    /**
-     * Returns a "nice" number approximately equal to range Rounds
-     * the number if round = true Takes the ceiling if round = false.
-     *
-     * @param range the data range
-     * @param round whether to round the result
-     * @return a "nice" number to be used for the data range
-     */
 
     private double niceNum(double range, boolean round)
     {
@@ -116,25 +84,12 @@ public class NiceDate
         return niceFraction * Math.pow(10, exponent);
     }
 
-    /**
-     * Sets the minimum and maximum data points for the axis.
-     *
-     * @param minPoint the minimum data point on the axis
-     * @param maxPoint the maximum data point on the axis
-     */
-
     public void setMinMaxPoints(double minPoint, double maxPoint)
     {
         this.minPoint = minPoint;
         this.maxPoint = maxPoint;
         calculate();
     }
-
-    /**
-     * Sets maximum number of tick marks we're comfortable with
-     *
-     * @param maxTicks the maximum number of tick marks for the axis
-     */
 
     public void setMaxTicks(double maxTicks)
     {

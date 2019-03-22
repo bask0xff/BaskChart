@@ -9,7 +9,6 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -22,34 +21,34 @@ import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
-public class ChartControlsView extends LinearLayout {
+public class ContestChartView extends LinearLayout {
 
     private final Context mContext;
     private IChartTheme mTheme;
 
     private ChartViewTg chartView;
     private ChartViewSlider chartViewSlider;
-    private String TAG = ChartControlsView.class.getSimpleName();
+    private String TAG = ContestChartView.class.getSimpleName();
     private ChartData mChartData;
 
-    public ChartControlsView(Context context) {
+    public ContestChartView(Context context) {
         this(context, null);
         init(context);
     }
 
-    public ChartControlsView(Context context, AttributeSet attrs) {
+    public ContestChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         init(context);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
-                    R.styleable.ChartControlsView, 0, 0);
+                    R.styleable.ContestChartView, 0, 0);
 
             try {
-                String titleText = a.getString(R.styleable.ChartControlsView_titleText);
+                String titleText = a.getString(R.styleable.ContestChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartViewTg_showLegend, false);
-                int themeId = a.getInteger(R.styleable.ChartControlsView_themeType, 0);
+                int themeId = a.getInteger(R.styleable.ContestChartView_themeType, 0);
                 switch (themeId) {
                     case 1:
                         mTheme = new DarkTheme();

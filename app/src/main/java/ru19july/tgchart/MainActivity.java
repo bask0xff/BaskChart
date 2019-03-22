@@ -1,17 +1,10 @@
 package ru19july.tgchart;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,19 +13,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
-import ru19july.tgchart.view.ChartControlsView;
-import ru19july.tgchart.view.theme.DarkTheme;
-import ru19july.tgchart.view.theme.LightTheme;
+import ru19july.tgchart.view.ContestChartView;
 
 public class MainActivity extends ListActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private ChartData gsonObj;
-    private List<ChartControlsView> chartControlsViews = new ArrayList<>();
+    private List<ContestChartView> contestChartViews = new ArrayList<>();
     private boolean nightTheme = true;
     //ChartView chartView;
 
@@ -60,7 +50,7 @@ public class MainActivity extends ListActivity {
 
         }*/
 
-        MyPerformanceArrayAdapter adapter = new MyPerformanceArrayAdapter(this, charts);
+        ChartsAdapter adapter = new ChartsAdapter(this, charts);
         setListAdapter(adapter);
     }
 

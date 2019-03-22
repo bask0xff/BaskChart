@@ -1,7 +1,5 @@
 package ru19july.tgchart.utils;
 
-import android.util.Log;
-
 import java.util.List;
 
 import ru19july.tgchart.data.Series;
@@ -17,13 +15,6 @@ public class NiceScale
     public double range;
     public double niceMin;
     public double niceMax;
-
-    /**
-     * Instantiates a new instance of the NiceScale class.
-     *
-     * @param min the minimum data point on the axis
-     * @param max the maximum data point on the axis
-     */
 
     public NiceScale(double min, double max)
     {
@@ -93,29 +84,4 @@ public class NiceScale
         return niceFraction * Math.pow(10, exponent);
     }
 
-    /**
-     * Sets the minimum and maximum data points for the axis.
-     *
-     * @param minPoint the minimum data point on the axis
-     * @param maxPoint the maximum data point on the axis
-     */
-
-    public void setMinMaxPoints(double minPoint, double maxPoint)
-    {
-        this.minPoint = minPoint;
-        this.maxPoint = maxPoint;
-        calculate();
-    }
-
-    /**
-     * Sets maximum number of tick marks we're comfortable with
-     *
-     * @param maxTicks the maximum number of tick marks for the axis
-     */
-
-    public void setMaxTicks(double maxTicks)
-    {
-        this.maxTicks = maxTicks;
-        calculate();
-    }
 }

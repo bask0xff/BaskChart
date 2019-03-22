@@ -22,12 +22,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-import java.util.TimeZone;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.R;
@@ -61,8 +58,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
     private IChartTheme mTheme = new DarkTheme();
-    private float minVal = 0f;
-    private float maxVal = 0f;
+    private boolean mShowVerticalLines = false;
 
     public ChartViewTg(Context context) {
         super(context);
@@ -336,17 +332,19 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         while (xLine <= numScale.niceMax) {
             float xL = GetX(xLine);
 
-            Path mPath = new Path();
-            mPath.moveTo(xL, H* 0.2f);
-            mPath.quadTo(xL, H/2, xL, H * 0.8f);
-            Paint mPaint = new Paint();
-            mPaint.setAntiAlias(false);
-            mPaint.setColor(Color.BLACK);
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-            //canvas.drawPath(mPath, mPaint);
+            if(mShowVerticalLines) {
+                Path mPath = new Path();
+                mPath.moveTo(xL, H * 0.2f);
+                mPath.quadTo(xL, H / 2, xL, H * 0.8f);
+                Paint mPaint = new Paint();
+                mPaint.setAntiAlias(false);
+                mPaint.setColor(Color.BLACK);
+                mPaint.setStyle(Paint.Style.STROKE);
+                mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
+                canvas.drawPath(mPath, mPaint);
+            }
 
-            String str = convertTime((long)xLine, "MMM dd");
+            String str = Utils.unixtimeToString((long)xLine, "MMM dd");
             Paint p = new Paint();
             float textSize = H * 0.033f;
             int xw = (int) p.measureText(str);
@@ -370,20 +368,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         canvas.drawPath(path, paint);
     }
 
-    public String convertTime(long time) {
-        Date date = new Date(time);
-        SimpleDateFormat format = new SimpleDateFormat("MMM dd HH:mm", Locale.ENGLISH);
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return format.format(date);
-    }
-
-    public String convertTime(long time, String fmt) {
-        Date date = new Date(time);
-        SimpleDateFormat format = new SimpleDateFormat(fmt, Locale.ENGLISH);
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return format.format(date);
-    }
-
     private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
@@ -399,7 +383,7 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         p.setFakeBoldText(true);
         p.setStrokeWidth(1);
 
-        String dat = convertTime(timestamp);
+        String dat = Utils.convertTime(timestamp);
 
         //calculate text width
         p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
@@ -501,9 +485,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         oldChartData.getNiceScale();
         newChartData.getNiceScale();
 
-        minVal = (float) oldChartData.getMinQuote();
-        maxVal = (float) oldChartData.getMaxQuote();
-
         float scaleFrom = (float) (oldChartData.getMaxQuote() - (oldChartData.getMinQuote() + 0f));
         float scaleTo = (float) (newChartData.getMaxQuote() - (newChartData.getMinQuote() + 0f));
         float ratio = scaleTo / scaleFrom;
@@ -513,7 +494,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                minVal = (float) animation.getAnimatedValue();
                 for (int i = 1; i < mChartData.getSeries().size(); i++)
                     mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
 
@@ -526,7 +506,6 @@ public class ChartViewTg extends View implements View.OnTouchListener {
         post(new Runnable() {
             @Override
             public void run() {
-
                 //logging
                 Log.d(TAG, "oldChartData [" + oldChartData.getMinQuote() + "; " + oldChartData.getMaxQuote() + "]");
                 for (int i = 1; i < oldChartData.getSeries().size(); i++)
@@ -535,20 +514,14 @@ public class ChartViewTg extends View implements View.OnTouchListener {
                 Log.d(TAG, "newChartData [" + newChartData.getMinQuote() + "; " + newChartData.getMaxQuote() + "]");
                 for (int i = 1; i < newChartData.getSeries().size(); i++)
                     Log.d(TAG, "run: newChartData " + newChartData.getSeries().get(i).getTitle() + ": " + newChartData.getSeries().get(i).isChecked() + " => " + newChartData.getSeries().get(i).toString());
-
-
             }
         });
 
         invalidate();
     }
 
-    public void drawText(String text) {
-    }
-
     public void setTheme(IChartTheme theme) {
         mTheme = theme;
-
         updateTheme();
     }
 

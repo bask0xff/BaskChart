@@ -93,8 +93,6 @@ public class Series implements Serializable {
             if (q < result.min) result.min = q;
         }
 
-        Log.d(TAG, "FindMinMax: " + result.min + "/" + result.max + " => " + Arrays.toString(values.toArray()));
-
         return result;
     }
 

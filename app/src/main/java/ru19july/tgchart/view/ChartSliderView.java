@@ -69,7 +69,6 @@ public class ChartSliderView extends View implements View.OnTouchListener {
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
 
-        //startTime = BinaryStationClient.Instance().CurrentTime();
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
@@ -80,8 +79,6 @@ public class ChartSliderView extends View implements View.OnTouchListener {
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
                 int mTextPos = a.getInteger(R.styleable.ChartCanvasView_labelPosition, 0);
 
-                Log.d(TAG, "initView: showLegend: " + mShowText);
-                Log.d(TAG, "initView: textPos: " + mTextPos);
             } finally {
                 a.recycle();
             }
@@ -175,7 +172,6 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int x = (int) event.getX();
-        //Log.d(TAG, "onTouchEvent; ACTION: " + event.getAction() + ";  x=" + x + "; result: " + result);
 
         float xx = event.getX();
         float dx1 = Math.abs(xx - xStart);
@@ -189,7 +185,6 @@ public class ChartSliderView extends View implements View.OnTouchListener {
             xStartSaved = xStart;
             xEndSaved = xEnd;
             startMoveX = xx;
-            //result = true;
         }
 
         if (event.getAction() == MotionEvent.ACTION_MOVE && slideMoving) {
@@ -198,6 +193,9 @@ public class ChartSliderView extends View implements View.OnTouchListener {
             xEnd = xEndSaved + (xx - startMoveX);
             if (xEnd >= W) xEnd = W;
         }
+
+        if(event.getAction() == MotionEvent.ACTION_MOVE )
+        {}
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             slideMoving = false;

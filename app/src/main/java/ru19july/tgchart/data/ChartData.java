@@ -10,8 +10,8 @@ public class ChartData implements Serializable {
 
     private static final String TAG = ChartData.class.getSimpleName();
     private List<Series> mSeries;
-    private double minQuote;
-    private double maxQuote;
+    private double minValue;
+    private double maxValue;
 
     public boolean isColumnsSizeEquals;
 
@@ -43,17 +43,17 @@ public class ChartData implements Serializable {
 
     }
 
-    public double getMinQuote() {
-        return minQuote;
+    public double getMinValue() {
+        return minValue;
     }
 
-    public double getMaxQuote() {
-        return maxQuote;
+    public double getMaxValue() {
+        return maxValue;
     }
 
     public NiceScale getNiceScale() {
-        minQuote = Double.MAX_VALUE;
-        maxQuote = Double.MIN_VALUE;
+        minValue = Double.MAX_VALUE;
+        maxValue = Double.MIN_VALUE;
 
         MinMax minmax = new MinMax();
         minmax.min = Float.MAX_VALUE;
@@ -66,15 +66,15 @@ public class ChartData implements Serializable {
         }
 
         NiceScale numScale = new NiceScale(minmax.min, minmax.max);
-        minQuote = numScale.niceMin;
-        maxQuote = numScale.niceMax;
+        minValue = numScale.niceMin;
+        maxValue = numScale.niceMax;
 
-        return new NiceScale(minQuote, maxQuote);
+        return new NiceScale(minValue, maxValue);
     }
 
     public NiceScale getNiceScale(float leftMinValue, float rightMaxValue) {
-        minQuote = Double.MAX_VALUE;
-        maxQuote = Double.MIN_VALUE;
+        minValue = Double.MAX_VALUE;
+        maxValue = Double.MIN_VALUE;
 
         MinMax minmax = new MinMax();
         minmax.min = Float.MAX_VALUE;
@@ -97,10 +97,10 @@ public class ChartData implements Serializable {
         }
 
         NiceScale numScale = new NiceScale(minmax.min, minmax.max);
-        minQuote = numScale.niceMin;
-        maxQuote = numScale.niceMax;
+        minValue = numScale.niceMin;
+        maxValue = numScale.niceMax;
 
-        return new NiceScale(minQuote, maxQuote);
+        return new NiceScale(minValue, maxValue);
     }
 
 }

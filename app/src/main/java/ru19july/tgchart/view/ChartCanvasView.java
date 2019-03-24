@@ -12,7 +12,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
@@ -137,8 +136,8 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
 
     private float GetY(double y, float scale) {
         float realY = 0;
-        if ((mChartData.getMaxQuote() - mChartData.getMinQuote()) > 0)
-            realY = (float) (H * (1 - 0.2 - 0.6 * scale * (y - mChartData.getMinQuote()) / (mChartData.getMaxQuote() - mChartData.getMinQuote())));
+        if ((mChartData.getMaxValue() - mChartData.getMinValue()) > 0)
+            realY = (float) (H * (1 - 0.2 - 0.6 * scale * (y - mChartData.getMinValue()) / (mChartData.getMaxValue() - mChartData.getMinValue())));
         return realY;
     }
 
@@ -151,7 +150,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
-        //очищаем график
         Paint fp = new Paint();
         fp.setAntiAlias(false);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -187,7 +185,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         p.setStyle(Paint.Style.FILL_AND_STROKE);
         p.setColor(Color.BLUE);
 
-        //очищаем график
         Paint fp = new Paint();
         fp.setAntiAlias(true);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -286,9 +283,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
                 result.max = i + 1;
         }
 
-        //result.min--;
-        //result.max++;
-
         if (result.min < 0) result.min = 0;
         if (result.max >= values.getValues().size()) result.max = values.getValues().size() - 1;
 
@@ -358,17 +352,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         }
     }
 
-    private void DrawPoly(Point[] point, Canvas canvas, Paint paint) {
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(point[0].x, point[0].y);
-        path.lineTo(point[1].x, point[1].y);
-        path.lineTo(point[2].x, point[2].y);
-        path.lineTo(point[3].x, point[3].y);
-        path.close();
-        canvas.drawPath(path, paint);
-    }
-
     private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
@@ -377,7 +360,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         paint.setAntiAlias(true);
 
-        //floating quote
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -387,7 +369,7 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         String dat = Utils.convertTime(timestamp);
 
         //calculate text width
-        p.setTextSize(H * Utils.FLOATING_QUOTE_TEXT_SIZE_RATIO);
+        p.setTextSize(H * Utils.FLOATING_TEXT_SIZE_RATIO);
         int xw = (int) p.measureText(dat);
         int activeCounter = 0;
         for (int i = 0; i < values.length; i++) {
@@ -397,20 +379,20 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
             activeCounter++;
         }
 
-        int leftX = (int) (lastX + Utils.FLOATING_QUOTE_MARGIN_LEFT);
-        int rightX = (int) (leftX + xw * Utils.FLOATING_QUOTE_WIDTH_RATIO);
+        int leftX = (int) (lastX + Utils.FLOATING_MARGIN_LEFT);
+        int rightX = (int) (leftX + xw * Utils.FLOATING_WIDTH_RATIO);
         if(rightX > W) {
             rightX = W - 30;
-            leftX = (int) (rightX - xw * Utils.FLOATING_QUOTE_WIDTH_RATIO);
+            leftX = (int) (rightX - xw * Utils.FLOATING_WIDTH_RATIO);
         }
 
         //TODO hide on click legend
         paint.setColor(Color.parseColor(mTheme.backgroundColor()));
         RectF rect = new RectF(
                 leftX,
-                lastY - H * Utils.FLOATING_QUOTE_MARGIN_TOP_RATIO,
+                lastY - H * 1f/15f,
                 rightX,
-                lastY + H * Utils.FLOATING_QUOTE_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
+                lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
 
         canvas.drawRoundRect(rect, 8, 8, paint);
 
@@ -486,8 +468,8 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         oldChartData.getNiceScale();
         newChartData.getNiceScale();
 
-        float scaleFrom = (float) (oldChartData.getMaxQuote() - (oldChartData.getMinQuote() + 0f));
-        float scaleTo = (float) (newChartData.getMaxQuote() - (newChartData.getMinQuote() + 0f));
+        float scaleFrom = (float) (oldChartData.getMaxValue() - (oldChartData.getMinValue() + 0f));
+        float scaleTo = (float) (newChartData.getMaxValue() - (newChartData.getMinValue() + 0f));
         float ratio = scaleTo / scaleFrom;
 
         ValueAnimator va = ValueAnimator.ofFloat(ratio, 1f);
@@ -503,20 +485,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         });
 
         va.start();
-
-        post(new Runnable() {
-            @Override
-            public void run() {
-                //logging
-                Log.d(TAG, "oldChartData [" + oldChartData.getMinQuote() + "; " + oldChartData.getMaxQuote() + "]");
-                for (int i = 1; i < oldChartData.getSeries().size(); i++)
-                    Log.d(TAG, "run: oldChartData " + oldChartData.getSeries().get(i).getTitle() + ": " + oldChartData.getSeries().get(i).isChecked() + " => " + oldChartData.getSeries().get(i).toString());
-
-                Log.d(TAG, "newChartData [" + newChartData.getMinQuote() + "; " + newChartData.getMaxQuote() + "]");
-                for (int i = 1; i < newChartData.getSeries().size(); i++)
-                    Log.d(TAG, "run: newChartData " + newChartData.getSeries().get(i).getTitle() + ": " + newChartData.getSeries().get(i).isChecked() + " => " + newChartData.getSeries().get(i).toString());
-            }
-        });
 
         invalidate();
     }
@@ -552,7 +520,6 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         touchIndex = 0;
 
         for (int i = startIndex; i < endIndex; i++) {
-            //FIXIT: java.lang.IndexOutOfBoundsException: Index: 112, Size: 112
             float xt = ((mChartData.getSeries().get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
             if (Math.abs(xt - xTouched) <= min) {
                 min = Math.abs(xt - xTouched);
@@ -581,5 +548,3 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
     }
 }
 
-//try it
-//http://www.java2s.com/Code/Android/2D-Graphics/DrawPolygon.htm

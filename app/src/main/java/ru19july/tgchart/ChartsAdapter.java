@@ -9,14 +9,16 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 import ru19july.tgchart.data.ChartData;
-import ru19july.tgchart.view.ContestChartView;
+import ru19july.tgchart.view.BaskChartView;
+import ru19july.tgchart.view.theme.DarkTheme;
 
 public class ChartsAdapter extends ArrayAdapter<ChartData> {
-    private final Activity context;
-    private final List<ChartData> charts;
+    private List<BaskChartView> baskChartViews;
+    private Activity context;
+    private List<ChartData> charts;
 
     static class ViewHolder {
-        public ContestChartView contestChartView;
+        public BaskChartView baskChartView;
     }
 
     public ChartsAdapter(Activity context, List<ChartData> charts) {
@@ -32,7 +34,7 @@ public class ChartsAdapter extends ArrayAdapter<ChartData> {
             LayoutInflater inflater = context.getLayoutInflater();
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.contestChartView = rowView.findViewById(R.id.chartControlsView);
+            viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
             rowView.setTag(viewHolder);
         }
 
@@ -40,8 +42,10 @@ public class ChartsAdapter extends ArrayAdapter<ChartData> {
         ViewHolder holder = (ViewHolder) rowView.getTag();
         ChartData chartData = charts.get(position);
 
-        holder.contestChartView.setData(chartData);
-        //holder.chartControlsView.invalidate();
+        holder.baskChartView.setData(chartData);
+        holder.baskChartView.setChartTheme(new DarkTheme());
+        holder.baskChartView.invalidate();
+        holder.baskChartView.update();
 
         return rowView;
     }

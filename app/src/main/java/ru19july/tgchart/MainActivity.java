@@ -17,14 +17,15 @@ import java.util.List;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
-import ru19july.tgchart.view.ContestChartView;
+import ru19july.tgchart.view.BaskChartView;
+import ru19july.tgchart.view.IOnThemeChange;
+import ru19july.tgchart.view.theme.DarkTheme;
+import ru19july.tgchart.view.theme.IChartTheme;
 
 public class MainActivity extends ListActivity {
     private String TAG = MainActivity.class.getSimpleName();
-    private ChartData gsonObj;
-    private List<ContestChartView> contestChartViews = new ArrayList<>();
     private boolean nightTheme = true;
-    //ChartView chartView;
+    private List<ChartData> charts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +40,19 @@ public class MainActivity extends ListActivity {
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
-        final List<ChartData> charts = new ArrayList<>();
+        charts = new ArrayList<>();
         charts.addAll(readJson(json));
 
-        /*for (int i = 0; i < charts.size(); i++) {
-            ChartControlsView chartControlsView = new ChartControlsView(this);
-            chartControlsView.setData(charts.get(i));
+        for (int i = 0; i < charts.size(); i++) {
+            BaskChartView baskChartView = new BaskChartView(this);
+            baskChartView.setData(charts.get(i));
+            baskChartView.setOnThemeChange(new IOnThemeChange() {
+                @Override
+                public void OnThemeChange(IChartTheme theme) {
 
-            //chartsLayout.addView(chartControlsView, i, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        }*/
+                }
+            });
+        }
 
         ChartsAdapter adapter = new ChartsAdapter(this, charts);
         setListAdapter(adapter);
@@ -145,7 +149,6 @@ public class MainActivity extends ListActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.item_theme:
                 toggleTheme();
@@ -157,6 +160,7 @@ public class MainActivity extends ListActivity {
 
     private void toggleTheme() {
         nightTheme = !nightTheme;
-        //chartControlsView.setTheme(nightTheme? new DarkTheme() : new LightTheme());
+        Log.d(TAG, "toggleTheme: " + nightTheme + " => " + charts.size());
+
     }
 }

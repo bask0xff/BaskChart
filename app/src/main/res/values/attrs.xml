@@ -8,7 +8,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ContestChartView">
+    <declare-styleable name="BaskChartView">
         <attr name="titleText" format="string" />
         <attr name="themeType" format="enum">
             <enum name="dark" value="0"/>

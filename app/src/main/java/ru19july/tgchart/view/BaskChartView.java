@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -21,42 +22,43 @@ import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
-public class ContestChartView extends LinearLayout {
+public class BaskChartView extends LinearLayout {
 
     private final Context mContext;
     private IChartTheme mTheme;
 
     private ChartCanvasView chartView;
     private ChartSliderView chartSliderView;
-    private String TAG = ContestChartView.class.getSimpleName();
+    private String TAG = BaskChartView.class.getSimpleName();
     private ChartData mChartData;
+    private IOnThemeChange mOnThemeChange;
 
-    public ContestChartView(Context context) {
+    public BaskChartView(Context context) {
         this(context, null);
         init(context);
     }
 
-    public ContestChartView(Context context, AttributeSet attrs) {
+    public BaskChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         init(context);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
-                    R.styleable.ContestChartView, 0, 0);
+                    R.styleable.BaskChartView, 0, 0);
 
             try {
-                String titleText = a.getString(R.styleable.ContestChartView_titleText);
+                String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
-                int themeId = a.getInteger(R.styleable.ContestChartView_themeType, 0);
+                int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
                 switch (themeId) {
-                    case 1:
-                        mTheme = new DarkTheme();
-                    default:
+                    case 0:
                         mTheme = new LightTheme();
+                    default:
+                        mTheme = new DarkTheme();
                 }
 
-                setTheme(mTheme);
+                setChartTheme(mTheme);
 
                 TextView title = (TextView) getChildAt(0);
                 title.setText(titleText);
@@ -104,12 +106,12 @@ public class ContestChartView extends LinearLayout {
 
             ColorStateList colorStateList = new ColorStateList(
                     new int[][] {
-                            new int[] { -android.R.attr.state_checked }, // unchecked
-                            new int[] {  android.R.attr.state_checked }  // checked
+                            new int[] { -android.R.attr.state_checked },
+                            new int[] {  android.R.attr.state_checked }
                     },
                     new int[] {
-                            Color.parseColor(mChartData.getSeries().get(i).getColor()),//unchecked
-                            Color.parseColor(mChartData.getSeries().get(i).getColor())//checked
+                            Color.parseColor(mChartData.getSeries().get(i).getColor()),
+                            Color.parseColor(mChartData.getSeries().get(i).getColor())
                     }
 
             );
@@ -155,7 +157,8 @@ public class ContestChartView extends LinearLayout {
         return mTheme;
     }
 
-    public void setTheme(IChartTheme theme) {
+    public void setChartTheme(IChartTheme theme) {
+        Log.d(TAG, "setTheme: " + theme.getClass().getCanonicalName());
         mTheme = theme;
         updateTheme();
         chartView.setTheme(mTheme);
@@ -165,6 +168,15 @@ public class ContestChartView extends LinearLayout {
 
     private void updateTheme() {
         setBackgroundColor(Color.parseColor(mTheme.backgroundColor()));
+    }
+
+    public void setOnThemeChange(IOnThemeChange onThemeChange){
+        mOnThemeChange = onThemeChange;
+    }
+
+    public void update() {
+        chartSliderView.invalidate();
+        chartView.invalidate();
     }
 }
 

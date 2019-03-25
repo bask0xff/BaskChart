@@ -45,7 +45,7 @@ public class MainActivity extends ListActivity {
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
 
-        for (int i = 0; i < chartsData.size(); i++) {
+        for (int i = 0; i < 1 /* chartsData.size()*/; i++) {
             final BaskChartView baskChartView = new BaskChartView(this);
             baskChartView.setData(chartsData.get(i));
             baskChartView.setOnThemeChange(new IOnThemeChange() {
@@ -170,7 +170,7 @@ public class MainActivity extends ListActivity {
 
         IChartTheme theme = nightTheme ? new DarkTheme() : new LightTheme();
 
-        for(int i=0; i<baskChartViews.size(); i++) {
+        for(int i=0; i<1/* baskChartViews.size()*/; i++) {
             Log.d(TAG, "toggleTheme, baskChartViews[" + i + "]: " + theme.getClass().getSimpleName());
             baskChartViews.get(i).setChartTheme(theme);
             final int finalI = i;

@@ -12,21 +12,28 @@ import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.view.BaskChartView;
 import ru19july.tgchart.view.theme.DarkTheme;
 
-public class ChartsAdapter extends ArrayAdapter<ChartData> {
+public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private List<BaskChartView> baskChartViews;
     private Activity context;
-    private List<ChartData> charts;
+    //private List<ChartData> charts;
+    private  List<BaskChartView> charts;
+
+    public ChartsAdapter(MainActivity context, List<BaskChartView> baskChartViews) {
+        super(context,  R.layout.chart_item, baskChartViews);
+        this.context = context;
+        charts = baskChartViews;
+    }
 
     static class ViewHolder {
         public BaskChartView baskChartView;
     }
-
+/*
     public ChartsAdapter(Activity context, List<ChartData> charts) {
         super(context, R.layout.chart_item, charts);
         this.context = context;
         this.charts = charts;
     }
-
+*/
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
@@ -40,10 +47,10 @@ public class ChartsAdapter extends ArrayAdapter<ChartData> {
 
         // fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        ChartData chartData = charts.get(position);
+        BaskChartView chartData = charts.get(position);
 
-        holder.baskChartView.setData(chartData);
-        holder.baskChartView.setChartTheme(new DarkTheme());
+        holder.baskChartView.setData(chartData.getData());
+        //holder.baskChartView.setChartTheme(getT);
         holder.baskChartView.invalidate();
         holder.baskChartView.update();
 

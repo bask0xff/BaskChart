@@ -39,10 +39,10 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
 
     private final String TAG = ChartCanvasView.class.getSimpleName();
 
-    private float mScaleFactor = 1.f;
     Paint paint;
+    Random r = new Random();
 
-    private int W, ChartLineWidth, H;
+    private int W, H;
 
     private boolean drawing = false;
     private float xStart = 50.0f;
@@ -57,8 +57,9 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
     private float realW = 1.0f;
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
-    private IChartTheme mTheme = new DarkTheme();
+    private IChartTheme mTheme;
     private boolean mShowVerticalLines = false;
+    private String themeName;
 
     public ChartCanvasView(Context context) {
         super(context);
@@ -119,11 +120,12 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
     @Override
     protected void onDraw(final Canvas canvas) {
         canvas.save();
-        canvas.scale(mScaleFactor, mScaleFactor);
+
+        //Log.d(TAG, "onDraw, theme: " + mTheme.getClass().getSimpleName());
+        Log.d(TAG, "onDraw " + this + ", theme: " + mTheme + " / " + themeName);
 
         W = canvas.getWidth();
         H = canvas.getHeight();
-        ChartLineWidth = canvas.getWidth() * 25 / 40;//место, где заканчивается график
 
         PrepareCanvas(canvas);
 
@@ -491,11 +493,9 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
 
     public void setTheme(IChartTheme theme) {
         mTheme = theme;
-        updateTheme();
-    }
+        themeName = mTheme.getClass().getSimpleName() + ":" + r.nextDouble();
 
-    private void updateTheme() {
-        invalidate();
+        Log.d(TAG, "setTheme: " + mTheme + " / " + mTheme.getClass().getSimpleName() + " => " + themeName);
     }
 
     @Override

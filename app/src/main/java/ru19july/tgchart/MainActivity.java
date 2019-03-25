@@ -21,11 +21,13 @@ import ru19july.tgchart.view.BaskChartView;
 import ru19july.tgchart.view.IOnThemeChange;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
+import ru19july.tgchart.view.theme.LightTheme;
 
 public class MainActivity extends ListActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private boolean nightTheme = true;
-    private List<ChartData> charts;
+    private List<ChartData> chartsData = new ArrayList<>();
+    private List<BaskChartView> baskChartViews = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,21 +42,25 @@ public class MainActivity extends ListActivity {
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
-        charts = new ArrayList<>();
-        charts.addAll(readJson(json));
+        chartsData = new ArrayList<>();
+        chartsData.addAll(readJson(json));
 
-        for (int i = 0; i < charts.size(); i++) {
-            BaskChartView baskChartView = new BaskChartView(this);
-            baskChartView.setData(charts.get(i));
+        for (int i = 0; i < chartsData.size(); i++) {
+            final BaskChartView baskChartView = new BaskChartView(this);
+            baskChartView.setData(chartsData.get(i));
             baskChartView.setOnThemeChange(new IOnThemeChange() {
                 @Override
                 public void OnThemeChange(IChartTheme theme) {
-
+                    Log.d(TAG, "OnThemeChange-1: " + theme);
+                    //baskChartView.setChartTheme(theme);
                 }
             });
+
+            baskChartViews.add(baskChartView);
         }
 
-        ChartsAdapter adapter = new ChartsAdapter(this, charts);
+        //ChartsAdapter adapter = new ChartsAdapter(this, chartsData);
+        ChartsAdapter adapter = new ChartsAdapter(this, baskChartViews);
         setListAdapter(adapter);
     }
 
@@ -160,7 +166,22 @@ public class MainActivity extends ListActivity {
 
     private void toggleTheme() {
         nightTheme = !nightTheme;
-        Log.d(TAG, "toggleTheme: " + nightTheme + " => " + charts.size());
+        Log.d(TAG, "toggleTheme: " + nightTheme + " => " + chartsData.size());
+
+        IChartTheme theme = nightTheme ? new DarkTheme() : new LightTheme();
+
+        for(int i=0; i<baskChartViews.size(); i++) {
+            Log.d(TAG, "toggleTheme, baskChartViews[" + i + "]: " + theme.getClass().getSimpleName());
+            baskChartViews.get(i).setChartTheme(theme);
+            final int finalI = i;
+            baskChartViews.get(i).setOnThemeChange(new IOnThemeChange() {
+                @Override
+                public void OnThemeChange(IChartTheme thm) {
+                    Log.d(TAG, "OnThemeChange-2: " + thm);
+                    //baskChartViews.get(finalI).setChartTheme(thm);
+                }
+            });
+        }
 
     }
 }

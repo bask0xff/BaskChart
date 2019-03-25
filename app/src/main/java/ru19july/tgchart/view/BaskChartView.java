@@ -25,6 +25,7 @@ import ru19july.tgchart.view.theme.LightTheme;
 public class BaskChartView extends LinearLayout {
 
     private final Context mContext;
+    private TextView title;
     private IChartTheme mTheme;
 
     private ChartCanvasView chartView;
@@ -51,6 +52,7 @@ public class BaskChartView extends LinearLayout {
                 String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
                 int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
+                Log.d(TAG, "BaskChartView: themeId=" + themeId);
                 switch (themeId) {
                     case 0:
                         mTheme = new LightTheme();
@@ -60,13 +62,18 @@ public class BaskChartView extends LinearLayout {
 
                 setChartTheme(mTheme);
 
-                TextView title = (TextView) getChildAt(0);
-                title.setText(titleText);
+                title = (TextView) getChildAt(0);
+                setTitle(titleText);
             } finally {
                 a.recycle();
             }
         }
 
+    }
+
+    private void setTitle(String text) {
+        if (title != null)
+            title.setText(text);
     }
 
     private void init(Context context) {
@@ -158,11 +165,18 @@ public class BaskChartView extends LinearLayout {
     }
 
     public void setChartTheme(IChartTheme theme) {
-        Log.d(TAG, "setTheme: " + theme.getClass().getCanonicalName());
+        Log.d(TAG, "setTheme: " + theme.getClass().getSimpleName());
         mTheme = theme;
         updateTheme();
+        setTitle(theme.getClass().getSimpleName());
         chartView.setTheme(mTheme);
         chartSliderView.setTheme(mTheme);
+
+        if(mOnThemeChange != null)
+            mOnThemeChange.OnThemeChange(theme);
+        else
+            Log.e(TAG, "setChartTheme: mOnThemeChange is null" );
+
         invalidate();
     }
 
@@ -177,6 +191,10 @@ public class BaskChartView extends LinearLayout {
     public void update() {
         chartSliderView.invalidate();
         chartView.invalidate();
+    }
+
+    public ChartData getData() {
+        return mChartData;
     }
 }
 

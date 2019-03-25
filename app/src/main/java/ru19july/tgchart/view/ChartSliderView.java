@@ -35,7 +35,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     private float xStartSaved = 0.0f;
     private float xEndSaved = 0.f;
     private ChartData chartData;
-    private IChartTheme mTheme = new DarkTheme();
+    private IChartTheme mTheme;
 
     public ChartSliderView(Context context) {
         super(context);

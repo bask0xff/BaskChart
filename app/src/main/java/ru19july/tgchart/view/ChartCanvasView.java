@@ -35,7 +35,7 @@ import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 
-public class ChartCanvasView extends View implements View.OnTouchListener {
+public class ChartCanvasView extends View implements IChartView, View.OnTouchListener {
 
     private final String TAG = ChartCanvasView.class.getSimpleName();
 
@@ -546,5 +546,7 @@ public class ChartCanvasView extends View implements View.OnTouchListener {
         });
         va.start();
     }
+
+
 }
 

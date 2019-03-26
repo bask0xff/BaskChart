@@ -28,7 +28,7 @@ public class BaskChartView extends LinearLayout {
     private TextView title;
     private IChartTheme mTheme;
 
-    private ChartCanvasView chartView;
+    private IChartView chartView;
     private ChartSliderView chartSliderView;
     private String TAG = BaskChartView.class.getSimpleName();
     private ChartData mChartData;

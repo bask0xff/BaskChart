@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.opengl.ChartGLView;
 import ru19july.tgchart.view.opengl.ChartGLRenderer;
 import ru19july.tgchart.view.theme.DarkTheme;

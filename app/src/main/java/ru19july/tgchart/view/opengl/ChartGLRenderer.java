@@ -40,10 +40,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        gl.glTranslatef(0.0f, 0.0f, -3.0f);
-        gl.glRotatef(mAngleX, 1, 0, 0);
-        gl.glRotatef(mAngleY, 0, 1, 0);
-        gl.glRotatef(mAngleZ, 0, 0, 1);
+        gl.glTranslatef(0.0f, 0.0f, -1.00001f);
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 
@@ -144,6 +141,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
                 0.4f, 0.3f + -ticks*0.015f, 0.0f,
                 0.6f, 0.2f + ticks*0.011f, 0.0f,
                 0.8f, 0.7f + -ticks*0.007f, 0.0f,
+                1.0f, 0.8f + ticks*0.017f, 0.0f,
         };
         float vertexlist0[] = {
                 -1.0f, 0.0f, -1.0f,
@@ -164,7 +162,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         };
 
         short trigborderindexlist[] = {
-                0, 1, 1, 2, 2, 3
+                0, 1, 1, 2, 2, 3, 3, 4, 4, 5
         };
 
         mNumOfTriangleBorderIndices = trigborderindexlist.length;

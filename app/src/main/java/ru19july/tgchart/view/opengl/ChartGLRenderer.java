@@ -32,7 +32,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
     private int ticks = 0;
 
-    private float startX = -1f;
+    private float startX = -0f;
 
 
     public ChartGLRenderer(Context context) {
@@ -49,7 +49,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 
         // Set line color to green
-        gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+        gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f - ticks * 0.1f);
 
         // Draw all lines
         gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
@@ -188,6 +188,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
     public void slideFrame(int xStart, int xEnd) {
         Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
-        startX = (xStart - 500f) / 500f;
+        startX = (500f - xStart) / 500f;
     }
 }

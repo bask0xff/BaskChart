@@ -64,7 +64,6 @@ public class MainActivity extends ListActivity {
 
         }
 
-        //ChartsAdapter adapter = new ChartsAdapter(this, chartsData);
         adapter = new ChartsAdapter(this, baskChartViews);
         setListAdapter(adapter);
 

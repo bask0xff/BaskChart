@@ -3,7 +3,6 @@ package ru19july.tgchart;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,14 +16,10 @@ import java.util.List;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
 import ru19july.tgchart.view.BaskChartView;
-import ru19july.tgchart.view.opengl.ChartGLRenderer;
-import ru19july.tgchart.view.opengl.ChartGLView;
 
-public class TutorialOnOpenGL extends Activity {
+public class ChartGLActivity extends Activity {
 
-    private static final String TAG = TutorialOnOpenGL.class.getSimpleName();
-    private ChartGLView mView;
-    private ChartGLRenderer mRenderer;
+    private static final String TAG = ChartGLActivity.class.getSimpleName();
     private List<ChartData> chartsData;
     private BaskChartView baskChartView;
 
@@ -39,17 +34,9 @@ public class TutorialOnOpenGL extends Activity {
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
 
-        mView = findViewById(R.id.gl_surface_view);
-        mRenderer = new ChartGLRenderer(this);
-        mView.setRenderer(mRenderer);
-
         baskChartView = findViewById(R.id.baskChartView);
         baskChartView.setData(chartsData.get(0));
 
-    }
-
-    public boolean onTouchEvent(MotionEvent event) {
-        return mRenderer.onTouchEvent(event);
     }
 
     private List<ChartData> readJson(String json) {

@@ -6,12 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <ru19july.tgchart.view.opengl.ChartGLView
-        android:id="@+id/gl_surface_view"
-        android:layout_width="match_parent"
-        android:layout_height="300dp" />
-
     <ru19july.tgchart.view.BaskChartView
         android:id="@+id/baskChartView"
         android:paddingTop="20dp"

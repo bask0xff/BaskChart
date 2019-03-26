@@ -11,6 +11,7 @@ import java.util.List;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.view.BaskChartView;
 import ru19july.tgchart.view.theme.DarkTheme;
+import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private List<BaskChartView> baskChartViews;
@@ -22,6 +23,10 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
         super(context,  R.layout.chart_item, baskChartViews);
         this.context = context;
         charts = baskChartViews;
+    }
+
+    public void remove(int position) {
+        charts.remove(position);
     }
 
     static class ViewHolder {
@@ -56,4 +61,6 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
 
         return rowView;
     }
+
+
 }

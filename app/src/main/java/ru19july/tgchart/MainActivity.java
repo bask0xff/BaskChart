@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,7 @@ public class MainActivity extends ListActivity {
     private boolean nightTheme = true;
     private List<ChartData> chartsData = new ArrayList<>();
     private List<BaskChartView> baskChartViews = new ArrayList<>();
+    private ChartsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +55,21 @@ public class MainActivity extends ListActivity {
                 public void OnThemeChange(IChartTheme theme) {
                     Log.d(TAG, "OnThemeChange-1: " + theme);
                     //baskChartView.setChartTheme(theme);
+
+                    adapter.notifyDataSetChanged();
                 }
             });
 
             baskChartViews.add(baskChartView);
+
         }
 
         //ChartsAdapter adapter = new ChartsAdapter(this, chartsData);
-        ChartsAdapter adapter = new ChartsAdapter(this, baskChartViews);
+        adapter = new ChartsAdapter(this, baskChartViews);
         setListAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+
     }
 
     private List<ChartData> readJson(String json) {
@@ -172,16 +180,16 @@ public class MainActivity extends ListActivity {
 
         for(int i=0; i<1/* baskChartViews.size()*/; i++) {
             Log.d(TAG, "toggleTheme, baskChartViews[" + i + "]: " + theme.getClass().getSimpleName());
-            baskChartViews.get(i).setChartTheme(theme);
-            final int finalI = i;
-            baskChartViews.get(i).setOnThemeChange(new IOnThemeChange() {
-                @Override
-                public void OnThemeChange(IChartTheme thm) {
-                    Log.d(TAG, "OnThemeChange-2: " + thm);
-                    //baskChartViews.get(finalI).setChartTheme(thm);
-                }
-            });
+            updateChart(baskChartViews.get(i), theme, i);
         }
+
+    }
+
+    //https://stackoverflow.com/questions/3724874/how-can-i-update-a-single-row-in-a-listview
+    private void updateChart(BaskChartView baskChartView, IChartTheme theme, int position) {
+
+        //adapter.updateTheme(position, theme);
+        adapter.notifyDataSetChanged();
 
     }
 }

@@ -61,6 +61,7 @@ class MyRenderer implements GLSurfaceView.Renderer {
     private final int VertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
     float color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    private int ticks = 0;
 
 
     public MyRenderer(Context context) {
@@ -112,10 +113,14 @@ class MyRenderer implements GLSurfaceView.Renderer {
 
 
 
-
         // Draw all lines
         gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
                 GL10.GL_UNSIGNED_SHORT, mTriangleBorderIndicesBuffer);
+
+        setAllBuffers();
+
+        //ticks++;
+
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -197,11 +202,11 @@ class MyRenderer implements GLSurfaceView.Renderer {
     private void setAllBuffers(){
         // Set vertex buffer
         float vertexlist[] = {
-                0.0f, 0.0f, 0.0f,
-                0.2f, 0.0f, 0.0f,
-                0.4f, 0.3f, 0.0f,
-                0.6f, 0.2f, 0.0f,
-                0.8f, 0.7f, 0.0f,
+                0.0f, 0.0f + ticks*0.0085f, 0.0f,
+                0.2f, 0.0f + ticks*0.02f, 0.0f,
+                0.4f, 0.3f + -ticks*0.015f, 0.0f,
+                0.6f, 0.2f + ticks*0.011f, 0.0f,
+                0.8f, 0.7f + -ticks*0.007f, 0.0f,
         };
         float vertexlist0[] = {
                 -1.0f, 0.0f, -1.0f,
@@ -248,6 +253,7 @@ class MyRenderer implements GLSurfaceView.Renderer {
             case MotionEvent.ACTION_MOVE:
                 float dx = x - mPreviousX;
                 float dy = y - mPreviousY;
+                ticks = (int) (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR));
  //               mAngleY = (mAngleY + (int)(dx * TOUCH_SCALE_FACTOR) + 360) % 360;
  //               mAngleX = (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR) + 360) % 360;
                 break;

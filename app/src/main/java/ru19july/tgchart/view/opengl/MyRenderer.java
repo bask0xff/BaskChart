@@ -49,9 +49,29 @@ class MyRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        /*gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
         gl.glEnable(GL10.GL_DEPTH_TEST);
+
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+*/
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
+
+        //gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
+        gl.glShadeModel(GL10.GL_FLAT);
+        gl.glDisable(GL10.GL_DEPTH_TEST);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        /*
+         * By default, OpenGL enables features that improve quality but reduce
+         * performance. One might want to tweak that especially on software
+         * renderer.
+         */
+        gl.glDisable(GL10.GL_DITHER);
+        gl.glDisable(GL10.GL_LIGHTING);
+
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+        //gl.glEnable(GL10.GL_DEPTH_TEST);
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 

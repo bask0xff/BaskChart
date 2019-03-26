@@ -11,4 +11,5 @@
     <string name="february">February</string>
     <string name="april">April</string>
     <string name="june">June</string>
+    <string name="title_activity_open_gltest">OpenGLTestActivity</string>
 </resources>

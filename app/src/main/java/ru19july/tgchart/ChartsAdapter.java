@@ -8,10 +8,7 @@ import android.widget.ArrayAdapter;
 
 import java.util.List;
 
-import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.view.BaskChartView;
-import ru19july.tgchart.view.theme.DarkTheme;
-import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private List<BaskChartView> baskChartViews;

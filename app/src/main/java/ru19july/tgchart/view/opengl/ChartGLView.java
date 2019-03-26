@@ -3,7 +3,6 @@ package ru19july.tgchart.view.opengl;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -12,7 +11,7 @@ import ru19july.tgchart.view.IChartView;
 import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTouchListener  {
-    private MyRenderer mRenderer;
+    private ChartGLRenderer mRenderer;
 
     public ChartGLView(Context context) {
         super(context);
@@ -54,7 +53,7 @@ public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTou
     }
 
     @Override
-    public void setRenderer(MyRenderer renderer) {
+    public void setRenderer(ChartGLRenderer renderer) {
         super.setRenderer(renderer);
         mRenderer = renderer;
     }

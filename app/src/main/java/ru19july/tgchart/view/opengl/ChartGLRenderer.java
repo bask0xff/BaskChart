@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static javax.microedition.khronos.opengles.GL10.*;
 
-public class MyRenderer implements GLSurfaceView.Renderer {
+public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private Context mContext;
     private FloatBuffer mVertexBuffer = null;
     private ShortBuffer mTriangleBorderIndicesBuffer = null;
@@ -31,7 +31,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private int ticks = 0;
 
 
-    public MyRenderer(Context context) {
+    public ChartGLRenderer(Context context) {
         mContext = context;
     }
 

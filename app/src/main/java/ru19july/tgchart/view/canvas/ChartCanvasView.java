@@ -1,4 +1,4 @@
-package ru19july.tgchart.view;
+package ru19july.tgchart.view.canvas;
 
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -32,8 +32,8 @@ import ru19july.tgchart.data.Series;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
-import ru19july.tgchart.view.opengl.MyRenderer;
-import ru19july.tgchart.view.theme.DarkTheme;
+import ru19july.tgchart.view.IChartView;
+import ru19july.tgchart.view.opengl.ChartGLRenderer;
 import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartCanvasView extends View implements IChartView, View.OnTouchListener {
@@ -500,7 +500,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     }
 
     @Override
-    public void setRenderer(MyRenderer mRenderer) {
+    public void setRenderer(ChartGLRenderer mRenderer) {
 
     }
 

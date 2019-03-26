@@ -3,6 +3,7 @@ package ru19july.tgchart.view.opengl;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.nio.ByteBuffer;
@@ -16,6 +17,7 @@ import javax.microedition.khronos.opengles.GL10;
 import static javax.microedition.khronos.opengles.GL10.*;
 
 public class ChartGLRenderer implements GLSurfaceView.Renderer {
+    private static final String TAG = ChartGLRenderer.class.getSimpleName();
     private Context mContext;
     private FloatBuffer mVertexBuffer = null;
     private ShortBuffer mTriangleBorderIndicesBuffer = null;
@@ -29,6 +31,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private final float TOUCH_SCALE_FACTOR = 0.6f;
 
     private int ticks = 0;
+
+    private float startX = -1f;
 
 
     public ChartGLRenderer(Context context) {
@@ -136,34 +140,25 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private void setAllBuffers(){
         // Set vertex buffer
         float vertexlist[] = {
-                0.0f, 0.0f + ticks*0.0085f, 0.0f,
-                0.2f, 0.0f + ticks*0.02f, 0.0f,
-                0.4f, 0.3f + -ticks*0.015f, 0.0f,
-                0.6f, 0.2f + ticks*0.011f, 0.0f,
-                0.8f, 0.7f + -ticks*0.007f, 0.0f,
-                1.0f, 0.8f + ticks*0.017f, 0.0f,
+                startX + 0.0f, 0.0f + ticks*0.0085f, 0.0f,
+                startX + 0.2f, 0.0f + ticks*0.02f, 0.0f,
+                startX + 0.4f, 0.3f + -ticks*0.015f, 0.0f,
+                startX + 0.6f, 0.2f + ticks*0.011f, 0.0f,
+                startX + 0.8f, 0.7f + -ticks*0.007f, 0.0f,
+                startX + 1.0f, 0.8f + ticks*0.017f, 0.0f,
         };
-        float vertexlist0[] = {
-                -1.0f, 0.0f, -1.0f,
-                1.0f, 0.0f, -1.0f,
-                -1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                0.0f, 2.0f, 0.0f,
-        };
+
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertexlist.length * 4);
         vbb.order(ByteOrder.nativeOrder());
         mVertexBuffer = vbb.asFloatBuffer();
         mVertexBuffer.put(vertexlist);
         mVertexBuffer.position(0);
 
-        // Set triangle border buffer with vertex indices
-        short trigborderindexlist0[] = {
-                4, 0,  4, 1,  4, 2,  4, 3,  0, 1,  1, 3,  3, 2,  2, 0,  0, 3
-        };
-
-        short trigborderindexlist[] = {
-                0, 1, 1, 2, 2, 3, 3, 4, 4, 5
-        };
+        short[] trigborderindexlist = new short[vertexlist.length * 2 / 3];
+        for(short i=0; i< trigborderindexlist.length/2-1; i++){
+            trigborderindexlist[i*2] = i;
+            trigborderindexlist[i*2+1] = (short)(i+1);
+        }
 
         mNumOfTriangleBorderIndices = trigborderindexlist.length;
         ByteBuffer tbibb = ByteBuffer.allocateDirect(trigborderindexlist.length * 2);
@@ -189,5 +184,10 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         mPreviousX = x;
         mPreviousY = y;
         return true;
+    }
+
+    public void slideFrame(int xStart, int xEnd) {
+        Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
+        startX = (xStart - 500f) / 500f;
     }
 }

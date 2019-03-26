@@ -34,7 +34,7 @@ public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTou
 
     @Override
     public void updateSlideFrameWindow(int xStart, int xEnd) {
-
+        mRenderer.slideFrame(xStart, xEnd);
     }
 
     @Override

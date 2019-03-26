@@ -1,7 +1,6 @@
 package ru19july.tgchart.view.opengl;
 
 import android.content.Context;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,6 +12,8 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import ru19july.tgchart.data.ChartData;
 
 import static javax.microedition.khronos.opengles.GL10.*;
 
@@ -33,6 +34,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private int ticks = 0;
 
     private float startX = -0f;
+    private ChartData mChartData;
 
 
     public ChartGLRenderer(Context context) {
@@ -55,7 +57,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
                 GL10.GL_UNSIGNED_SHORT, mTriangleBorderIndicesBuffer);
 
-        setAllBuffers();
+        setAllBuffers(mChartData);
 
         //ticks++;
 
@@ -67,7 +69,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         //init3(gl, config);
 
         // Get all the buffers ready
-        setAllBuffers();
+        setAllBuffers(mChartData);
     }
 
     private void init3(GL10 gl, EGLConfig config) {
@@ -137,16 +139,17 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glFrustumf(-aspect, aspect, -1.0f, 1.0f, 1f, 10.0f);
     }
 
-    private void setAllBuffers(){
-        // Set vertex buffer
-        float vertexlist[] = {
-                startX + 0.0f, 0.0f + ticks*0.0085f, 0.0f,
-                startX + 0.2f, 0.0f + ticks*0.02f, 0.0f,
-                startX + 0.4f, 0.3f + -ticks*0.015f, 0.0f,
-                startX + 0.6f, 0.2f + ticks*0.011f, 0.0f,
-                startX + 0.8f, 0.7f + -ticks*0.007f, 0.0f,
-                startX + 1.0f, 0.8f + ticks*0.017f, 0.0f,
-        };
+    private void setAllBuffers(ChartData chartData){
+        float[] vertexlist = new float[chartData.getSeries().get(0).getValues().size() * 3];
+        float minX =  chartData.getSeries().get(0).getMinValue();
+        float maxX =  chartData.getSeries().get(0).getMaxValue();
+
+        for(int i=0; i<chartData.getSeries().get(1).getValues().size(); i++) {
+            vertexlist[i * 3] = startX + ((chartData.getSeries().get(0).getValues().get(i) - minX) / (maxX - minX)) * 5.0f - 2.5f;
+            vertexlist[i * 3 + 1] = ((chartData.getSeries().get(1).getValues().get(i))) / 300.0f;
+            vertexlist[i * 3 + 2] = 0.0f;
+        }
+
 
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertexlist.length * 4);
         vbb.order(ByteOrder.nativeOrder());
@@ -189,5 +192,9 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     public void slideFrame(int xStart, int xEnd) {
         Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
         startX = (500f - xStart) / 500f;
+    }
+
+    public void setData(ChartData chartData) {
+        mChartData = chartData;
     }
 }

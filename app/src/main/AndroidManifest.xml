@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity
-            android:name=".ChartGLActivity"
+            android:name=".TestChartsActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
 

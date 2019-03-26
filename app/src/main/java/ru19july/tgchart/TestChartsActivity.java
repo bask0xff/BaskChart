@@ -3,7 +3,6 @@ package ru19july.tgchart;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,9 +17,9 @@ import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
 import ru19july.tgchart.view.BaskChartView;
 
-public class ChartGLActivity extends Activity {
+public class TestChartsActivity extends Activity {
 
-    private static final String TAG = ChartGLActivity.class.getSimpleName();
+    private static final String TAG = TestChartsActivity.class.getSimpleName();
     private List<ChartData> chartsData;
     private BaskChartView baskChartView;
     private BaskChartView baskChartView2;

@@ -29,7 +29,7 @@ public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTou
 
     @Override
     public void setData(ChartData mChartData) {
-
+        mRenderer.setData(mChartData);
     }
 
     @Override

@@ -7,6 +7,7 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 /**
+ * https://github.com/costimuraru/Simple-Android-OpenGL-2D-Rendering/blob/master/SpriteTest/src/com/android/spritemethodtest/Grid.java
  * A 2D rectangular mesh. Can be drawn textured or untextured.
  * This version is modified from the original Grid.java (found in
  * the SpriteText package in the APIDemos Android sample) to support hardware

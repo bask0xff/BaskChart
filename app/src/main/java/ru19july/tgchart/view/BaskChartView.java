@@ -87,7 +87,9 @@ public class BaskChartView extends LinearLayout {
 
         linearlayout = (LinearLayout) getChildAt(0);
 
-        chartView = (ChartCanvasView) linearlayout.getChildAt(1);
+        //chartView = (ChartCanvasView) linearlayout.getChildAt(1);
+        chartView = new ChartCanvasView(context);
+        linearlayout.addView((ChartCanvasView)chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         chartSliderView = (ChartSliderView) linearlayout.getChildAt(2);
         chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {

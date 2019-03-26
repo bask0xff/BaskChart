@@ -17,7 +17,7 @@ import ru19july.tgchart.view.opengl.sprite.SimpleGLRenderer;
 
 import static javax.microedition.khronos.opengles.GL10.*;
 
-class MyRenderer implements GLSurfaceView.Renderer {
+public class MyRenderer implements GLSurfaceView.Renderer {
     private Context mContext;
     private FloatBuffer mVertexBuffer = null;
     private ShortBuffer mTriangleBorderIndicesBuffer = null;

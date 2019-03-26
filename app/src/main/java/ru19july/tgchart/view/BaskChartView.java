@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.view.opengl.ChartGLView;
+import ru19july.tgchart.view.opengl.MyRenderer;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 import ru19july.tgchart.view.theme.LightTheme;
@@ -89,13 +91,15 @@ public class BaskChartView extends LinearLayout {
 
         //dynamically add canvas/OpenGL chart
         if(true) {
-            chartView = new ChartCanvasView(context);
-            linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            chartView = new ChartGLView(context);
+            MyRenderer mRenderer = new MyRenderer(context);
+            chartView.setRenderer(mRenderer);
+            linearlayout.addView((ChartGLView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 500));
         }
         else
         {
             chartView = new ChartCanvasView(context);
-            linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
         }
 
 

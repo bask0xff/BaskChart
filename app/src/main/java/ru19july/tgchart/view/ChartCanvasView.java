@@ -32,6 +32,7 @@ import ru19july.tgchart.data.Series;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
+import ru19july.tgchart.view.opengl.MyRenderer;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.IChartTheme;
 
@@ -496,6 +497,11 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         themeName = mTheme.getClass().getSimpleName() + ":" + r.nextDouble();
 
         Log.d(TAG, "setTheme: " + mTheme + " / " + mTheme.getClass().getSimpleName() + " => " + themeName);
+    }
+
+    @Override
+    public void setRenderer(MyRenderer mRenderer) {
+
     }
 
     @Override

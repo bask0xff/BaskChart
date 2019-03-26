@@ -87,7 +87,7 @@ public class BaskChartView extends LinearLayout {
 
         linearlayout = (LinearLayout) getChildAt(0);
 
-        //chartView = (ChartCanvasView) linearlayout.getChildAt(1);
+        //dynamically add canvas/OpenGL chart
         chartView = new ChartCanvasView(context);
         linearlayout.addView((ChartCanvasView)chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 

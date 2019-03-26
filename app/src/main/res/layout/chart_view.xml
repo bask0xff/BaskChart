@@ -21,14 +21,7 @@
             android:textSize="20sp"
             />
 
-        <!--ru19july.tgchart.view.ChartCanvasView
-            android:id="@+id/chartView1"
-            android:layout_width="wrap_content"
-            android:layout_height="500dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:visibility="visible"
-            /-->
+        <!-- place for canvas/OpenGL chart dynamically added here -->
 
         <ru19july.tgchart.view.ChartSliderView
             android:id="@+id/chartViewSlider"

@@ -93,8 +93,6 @@ public class BaskChartView extends LinearLayout {
                 chartView.updateSlideFrameWindow(xStart, xEnd);
             }
         });
-
-
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

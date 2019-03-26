@@ -1,7 +1,5 @@
 package ru19july.tgchart.view;
 
-import android.view.View;
-
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.view.theme.IChartTheme;
 

@@ -11,6 +11,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
 
@@ -20,7 +21,7 @@ import android.util.Log;
  * frame.  It also manages loading of textures and (when VBOs are used) the
  * allocation of vertex buffer objects.
  */
-public class SimpleGLRenderer implements GLSurfaceView.Renderer {
+public class SimpleGLRenderer implements MyGLSurfaceView.Renderer {
     // Specifies the format our textures should be converted to upon load.
     private static BitmapFactory.Options sBitmapOptions
             = new BitmapFactory.Options();
@@ -47,6 +48,18 @@ public class SimpleGLRenderer implements GLSurfaceView.Renderer {
         sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
 
         mContext = context;
+    }
+
+    public static int loadShader(int type, String shaderCode) {
+        // create a vertex shader type
+        //(GLES20.GL_VERTEX_SHADER)
+        // or a fragment shader type
+        //(GLES20.GL_FRAGMENT_SHADER)
+        int shader = GLES20.glCreateShader(type);
+        // add the source code to the shader and compile it
+        GLES20.glShaderSource(shader, shaderCode);
+        GLES20.glCompileShader(shader);
+        return shader;
     }
 
     public int[] getConfigSpec() {

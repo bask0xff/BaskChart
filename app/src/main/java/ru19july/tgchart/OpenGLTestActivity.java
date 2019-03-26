@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 
 import ru19july.tgchart.view.opengl.GLSprite;
-import ru19july.tgchart.view.opengl.GLSurfaceView;
+import ru19july.tgchart.view.opengl.MyGLSurfaceView;
 import ru19july.tgchart.view.opengl.Grid;
 import ru19july.tgchart.view.opengl.Mover;
 import ru19july.tgchart.view.opengl.ProfileRecorder;
@@ -23,7 +23,7 @@ public class OpenGLTestActivity extends Activity {
     private final static int BACKGROUND_WIDTH = 1024;
     private final static int BACKGROUND_HEIGHT = 512;
 
-    private GLSurfaceView mGLSurfaceView;
+    private MyGLSurfaceView mMyGLSurfaceView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,12 @@ public class OpenGLTestActivity extends Activity {
         if(surfaceViewIsLayout)
         {
             setContentView(R.layout.content_open_gltest);
-            mGLSurfaceView = (GLSurfaceView) findViewById(R.id.glSurfaceView);
+            mMyGLSurfaceView = (MyGLSurfaceView) findViewById(R.id.glSurfaceView);
         }
         else
         {
             //setContentView(R.layout.activity_gl_test);
-            mGLSurfaceView = new GLSurfaceView(this);
+            mMyGLSurfaceView = new MyGLSurfaceView(this);
         }
 
 
@@ -134,17 +134,17 @@ public class OpenGLTestActivity extends Activity {
         spriteRenderer.setSprites(spriteArray);
         spriteRenderer.setVertMode(useVerts, useHardwareBuffers);
 
-        mGLSurfaceView.setRenderer(spriteRenderer);
+        mMyGLSurfaceView.setRenderer(spriteRenderer);
 
         if (animate) {
             Mover simulationRuntime = new Mover();
             simulationRuntime.setRenderables(renderableArray);
 
             simulationRuntime.setViewSize(dm.widthPixels, dm.heightPixels);
-            mGLSurfaceView.setEvent(simulationRuntime);
+            mMyGLSurfaceView.setEvent(simulationRuntime);
         }
 
         if(!surfaceViewIsLayout)
-            setContentView(mGLSurfaceView);
+            setContentView(mMyGLSurfaceView);
     }
 }

@@ -26,15 +26,15 @@ import android.view.SurfaceView;
  * The application-specific rendering code is delegated to a GLView.Renderer
  * instance.
  */
-public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+public class MyGLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     private final String TAG = "GLSurfaceView";
 
-    public GLSurfaceView(Context context) {
+    public MyGLSurfaceView(Context context) {
         super(context);
         init();
     }
 
-    public GLSurfaceView(Context context, AttributeSet attrs) {
+    public MyGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }

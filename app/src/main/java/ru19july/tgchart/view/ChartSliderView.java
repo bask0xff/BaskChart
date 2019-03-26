@@ -12,9 +12,8 @@ import android.view.View;
 
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceScale;
-import ru19july.tgchart.view.theme.DarkTheme;
-import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartSliderView extends View implements View.OnTouchListener {
 

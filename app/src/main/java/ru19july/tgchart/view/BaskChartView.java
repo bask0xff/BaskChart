@@ -18,16 +18,18 @@ import android.widget.TextView;
 
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.interfaces.IChartTheme;
+import ru19july.tgchart.interfaces.IChartView;
+import ru19july.tgchart.interfaces.IOnThemeChange;
 import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.opengl.ChartGLView;
 import ru19july.tgchart.view.opengl.ChartGLRenderer;
 import ru19july.tgchart.view.theme.DarkTheme;
-import ru19july.tgchart.view.theme.IChartTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
 public class BaskChartView extends LinearLayout {
 
-    private final Context mContext;
+    private Context mContext;
     private TextView title;
     private IChartTheme mTheme;
 
@@ -37,6 +39,7 @@ public class BaskChartView extends LinearLayout {
     private ChartData mChartData;
     private IOnThemeChange mOnThemeChange;
     private LinearLayout linearlayout;
+    private int mode = 0;
 
     public BaskChartView(Context context) {
         this(context, null);
@@ -46,6 +49,7 @@ public class BaskChartView extends LinearLayout {
     public BaskChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+
         init(context);
 
         if (attrs != null) {
@@ -55,6 +59,9 @@ public class BaskChartView extends LinearLayout {
             try {
                 String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
+
+                mode = a.getInteger(R.styleable.BaskChartView_renderType, 0);
+
                 int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
                 Log.d(TAG, "BaskChartView: themeId=" + themeId);
                 switch (themeId) {
@@ -64,14 +71,14 @@ public class BaskChartView extends LinearLayout {
                         mTheme = new DarkTheme();
                 }
 
-                setChartTheme(mTheme);
-
-                title = (TextView) linearlayout.getChildAt(0);
-                setTitle(titleText);
+//                title = (TextView) linearlayout.getChildAt(0);
+//                setTitle(titleText);
             } finally {
                 a.recycle();
             }
         }
+
+        setChartTheme(mTheme);
 
     }
 
@@ -84,6 +91,8 @@ public class BaskChartView extends LinearLayout {
         setOrientation(LinearLayout.VERTICAL);
         setGravity(Gravity.TOP);
 
+        mContext = context;
+
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.chart_view, this, true);
@@ -91,7 +100,7 @@ public class BaskChartView extends LinearLayout {
         linearlayout = (LinearLayout) getChildAt(0);
 
         //dynamically add canvas/OpenGL chart
-        if(true) {
+        if(mode == 0) {
             chartView = new ChartGLView(context);
             ChartGLRenderer mRenderer = new ChartGLRenderer(context);
             chartView.setRenderer(mRenderer);
@@ -102,7 +111,6 @@ public class BaskChartView extends LinearLayout {
             chartView = new ChartCanvasView(context);
             linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
         }
-
 
         chartSliderView = (ChartSliderView) linearlayout.getChildAt(2);
         chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {
@@ -211,6 +219,25 @@ public class BaskChartView extends LinearLayout {
 
     public ChartData getData() {
         return mChartData;
+    }
+
+    public void setMode(int i) {
+        mode = i;
+        //init(mContext);
+
+        if(mode == 0) {
+            chartView = new ChartGLView(mContext);
+            ChartGLRenderer mRenderer = new ChartGLRenderer(mContext);
+            chartView.setRenderer(mRenderer);
+            //linearlayout.addView((ChartGLView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 500));
+        }
+        else
+        {
+            chartView = new ChartCanvasView(mContext);
+            //linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
+        }
+
+        chartView.invalidate();
     }
 }
 

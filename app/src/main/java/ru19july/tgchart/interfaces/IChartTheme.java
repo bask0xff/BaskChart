@@ -1,4 +1,4 @@
-package ru19july.tgchart.view.theme;
+package ru19july.tgchart.interfaces;
 
 public interface IChartTheme {
     String fontColor();

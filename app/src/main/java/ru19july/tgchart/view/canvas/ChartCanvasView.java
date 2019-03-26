@@ -29,12 +29,12 @@ import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.MinMaxIndex;
 import ru19july.tgchart.data.Series;
+import ru19july.tgchart.interfaces.IChartTheme;
+import ru19july.tgchart.interfaces.IChartView;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
-import ru19july.tgchart.view.IChartView;
 import ru19july.tgchart.view.opengl.ChartGLRenderer;
-import ru19july.tgchart.view.theme.IChartTheme;
 
 public class ChartCanvasView extends View implements IChartView, View.OnTouchListener {
 
@@ -64,22 +64,16 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     public ChartCanvasView(Context context) {
         super(context);
-        Log.d(TAG, "ChartView(Context context)");
-
         initView(context, null);
     }
 
     public ChartCanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
-
         initView(context, attrs);
     }
 
     public ChartCanvasView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
-
         initView(context, attrs);
     }
 

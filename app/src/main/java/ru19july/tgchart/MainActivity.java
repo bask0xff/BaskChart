@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,10 +17,10 @@ import java.util.List;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
+import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.view.BaskChartView;
-import ru19july.tgchart.view.IOnThemeChange;
+import ru19july.tgchart.interfaces.IOnThemeChange;
 import ru19july.tgchart.view.theme.DarkTheme;
-import ru19july.tgchart.view.theme.IChartTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
 public class MainActivity extends ListActivity {

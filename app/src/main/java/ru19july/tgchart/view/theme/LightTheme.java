@@ -1,5 +1,7 @@
 package ru19july.tgchart.view.theme;
 
+import ru19july.tgchart.interfaces.IChartTheme;
+
 public class LightTheme implements IChartTheme {
     @Override
     public String fontColor() { return "#96A2AA"; }

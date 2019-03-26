@@ -7,8 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import ru19july.tgchart.data.ChartData;
-import ru19july.tgchart.view.IChartView;
-import ru19july.tgchart.view.theme.IChartTheme;
+import ru19july.tgchart.interfaces.IChartTheme;
+import ru19july.tgchart.interfaces.IChartView;
 
 public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTouchListener  {
     private ChartGLRenderer mRenderer;

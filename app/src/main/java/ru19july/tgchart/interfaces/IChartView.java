@@ -1,8 +1,7 @@
-package ru19july.tgchart.view;
+package ru19july.tgchart.interfaces;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.view.opengl.ChartGLRenderer;
-import ru19july.tgchart.view.theme.IChartTheme;
 
 public interface IChartView {
     void setData(ChartData mChartData);

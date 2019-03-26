@@ -3,6 +3,7 @@ package ru19july.tgchart;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +23,7 @@ public class ChartGLActivity extends Activity {
     private static final String TAG = ChartGLActivity.class.getSimpleName();
     private List<ChartData> chartsData;
     private BaskChartView baskChartView;
+    private BaskChartView baskChartView2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,9 +36,13 @@ public class ChartGLActivity extends Activity {
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
 
-        baskChartView = findViewById(R.id.baskChartView);
+        baskChartView = findViewById(R.id.baskChartView1);
+        //baskChartView.setMode(0);
         baskChartView.setData(chartsData.get(0));
 
+        baskChartView2 = findViewById(R.id.baskChartView2);
+        //baskChartView2.setMode(1);
+        baskChartView2.setData(chartsData.get(1));
     }
 
     private List<ChartData> readJson(String json) {

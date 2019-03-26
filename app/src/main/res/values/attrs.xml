@@ -10,6 +10,10 @@
 
     <declare-styleable name="BaskChartView">
         <attr name="titleText" format="string" />
+        <attr name="renderType" format="enum">
+            <enum name="opengl" value="0"/>
+            <enum name="canvas" value="1"/>
+        </attr>
         <attr name="themeType" format="enum">
             <enum name="dark" value="0"/>
             <enum name="light" value="1"/>

@@ -88,8 +88,16 @@ public class BaskChartView extends LinearLayout {
         linearlayout = (LinearLayout) getChildAt(0);
 
         //dynamically add canvas/OpenGL chart
-        chartView = new ChartCanvasView(context);
-        linearlayout.addView((ChartCanvasView)chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        if(true) {
+            chartView = new ChartCanvasView(context);
+            linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+        else
+        {
+            chartView = new ChartCanvasView(context);
+            linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+
 
         chartSliderView = (ChartSliderView) linearlayout.getChildAt(2);
         chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {

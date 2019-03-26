@@ -26,7 +26,7 @@ import ru19july.tgchart.view.BaskChartView;
 public class TutorialOnOpenGL extends Activity {
 
     private static final String TAG = TutorialOnOpenGL.class.getSimpleName();
-    private GLSurfaceView mView;
+    private ChartGLView mView;
     private MyRenderer mRenderer;
     private List<ChartData> chartsData;
     private BaskChartView baskChartView;
@@ -42,18 +42,14 @@ public class TutorialOnOpenGL extends Activity {
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
 
-
         //mView = new GLSurfaceView(this);
         mView = findViewById(R.id.gl_surface_view);
         mRenderer = new MyRenderer(this);
         mView.setRenderer(mRenderer);
 
         baskChartView = findViewById(R.id.baskChartView);
-
         baskChartView.setData(chartsData.get(0));
 
-        //layout.addView(mView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 300));
-        //setContentView(mView);
     }
 
     public boolean onTouchEvent(MotionEvent event) {

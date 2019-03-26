@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
 
-    <android.opengl.GLSurfaceView
+    <ru19july.tgchart.view.opengl.ChartGLView
         android:id="@+id/gl_surface_view"
         android:layout_width="match_parent"
         android:layout_height="300dp" />

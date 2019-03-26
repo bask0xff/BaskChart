@@ -22,7 +22,7 @@
 
         </activity>
         <activity
-            android:name=".OpenGLTestActivity"
+            android:name=".view.opengl.sprite.OpenGLTestActivity"
             android:label="@string/title_activity_open_gltest"
             android:theme="@style/AppTheme.NoActionBar">
 

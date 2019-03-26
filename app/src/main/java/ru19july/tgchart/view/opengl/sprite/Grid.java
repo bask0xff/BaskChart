@@ -1,4 +1,4 @@
-package ru19july.tgchart.view.opengl;
+package ru19july.tgchart.view.opengl.sprite;
 
 import java.nio.CharBuffer;
 import java.nio.FloatBuffer;

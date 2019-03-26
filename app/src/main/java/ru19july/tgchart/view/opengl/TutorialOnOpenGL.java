@@ -19,13 +19,12 @@ public class TutorialOnOpenGL extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tutorial_opengl_activity);
 
-        LinearLayout layout = findViewById(R.id.layout);
-
-        mView = new GLSurfaceView(this);
+        //mView = new GLSurfaceView(this);
+        mView = findViewById(R.id.gl_surface_view);
         mRenderer = new MyRenderer(this);
         mView.setRenderer(mRenderer);
 
-        layout.addView(mView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //layout.addView(mView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 300));
         //setContentView(mView);
     }
 

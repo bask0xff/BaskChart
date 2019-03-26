@@ -1,4 +1,4 @@
-package ru19july.tgchart.view.opengl;
+package ru19july.tgchart.view.opengl.sprite;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +14,9 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.util.Log;
+
+import ru19july.tgchart.view.opengl.sprite.Grid;
+import ru19july.tgchart.view.opengl.sprite.MyGLSurfaceView;
 
 /**
  * An OpenGL ES renderer based on the GLSurfaceView rendering framework.  This

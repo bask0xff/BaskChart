@@ -13,6 +13,8 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import ru19july.tgchart.view.opengl.sprite.SimpleGLRenderer;
+
 import static javax.microedition.khronos.opengles.GL10.*;
 
 class MyRenderer implements GLSurfaceView.Renderer {

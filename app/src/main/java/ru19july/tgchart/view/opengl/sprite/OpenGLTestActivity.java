@@ -1,17 +1,11 @@
-package ru19july.tgchart;
+package ru19july.tgchart.view.opengl.sprite;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
-import ru19july.tgchart.view.opengl.GLSprite;
-import ru19july.tgchart.view.opengl.MyGLSurfaceView;
-import ru19july.tgchart.view.opengl.Grid;
-import ru19july.tgchart.view.opengl.Mover;
-import ru19july.tgchart.view.opengl.ProfileRecorder;
-import ru19july.tgchart.view.opengl.Renderable;
-import ru19july.tgchart.view.opengl.SimpleGLRenderer;
+import ru19july.tgchart.R;
 
 /**
  * Activity for testing OpenGL ES drawing speed.  This activity sets up sprites

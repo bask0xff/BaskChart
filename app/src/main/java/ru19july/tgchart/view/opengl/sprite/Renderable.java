@@ -1,4 +1,4 @@
-package ru19july.tgchart.view.opengl;
+package ru19july.tgchart.view.opengl.sprite;
 
 /**
  * Base class defining the core set of information necessary to render (and move

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <ru19july.tgchart.view.opengl.MyGLSurfaceView
+        <ru19july.tgchart.view.opengl.sprite.MyGLSurfaceView
             android:id="@+id/glSurfaceView"
             android:layout_marginTop="100dp"
             android:layout_width="match_parent"

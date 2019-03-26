@@ -27,7 +27,7 @@ import android.view.SurfaceView;
  * instance.
  */
 public class MyGLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
-    private final String TAG = "GLSurfaceView";
+    private final String TAG = "MyGLSurfaceView";
 
     public MyGLSurfaceView(Context context) {
         super(context);

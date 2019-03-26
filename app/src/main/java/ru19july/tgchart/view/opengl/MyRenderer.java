@@ -27,40 +27,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private float mPreviousX;
     private float mPreviousY;
     private final float TOUCH_SCALE_FACTOR = 0.6f;
-/*
-    private final String VertexShaderCode =
-            // This matrix member variable provides a hook to manipulate
-            // the coordinates of the objects that use this vertex shader
-            "uniform mat4 uMVPMatrix;" +
 
-                    "attribute vec4 vPosition;" +
-                    "void main() {" +
-                    // the matrix must be included as a modifier of gl_Position
-                    "  gl_Position = uMVPMatrix * vPosition;" +
-                    "}";
-
-    private final String FragmentShaderCode =
-            "precision mediump float;" +
-                    "uniform vec4 vColor;" +
-                    "void main() {" +
-                    "  gl_FragColor = vColor;" +
-                    "}";
-
-    protected int GlProgram;
-    protected int PositionHandle;
-    protected int ColorHandle;
-    protected int MVPMatrixHandle;
-*/
-    static final int COORDS_PER_VERTEX = 3;
-    static float LineCoords[] = {
-            0.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f
-    };
-
-    private final int VertexCount = LineCoords.length / COORDS_PER_VERTEX;
-    private final int VertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
-
-    float color[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     private int ticks = 0;
 
 
@@ -82,36 +49,6 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
         // Set line color to green
         gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-
-/*
-        // Add program to OpenGL ES environment
-        GLES20.glUseProgram(GlProgram);
-
-        // get handle to vertex shader's vPosition member
-        PositionHandle = GLES20.glGetAttribLocation(GlProgram, "vPosition");
-
-        // Enable a handle to the triangle vertices
-        GLES20.glEnableVertexAttribArray(PositionHandle);
-
-        // Prepare the triangle coordinate data
-        //GLES20.glVertexAttribPointer(PositionHandle, COORDS_PER_VERTEX,
-        //        GLES20.GL_FLOAT, false,
-        //        VertexStride, VertexBuffer);
-
-        // get handle to fragment shader's vColor member
-        ColorHandle = GLES20.glGetUniformLocation(GlProgram, "vColor");
-
-        // Set color for drawing the triangle
-        GLES20.glUniform4fv(ColorHandle, 1, color, 0);
-
-        // get handle to shape's transformation matrix
-        MVPMatrixHandle = GLES20.glGetUniformLocation(GlProgram, "uMVPMatrix");
-        //ArRenderer.checkGlError("glGetUniformLocation");
-
-        // Apply the projection and view transformation
-        //GLES20.glUniformMatrix4fv(MVPMatrixHandle, 1, false, mvpMatrix, 0);
-*/
-
 
         // Draw all lines
         gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
@@ -237,13 +174,6 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         mTriangleBorderIndicesBuffer.put(trigborderindexlist);
         mTriangleBorderIndicesBuffer.position(0);
 
- /*       int vertexShader = SimpleGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, VertexShaderCode);
-        int fragmentShader = SimpleGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, FragmentShaderCode);
-
-        GlProgram = GLES20.glCreateProgram();             // create empty OpenGL ES Program
-        GLES20.glAttachShader(GlProgram, vertexShader);   // add the vertex shader to program
-        GLES20.glAttachShader(GlProgram, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(GlProgram);                  // creates OpenGL ES program executables*/
     }
 
     public boolean onTouchEvent(MotionEvent e) {

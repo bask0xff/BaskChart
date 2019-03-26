@@ -13,8 +13,6 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import ru19july.tgchart.view.opengl.sprite.SimpleGLRenderer;
-
 import static javax.microedition.khronos.opengles.GL10.*;
 
 public class MyRenderer implements GLSurfaceView.Renderer {
@@ -29,7 +27,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private float mPreviousX;
     private float mPreviousY;
     private final float TOUCH_SCALE_FACTOR = 0.6f;
-
+/*
     private final String VertexShaderCode =
             // This matrix member variable provides a hook to manipulate
             // the coordinates of the objects that use this vertex shader
@@ -52,7 +50,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     protected int PositionHandle;
     protected int ColorHandle;
     protected int MVPMatrixHandle;
-
+*/
     static final int COORDS_PER_VERTEX = 3;
     static float LineCoords[] = {
             0.0f, 0.0f, 0.0f,
@@ -85,7 +83,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         // Set line color to green
         gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 
-
+/*
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(GlProgram);
 
@@ -112,7 +110,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
         // Apply the projection and view transformation
         //GLES20.glUniformMatrix4fv(MVPMatrixHandle, 1, false, mvpMatrix, 0);
-
+*/
 
 
         // Draw all lines
@@ -239,13 +237,13 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         mTriangleBorderIndicesBuffer.put(trigborderindexlist);
         mTriangleBorderIndicesBuffer.position(0);
 
-        int vertexShader = SimpleGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, VertexShaderCode);
+ /*       int vertexShader = SimpleGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, VertexShaderCode);
         int fragmentShader = SimpleGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, FragmentShaderCode);
 
         GlProgram = GLES20.glCreateProgram();             // create empty OpenGL ES Program
         GLES20.glAttachShader(GlProgram, vertexShader);   // add the vertex shader to program
         GLES20.glAttachShader(GlProgram, fragmentShader); // add the fragment shader to program
-        GLES20.glLinkProgram(GlProgram);                  // creates OpenGL ES program executables
+        GLES20.glLinkProgram(GlProgram);                  // creates OpenGL ES program executables*/
     }
 
     public boolean onTouchEvent(MotionEvent e) {

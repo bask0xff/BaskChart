@@ -21,12 +21,7 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".view.opengl.sprite.OpenGLTestActivity"
-            android:label="@string/title_activity_open_gltest"
-            android:theme="@style/AppTheme.NoActionBar">
 
-        </activity>
         <activity android:name=".MainActivity">
         </activity>
     </application>

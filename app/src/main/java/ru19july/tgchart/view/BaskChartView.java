@@ -33,6 +33,7 @@ public class BaskChartView extends LinearLayout {
     private String TAG = BaskChartView.class.getSimpleName();
     private ChartData mChartData;
     private IOnThemeChange mOnThemeChange;
+    private LinearLayout linearlayout;
 
     public BaskChartView(Context context) {
         this(context, null);
@@ -62,7 +63,7 @@ public class BaskChartView extends LinearLayout {
 
                 setChartTheme(mTheme);
 
-                title = (TextView) getChildAt(0);
+                title = (TextView) linearlayout.getChildAt(0);
                 setTitle(titleText);
             } finally {
                 a.recycle();
@@ -84,9 +85,11 @@ public class BaskChartView extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.chart_view, this, true);
 
-        chartView = (ChartCanvasView) getChildAt(1);
+        linearlayout = (LinearLayout) getChildAt(0);
 
-        chartSliderView = (ChartSliderView) getChildAt(2);
+        chartView = (ChartCanvasView) linearlayout.getChildAt(1);
+
+        chartSliderView = (ChartSliderView) linearlayout.getChildAt(2);
         chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {
             @Override
             public void onSlide(int xStart, int xEnd) {

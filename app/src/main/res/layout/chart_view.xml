@@ -2,41 +2,49 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:chart="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:textColor="#7BC4FB"
-        android:fontFamily="Roboto"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="16dp"
-        android:textSize="20sp"
-        />
-
-    <ru19july.tgchart.view.ChartCanvasView
-        android:id="@+id/chartView1"
-        android:layout_width="wrap_content"
-        android:layout_height="500dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:visibility="visible"
-        />
-
-    <ru19july.tgchart.view.ChartSliderView
-        android:id="@+id/chartViewSlider"
-        android:layout_marginTop="1dp"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:visibility="visible"
-        />
-
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:orientation="vertical"
-        android:id="@+id/insert_point"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="#7BC4FB"
+            android:fontFamily="Roboto"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="16dp"
+            android:textSize="20sp"
+            />
+
+        <ru19july.tgchart.view.ChartCanvasView
+            android:id="@+id/chartView1"
+            android:layout_width="wrap_content"
+            android:layout_height="500dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:visibility="visible"
+            />
+
+        <ru19july.tgchart.view.ChartSliderView
+            android:id="@+id/chartViewSlider"
+            android:layout_marginTop="1dp"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/insert_point"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
 
     </LinearLayout>
-
 </merge>

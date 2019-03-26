@@ -49,6 +49,7 @@ public class TutorialOnOpenGL extends Activity {
         mView.setRenderer(mRenderer);
 
         baskChartView = findViewById(R.id.baskChartView);
+
         baskChartView.setData(chartsData.get(0));
 
         //layout.addView(mView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 300));

@@ -12,6 +12,8 @@ import java.nio.ShortBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import static javax.microedition.khronos.opengles.GL10.*;
+
 class MyRenderer implements GLSurfaceView.Renderer {
     private Context mContext;
     private FloatBuffer mVertexBuffer = null;
@@ -41,7 +43,8 @@ class MyRenderer implements GLSurfaceView.Renderer {
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
 
-        // Set line color to green     gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+        // Set line color to green
+        gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 
         // Draw all lines
         gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
@@ -49,12 +52,52 @@ class MyRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        /*gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        init1(gl, config);
+        //init2(gl, config);
+        //init3(gl, config);
+
+        // Get all the buffers ready
+        setAllBuffers();
+    }
+
+    private void init3(GL10 gl, EGLConfig config) {
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gl.glMatrixMode(GL_PROJECTION);
+        gl.glPushMatrix();
+        gl.glLoadIdentity();
+        gl.glOrthof( 0,1000,500,0,0.0f,100.0f);
+
+        gl.glEnableClientState(GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GL_COLOR_ARRAY);
+        line ( 10,100,100,300,  //coordinates
+                1.2,                //thickness in px
+                0.5, 0.0, 1.0, 1.0, //line color RGBA
+                0,0,                //not used
+                true);              //enable alphablend
+
+        //more line() or glDrawArrays() calls
+        gl.glDisableClientState(GL_VERTEX_ARRAY);
+        gl.glDisableClientState(GL_COLOR_ARRAY);
+
+        //other drawing code...
+        gl.glPopMatrix();
+        gl.glDisable(GL_BLEND); //restore blending options
+    }
+
+    private void line(int i, int i1, int i2, int i3, double v, double v1, double v2, double v3, double v4, int i4, int i5, boolean b) {
+
+    }
+
+    private void init1(GL10 gl, EGLConfig config) {
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
         gl.glEnable(GL10.GL_DEPTH_TEST);
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-*/
+    }
+
+    private void init2(GL10 gl, EGLConfig config) {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
 
         //gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
@@ -74,24 +117,31 @@ class MyRenderer implements GLSurfaceView.Renderer {
         //gl.glEnable(GL10.GL_DEPTH_TEST);
 
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-
-        // Get all the buffers ready
-        setAllBuffers();
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         gl.glViewport(0, 0, width, height);
         float aspect = (float)width / height;
-        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glMatrixMode(GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glFrustumf(-aspect, aspect, -1.0f, 1.0f, 1.0f, 10.0f);
+        gl.glFrustumf(-aspect, aspect, -1.0f, 1.0f, 1f, 10.0f);
     }
 
     private void setAllBuffers(){
         // Set vertex buffer
         float vertexlist[] = {
-                -1.0f, 0.0f, -1.0f,  1.0f, 0.0f, -1.0f,  -1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,  0.0f, 2.0f, 0.0f,
+                0.0f, 0.0f, 0.0f,
+                0.2f, 0.0f, 0.0f,
+                0.4f, 0.3f, 0.0f,
+                0.6f, 0.2f, 0.0f,
+                0.8f, 0.7f, 0.0f,
+        };
+        float vertexlist0[] = {
+                -1.0f, 0.0f, -1.0f,
+                1.0f, 0.0f, -1.0f,
+                -1.0f, 0.0f, 1.0f,
+                1.0f, 0.0f, 1.0f,
+                0.0f, 2.0f, 0.0f,
         };
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertexlist.length * 4);
         vbb.order(ByteOrder.nativeOrder());
@@ -100,9 +150,14 @@ class MyRenderer implements GLSurfaceView.Renderer {
         mVertexBuffer.position(0);
 
         // Set triangle border buffer with vertex indices
-        short trigborderindexlist[] = {
+        short trigborderindexlist0[] = {
                 4, 0,  4, 1,  4, 2,  4, 3,  0, 1,  1, 3,  3, 2,  2, 0,  0, 3
         };
+
+        short trigborderindexlist[] = {
+                0, 1, 1, 2, 2, 3
+        };
+
         mNumOfTriangleBorderIndices = trigborderindexlist.length;
         ByteBuffer tbibb = ByteBuffer.allocateDirect(trigborderindexlist.length * 2);
         tbibb.order(ByteOrder.nativeOrder());
@@ -118,8 +173,8 @@ class MyRenderer implements GLSurfaceView.Renderer {
             case MotionEvent.ACTION_MOVE:
                 float dx = x - mPreviousX;
                 float dy = y - mPreviousY;
-                mAngleY = (mAngleY + (int)(dx * TOUCH_SCALE_FACTOR) + 360) % 360;
-                mAngleX = (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR) + 360) % 360;
+ //               mAngleY = (mAngleY + (int)(dx * TOUCH_SCALE_FACTOR) + 360) % 360;
+ //               mAngleX = (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR) + 360) % 360;
                 break;
         }
         mPreviousX = x;

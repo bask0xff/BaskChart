@@ -10,10 +10,12 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 import ru19july.tgchart.view.BaskChartView;
+import ru19july.tgchart.view.canvas.ChartCanvasView;
+import ru19july.tgchart.view.theme.LightTheme;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private static final String TAG = ChartsAdapter.class.getSimpleName();
-    
+
     private List<BaskChartView> baskChartViews;
     private Activity context;
     //private List<ChartData> charts;
@@ -48,6 +50,10 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
+            viewHolder.baskChartView.setChartTheme(new LightTheme());
+            viewHolder.baskChartView.setRenderType(ChartCanvasView.class);
+
+
             rowView.setTag(viewHolder);
         }
 

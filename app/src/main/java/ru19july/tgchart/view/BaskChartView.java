@@ -242,5 +242,8 @@ public class BaskChartView extends LinearLayout {
         return mChartData;
     }
 
+    public void setRenderType(Class<ChartCanvasView> chartCanvasViewClass) {
+        mChartViewClass = chartCanvasViewClass;
+    }
 }
 

@@ -255,8 +255,12 @@ public class BaskChartView extends LinearLayout {
         return mChartData;
     }
 
-    public void setRenderType(Class<ChartCanvasView> chartCanvasViewClass) {
+    public void setRenderType(Class<?> chartCanvasViewClass) {
         mChartViewClass = chartCanvasViewClass;
+    }
+
+    public Class<?> getRenderType() {
+        return mChartViewClass;
     }
 }
 

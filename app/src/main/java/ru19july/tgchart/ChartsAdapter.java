@@ -52,10 +52,9 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
-
             //TODO: here!
-            viewHolder.baskChartView.setChartTheme(new LightTheme());
-            viewHolder.baskChartView.setRenderType(ChartCanvasView.class);
+            viewHolder.baskChartView.setChartTheme(chartData.getTheme());
+            viewHolder.baskChartView.setRenderType(chartData.getRenderType());
 
 
             rowView.setTag(viewHolder);

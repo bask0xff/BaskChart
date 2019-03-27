@@ -44,6 +44,15 @@ public class BaskChartView extends LinearLayout {
 
     private IOnThemeChange mOnThemeChange;
     private LinearLayout linearlayout;
+/*
+    public BaskChartView(Context context) {
+        super(context, null);
+
+        Log.d(TAG, "BaskChartView");
+
+        init(context);
+    }
+*/
 
     public BaskChartView(Context context, Class<?> chartViewClass) {
         super(context, null);
@@ -52,7 +61,7 @@ public class BaskChartView extends LinearLayout {
 
         mChartViewClass = chartViewClass;
 
-        init(context);
+        init(context, chartViewClass);
     }
 
     public BaskChartView(Context context, AttributeSet attrs) {
@@ -75,7 +84,10 @@ public class BaskChartView extends LinearLayout {
                 int renderType = a.getInteger(R.styleable.BaskChartView_renderType, 0);
 
                 Log.d(TAG, "BaskChartView: renderType: " + renderType);
-                if(renderType == 1)
+                Log.d(TAG, "BaskChartView: old mChartViewClass: " + mChartViewClass);
+
+                //TODO: here is wrong works!!!
+                if(renderType == 0)
                     mChartViewClass = ChartGLView.class;
                 else
                     mChartViewClass = ChartCanvasView.class;
@@ -98,10 +110,11 @@ public class BaskChartView extends LinearLayout {
 
         Log.d(TAG, "BaskChartView: mChartViewClass: " + mChartViewClass.getSimpleName());
 
-        init(context);
+        init(context, mChartViewClass);
 
         Log.d(TAG, "BaskChartView: setChartTheme(mTheme); " + mTheme);
-        setChartTheme(mTheme);
+        //setChartTheme(mTheme);
+        //setRenderType(mChartViewClass);
 
     }
 
@@ -110,11 +123,13 @@ public class BaskChartView extends LinearLayout {
             title.setText(text);
     }
 
-    private void init(Context context) {
+    private void init(Context context, Class<?> chartViewClass) {
+        Log.d(TAG, "init: ");
         setOrientation(LinearLayout.VERTICAL);
         setGravity(Gravity.TOP);
 
         mContext = context;
+        mChartViewClass = chartViewClass;
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -123,8 +138,8 @@ public class BaskChartView extends LinearLayout {
         linearlayout = (LinearLayout) getChildAt(0);
 
         //dynamically add canvas/OpenGL chart
-        Log.d(TAG, "init: " + mChartViewClass.getCanonicalName() + " ???-equals-??? " + ChartGLView.class.getCanonicalName());
-        if(mChartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
+        Log.d(TAG, "init: " + chartViewClass.getCanonicalName() + " ???-equals-??? " + ChartGLView.class.getCanonicalName());
+        if(chartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
             chartView = new ChartGLView(context);
             ChartGLRenderer mRenderer = new ChartGLRenderer(context);
             chartView.setRenderer(mRenderer);
@@ -255,8 +270,16 @@ public class BaskChartView extends LinearLayout {
         return mChartData;
     }
 
-    public void setRenderType(Class<?> chartCanvasViewClass) {
-        mChartViewClass = chartCanvasViewClass;
+    public void setRenderType(Class<?> chartViewClass) {
+        mChartViewClass = chartViewClass;
+
+        Log.d(TAG, "setRenderType: " + chartViewClass);
+
+        //chartView.setTheme(mTheme);
+        Log.d(TAG, "setChartTheme: 777777");
+        //chartSliderView.setTheme(mTheme);
+
+        invalidate();
     }
 
     public Class<?> getRenderType() {

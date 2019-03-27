@@ -10,51 +10,51 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 import ru19july.tgchart.view.BaskChartView;
-import ru19july.tgchart.view.canvas.ChartCanvasView;
-import ru19july.tgchart.view.theme.LightTheme;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private static final String TAG = ChartsAdapter.class.getSimpleName();
 
     private List<BaskChartView> baskChartViews;
     private Activity context;
-    //private List<ChartData> charts;
-    private  List<BaskChartView> charts;
+    private  List<BaskChartView> baskChartViewList;
 
     public ChartsAdapter(MainActivity context, List<BaskChartView> baskChartViews) {
         super(context,  R.layout.chart_item, baskChartViews);
         this.context = context;
-        charts = baskChartViews;
+        baskChartViewList = baskChartViews;
     }
 
     public void remove(int position) {
-        charts.remove(position);
+        baskChartViewList.remove(position);
     }
 
     static class ViewHolder {
         public BaskChartView baskChartView;
     }
 /*
-    public ChartsAdapter(Activity context, List<ChartData> charts) {
-        super(context, R.layout.chart_item, charts);
+    public ChartsAdapter(Activity context, List<ChartData> baskChartViewList) {
+        super(context, R.layout.chart_item, baskChartViewList);
         this.context = context;
-        this.charts = charts;
+        this.baskChartViewList = baskChartViewList;
     }
 */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
         Log.d(TAG, "getView: convertView: " + convertView);
-        BaskChartView chartData = charts.get(position);
+        BaskChartView chartView = baskChartViewList.get(position);
+
+        Log.d(TAG, "getView, baskChartViewList.get("+position+").getRenderType(): " + chartView.getRenderType().getSimpleName());
 
         if (rowView == null) {
             LayoutInflater inflater = context.getLayoutInflater();
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
+
             //TODO: here!
-            viewHolder.baskChartView.setChartTheme(chartData.getTheme());
-            viewHolder.baskChartView.setRenderType(chartData.getRenderType());
+            viewHolder.baskChartView.setChartTheme(chartView.getTheme());
+            viewHolder.baskChartView.setRenderType(chartView.getRenderType());
 
 
             rowView.setTag(viewHolder);
@@ -63,7 +63,7 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
         // fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
 
-        holder.baskChartView.setData(chartData.getData());
+        holder.baskChartView.setData(chartView.getData());
         //holder.baskChartView.setChartTheme(getT);
         holder.baskChartView.invalidate();
         holder.baskChartView.update();

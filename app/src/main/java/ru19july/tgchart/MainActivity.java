@@ -20,6 +20,7 @@ import ru19july.tgchart.data.Series;
 import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.view.BaskChartView;
 import ru19july.tgchart.interfaces.IOnThemeChange;
+import ru19july.tgchart.view.opengl.ChartGLView;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
@@ -47,7 +48,7 @@ public class MainActivity extends ListActivity {
         chartsData.addAll(readJson(json));
 
         for (int i = 0; i < 1 /* chartsData.size()*/; i++) {
-            final BaskChartView baskChartView = new BaskChartView(this);
+            final BaskChartView baskChartView = new BaskChartView(this, ChartGLView.class);
             baskChartView.setData(chartsData.get(i));
             baskChartView.setOnThemeChange(new IOnThemeChange() {
                 @Override

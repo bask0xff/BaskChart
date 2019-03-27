@@ -29,6 +29,7 @@ import ru19july.tgchart.view.theme.LightTheme;
 
 public class BaskChartView extends LinearLayout {
 
+    private Class<?> mChartViewClass;
     private Context mContext;
     private TextView title;
     private IChartTheme mTheme;
@@ -39,18 +40,20 @@ public class BaskChartView extends LinearLayout {
     private ChartData mChartData;
     private IOnThemeChange mOnThemeChange;
     private LinearLayout linearlayout;
-    private int mode = 0;
 
-    public BaskChartView(Context context) {
-        this(context, null);
+    public BaskChartView(Context context, Class<?> chartViewClass) {
+        super(context, null);
+
+        Log.d(TAG, "BaskChartView: chartViewClass: " + chartViewClass.getSimpleName());
+
+        mChartViewClass = chartViewClass;
+
         init(context);
     }
 
     public BaskChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-
-        init(context);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
@@ -60,7 +63,11 @@ public class BaskChartView extends LinearLayout {
                 String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
 
-                mode = a.getInteger(R.styleable.BaskChartView_renderType, 0);
+                int mode = a.getInteger(R.styleable.BaskChartView_renderType, 0);
+                if(mode == 1)
+                    mChartViewClass = ChartGLView.class;
+                else
+                    mChartViewClass = ChartCanvasView.class;
 
                 int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
                 Log.d(TAG, "BaskChartView: themeId=" + themeId);
@@ -77,6 +84,8 @@ public class BaskChartView extends LinearLayout {
                 a.recycle();
             }
         }
+
+        init(context);
 
         setChartTheme(mTheme);
 
@@ -100,7 +109,7 @@ public class BaskChartView extends LinearLayout {
         linearlayout = (LinearLayout) getChildAt(0);
 
         //dynamically add canvas/OpenGL chart
-        if(mode == 0) {
+        if(mChartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
             chartView = new ChartGLView(context);
             ChartGLRenderer mRenderer = new ChartGLRenderer(context);
             chartView.setRenderer(mRenderer);
@@ -221,8 +230,7 @@ public class BaskChartView extends LinearLayout {
         return mChartData;
     }
 
-    public void setMode(int i) {
-        mode = i;
+    public void setMode(int mode) {
         //init(mContext);
 
         if(mode == 0) {

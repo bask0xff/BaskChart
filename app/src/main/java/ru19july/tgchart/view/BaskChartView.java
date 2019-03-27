@@ -33,8 +33,9 @@ public class BaskChartView extends LinearLayout {
 
     private Context mContext;
     private TextView title;
-    private IChartTheme mTheme;
+    private IChartTheme mTheme = new DarkTheme();
 
+    //default
     private Class<?> mChartViewClass;
     private IChartView chartView;
 
@@ -61,6 +62,8 @@ public class BaskChartView extends LinearLayout {
         Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) : " );
         //mChartViewClass = chartViewClass;
 
+        //chartView = new ChartCanvasView(context);
+
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
                     R.styleable.BaskChartView, 0, 0);
@@ -69,10 +72,10 @@ public class BaskChartView extends LinearLayout {
                 String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
 
-                int mode = a.getInteger(R.styleable.BaskChartView_renderType, 0);
+                int renderType = a.getInteger(R.styleable.BaskChartView_renderType, 0);
 
-                Log.d(TAG, "BaskChartView: mode: " + mode);
-                if(mode == 0)
+                Log.d(TAG, "BaskChartView: renderType: " + renderType);
+                if(renderType == 0)
                     mChartViewClass = ChartGLView.class;
                 else
                     mChartViewClass = ChartCanvasView.class;
@@ -94,8 +97,10 @@ public class BaskChartView extends LinearLayout {
         }
 
         Log.d(TAG, "BaskChartView: mChartViewClass: " + mChartViewClass.getSimpleName());
+
         init(context);
 
+        Log.d(TAG, "BaskChartView: setChartTheme(mTheme); " + mTheme);
         setChartTheme(mTheme);
 
     }
@@ -206,15 +211,23 @@ public class BaskChartView extends LinearLayout {
     }
 
     public IChartTheme getTheme() {
+        Log.d(TAG, "getTheme: " + mTheme);
         return mTheme;
     }
 
     public void setChartTheme(IChartTheme theme) {
+        Log.d(TAG, "setChartTheme: " + theme);
+
         Log.d(TAG, "setTheme: " + theme.getClass().getSimpleName());
         mTheme = theme;
         updateTheme();
+        Log.d(TAG, "setChartTheme: 11111");
         setTitle(theme.getClass().getSimpleName());
+        Log.d(TAG, "setChartTheme: 22222");
+        Log.d(TAG, "setChartTheme: chartView: " + chartView);
+
         chartView.setTheme(mTheme);
+        Log.d(TAG, "setChartTheme: 33333");
         chartSliderView.setTheme(mTheme);
 
         if(mOnThemeChange != null)

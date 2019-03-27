@@ -45,11 +45,15 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
         Log.d(TAG, "getView: convertView: " + convertView);
+        BaskChartView chartData = charts.get(position);
+
         if (rowView == null) {
             LayoutInflater inflater = context.getLayoutInflater();
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
+
+            //TODO: here!
             viewHolder.baskChartView.setChartTheme(new LightTheme());
             viewHolder.baskChartView.setRenderType(ChartCanvasView.class);
 
@@ -59,7 +63,6 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
 
         // fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        BaskChartView chartData = charts.get(position);
 
         holder.baskChartView.setData(chartData.getData());
         //holder.baskChartView.setChartTheme(getT);

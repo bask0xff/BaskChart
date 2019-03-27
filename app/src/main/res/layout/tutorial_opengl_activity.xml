@@ -10,7 +10,7 @@
         android:id="@+id/baskChartView1"
         android:paddingTop="20dp"
         chart:themeType="dark"
-        chart:renderType="canvas"
+        chart:renderType="opengl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -20,7 +20,7 @@
         android:id="@+id/baskChartView2"
         android:paddingTop="20dp"
         chart:themeType="dark"
-        chart:renderType="opengl"
+        chart:renderType="canvas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 

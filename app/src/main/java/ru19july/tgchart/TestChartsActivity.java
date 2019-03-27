@@ -39,11 +39,9 @@ public class TestChartsActivity extends Activity {
         BaskChartView bcv = new BaskChartView(this, ChartGLView.class);
 
         baskChartView = findViewById(R.id.baskChartView1);
-        //baskChartView.setMode(0);
         baskChartView.setData(chartsData.get(0));
 
         baskChartView2 = findViewById(R.id.baskChartView2);
-        //baskChartView2.setMode(1);
         baskChartView2.setData(chartsData.get(1));
     }
 

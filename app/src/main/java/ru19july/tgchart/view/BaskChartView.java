@@ -64,7 +64,7 @@ public class BaskChartView extends LinearLayout {
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
 
                 int mode = a.getInteger(R.styleable.BaskChartView_renderType, 0);
-                if(mode == 1)
+                if(mode == 0)
                     mChartViewClass = ChartGLView.class;
                 else
                     mChartViewClass = ChartCanvasView.class;

@@ -33,7 +33,7 @@ public class BaskChartView extends LinearLayout {
 
     private Context mContext;
     private TextView title;
-    private IChartTheme mTheme = new DarkTheme();
+    private IChartTheme mTheme;
 
     //default
     private Class<?> mChartViewClass;
@@ -55,11 +55,11 @@ public class BaskChartView extends LinearLayout {
         init(context);
     }
 
-    public BaskChartView(Context context, AttributeSet attrs/*, Class<?> chartViewClass*/) {
+    public BaskChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
 
-        Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) : " );
+        Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs: " );
         //mChartViewClass = chartViewClass;
 
         //chartView = new ChartCanvasView(context);
@@ -75,7 +75,7 @@ public class BaskChartView extends LinearLayout {
                 int renderType = a.getInteger(R.styleable.BaskChartView_renderType, 0);
 
                 Log.d(TAG, "BaskChartView: renderType: " + renderType);
-                if(renderType == 0)
+                if(renderType == 1)
                     mChartViewClass = ChartGLView.class;
                 else
                     mChartViewClass = ChartCanvasView.class;
@@ -83,7 +83,7 @@ public class BaskChartView extends LinearLayout {
                 int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
                 Log.d(TAG, "BaskChartView: themeId=" + themeId);
                 switch (themeId) {
-                    case 0:
+                    case 1:
                         mTheme = new LightTheme();
                     default:
                         mTheme = new DarkTheme();

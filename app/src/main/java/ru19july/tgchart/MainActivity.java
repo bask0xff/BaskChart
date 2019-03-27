@@ -53,7 +53,8 @@ public class MainActivity extends ListActivity {
             //Class<?> chartClass = ChartGLView.class;
             Class<?> chartClass = ChartCanvasView.class;
 
-            final BaskChartView baskChartView = new BaskChartView(this, ChartGLView.class);
+            final BaskChartView baskChartView = new BaskChartView(this, ChartCanvasView.class);
+            //baskChartView.setRenderType(ChartCanvasView.class);
             baskChartView.setChartTheme(new LightTheme());
             baskChartView.setData(chartsData.get(i));
             /*baskChartView.setOnThemeChange(new IOnThemeChange() {

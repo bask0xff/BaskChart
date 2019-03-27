@@ -54,12 +54,12 @@ public class BaskChartView extends LinearLayout {
         init(context);
     }
 
-    public BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) {
+    public BaskChartView(Context context, AttributeSet attrs/*, Class<?> chartViewClass*/) {
         super(context, attrs);
         mContext = context;
 
-        Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) : " + chartViewClass.getSimpleName());
-        mChartViewClass = chartViewClass;
+        Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) : " );
+        //mChartViewClass = chartViewClass;
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,

@@ -22,7 +22,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     int slLeft;
     int slRight;
     private int W, H;
-    private final String TAG = "ChartViewSlider";
+    private final String TAG = ChartSliderView.class.getSimpleName();
 
     ISliderListener mOnSliderListener;
 
@@ -38,21 +38,21 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
     public ChartSliderView(Context context) {
         super(context);
-        Log.d(TAG, "ChartView(Context context)");
+        Log.d(TAG, "ChartSliderView(Context context)");
 
         initView(context, null);
     }
 
     public ChartSliderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.d(TAG, "ChartView(Context context, AttributeSet attrs) ");
+        Log.d(TAG, "ChartSliderView(Context context, AttributeSet attrs) ");
 
         initView(context, attrs);
     }
 
     public ChartSliderView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Log.d(TAG, "ChartView(Context context, AttributeSet attrs, int defStyleAttr)");
+        Log.d(TAG, "ChartSliderView(Context context, AttributeSet attrs, int defStyleAttr)");
 
         initView(context, attrs);
     }
@@ -67,21 +67,6 @@ public class ChartSliderView extends View implements View.OnTouchListener {
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
-
-        if (attrs != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(
-                    attrs,
-                    R.styleable.ChartCanvasView,
-                    0, 0);
-
-            try {
-                boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
-                int mTextPos = a.getInteger(R.styleable.ChartCanvasView_labelPosition, 0);
-
-            } finally {
-                a.recycle();
-            }
-        }
     }
 
     @Override

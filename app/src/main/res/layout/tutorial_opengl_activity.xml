@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ru19july.tgchart.view.BaskChartView
+    <!--ru19july.tgchart.view.BaskChartView
         android:id="@+id/baskChartView1"
         android:paddingTop="20dp"
         chart:themeType="dark"
@@ -20,6 +20,6 @@
         chart:themeType="dark"
         chart:renderType="canvas"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" /-->
 
 </LinearLayout>

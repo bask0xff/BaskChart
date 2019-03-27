@@ -1,6 +1,7 @@
 package ru19july.tgchart;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import java.util.List;
 import ru19july.tgchart.view.BaskChartView;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
+    private static final String TAG = ChartsAdapter.class.getSimpleName();
+    
     private List<BaskChartView> baskChartViews;
     private Activity context;
     //private List<ChartData> charts;
@@ -39,6 +42,7 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
+        Log.d(TAG, "getView: convertView: " + convertView);
         if (rowView == null) {
             LayoutInflater inflater = context.getLayoutInflater();
             rowView = inflater.inflate(R.layout.chart_item, null);

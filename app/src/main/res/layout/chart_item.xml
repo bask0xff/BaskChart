@@ -9,6 +9,7 @@
         android:id="@+id/chartControlsView"
         android:paddingTop="20dp"
         chart:themeType="dark"
+        chart:renderType="opengl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 

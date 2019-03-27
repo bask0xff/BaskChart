@@ -20,6 +20,7 @@ import ru19july.tgchart.data.Series;
 import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.view.BaskChartView;
 import ru19july.tgchart.interfaces.IOnThemeChange;
+import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.opengl.ChartGLView;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.LightTheme;
@@ -47,10 +48,14 @@ public class MainActivity extends ListActivity {
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
 
-        for (int i = 0; i < 1 /* chartsData.size()*/; i++) {
-            final BaskChartView baskChartView = new BaskChartView(this, ChartGLView.class);
+        for (int i = 0; i < chartsData.size(); i++) {
+
+            //Class<?> chartClass = ChartGLView.class;
+            Class<?> chartClass = ChartCanvasView.class;
+
+            final BaskChartView baskChartView = new BaskChartView(this, ChartCanvasView.class);
             baskChartView.setData(chartsData.get(i));
-            baskChartView.setOnThemeChange(new IOnThemeChange() {
+            /*baskChartView.setOnThemeChange(new IOnThemeChange() {
                 @Override
                 public void OnThemeChange(IChartTheme theme) {
                     Log.d(TAG, "OnThemeChange-1: " + theme);
@@ -58,7 +63,7 @@ public class MainActivity extends ListActivity {
 
                     adapter.notifyDataSetChanged();
                 }
-            });
+            });*/
 
             baskChartViews.add(baskChartView);
 

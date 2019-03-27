@@ -29,15 +29,18 @@ import ru19july.tgchart.view.theme.LightTheme;
 
 public class BaskChartView extends LinearLayout {
 
-    private Class<?> mChartViewClass;
+    private String TAG = BaskChartView.class.getSimpleName();
+
     private Context mContext;
     private TextView title;
     private IChartTheme mTheme;
 
+    private Class<?> mChartViewClass;
     private IChartView chartView;
+
     private ChartSliderView chartSliderView;
-    private String TAG = BaskChartView.class.getSimpleName();
     private ChartData mChartData;
+
     private IOnThemeChange mOnThemeChange;
     private LinearLayout linearlayout;
 
@@ -51,9 +54,12 @@ public class BaskChartView extends LinearLayout {
         init(context);
     }
 
-    public BaskChartView(Context context, AttributeSet attrs) {
+    public BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) {
         super(context, attrs);
         mContext = context;
+
+        Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs, Class<?> chartViewClass) : " + chartViewClass.getSimpleName());
+        mChartViewClass = chartViewClass;
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
@@ -64,6 +70,8 @@ public class BaskChartView extends LinearLayout {
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
 
                 int mode = a.getInteger(R.styleable.BaskChartView_renderType, 0);
+
+                Log.d(TAG, "BaskChartView: mode: " + mode);
                 if(mode == 0)
                     mChartViewClass = ChartGLView.class;
                 else
@@ -85,6 +93,7 @@ public class BaskChartView extends LinearLayout {
             }
         }
 
+        Log.d(TAG, "BaskChartView: mChartViewClass: " + mChartViewClass.getSimpleName());
         init(context);
 
         setChartTheme(mTheme);
@@ -109,15 +118,18 @@ public class BaskChartView extends LinearLayout {
         linearlayout = (LinearLayout) getChildAt(0);
 
         //dynamically add canvas/OpenGL chart
+        Log.d(TAG, "init: " + mChartViewClass.getCanonicalName() + " ???-equals-??? " + ChartGLView.class.getCanonicalName());
         if(mChartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
             chartView = new ChartGLView(context);
             ChartGLRenderer mRenderer = new ChartGLRenderer(context);
             chartView.setRenderer(mRenderer);
+            Log.d(TAG, "init: ADD CHARTGLVIEW");
             linearlayout.addView((ChartGLView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 500));
         }
         else
         {
             chartView = new ChartCanvasView(context);
+            Log.d(TAG, "init: ADD CHARTCANVASVIEW");
             linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
         }
 
@@ -230,22 +242,5 @@ public class BaskChartView extends LinearLayout {
         return mChartData;
     }
 
-    public void setMode(int mode) {
-        //init(mContext);
-
-        if(mode == 0) {
-            chartView = new ChartGLView(mContext);
-            ChartGLRenderer mRenderer = new ChartGLRenderer(mContext);
-            chartView.setRenderer(mRenderer);
-            //linearlayout.addView((ChartGLView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 500));
-        }
-        else
-        {
-            chartView = new ChartCanvasView(mContext);
-            //linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
-        }
-
-        chartView.invalidate();
-    }
 }
 

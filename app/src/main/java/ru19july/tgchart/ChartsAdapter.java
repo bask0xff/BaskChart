@@ -6,11 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
 import ru19july.tgchart.view.BaskChartView;
 import ru19july.tgchart.view.canvas.ChartCanvasView;
+import ru19july.tgchart.view.opengl.ChartGLView;
+import ru19july.tgchart.view.theme.LightTheme;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private static final String TAG = ChartsAdapter.class.getSimpleName();
@@ -31,7 +34,9 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
 
     static class ViewHolder {
         public BaskChartView baskChartView;
+        public LinearLayout layout_chart;
     }
+
 /*
     public ChartsAdapter(Activity context, List<ChartData> baskChartViewList) {
         super(context, R.layout.chart_item, baskChartViewList);
@@ -39,6 +44,7 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
         this.baskChartViewList = baskChartViewList;
     }
 */
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
@@ -52,7 +58,15 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
             Log.d(TAG, "getView: AAAAAAA");
-            viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
+
+            //viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
+            viewHolder.layout_chart = rowView.findViewById(R.id.layout_chart);
+
+            final BaskChartView baskChartView = new BaskChartView(context, chartView.getRenderType());
+            baskChartView.setChartTheme(chartView.getTheme());
+            //baskChartView.setData(chartsData.get(i));
+
+            viewHolder.baskChartView = baskChartView;
 
             Log.d(TAG, "getView: BBBBBBBB");
             //TODO: here!
@@ -61,6 +75,8 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
             viewHolder.baskChartView.setRenderType(renderType);
 
             viewHolder.baskChartView.setChartTheme(chartView.getTheme());
+
+            viewHolder.layout_chart.addView(viewHolder.baskChartView);
 
             rowView.setTag(viewHolder);
             Log.d(TAG, "getView: CCCCCCCC");

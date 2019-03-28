@@ -64,6 +64,7 @@ public class BaskChartView extends LinearLayout {
         init(context, chartViewClass);
     }
 
+
     public BaskChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -81,21 +82,25 @@ public class BaskChartView extends LinearLayout {
                 String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
 
+                //TODO: FIXIT! PROBLEM IS HERE! NULL VALUES IF VIEW CREATED PROGRAMMATICALLY
                 int renderType = a.getInteger(R.styleable.BaskChartView_renderType, -1);
                 Log.d(TAG, "BaskChartView: renderType: " + renderType);
 
                 if(renderType == -1)
                 {
-                    renderType = 1;
+                    //renderType = 1;
+                    //take the parameters from chart data
+                    mChartViewClass = getRenderType();
                 }
 
                 Log.d(TAG, "BaskChartView: old mChartViewClass: " + mChartViewClass);
 
                 //TODO: here is wrong works!!!
-                if(renderType == 0)
-                    mChartViewClass = ChartGLView.class;
-                else
-                    mChartViewClass = ChartCanvasView.class;
+                //if(renderType != -1)
+                    if(renderType == 0)
+                        mChartViewClass = ChartGLView.class;
+                    else
+                        mChartViewClass = ChartCanvasView.class;
 
                 int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
                 Log.d(TAG, "BaskChartView: themeId=" + themeId);
@@ -288,6 +293,7 @@ public class BaskChartView extends LinearLayout {
     }
 
     public Class<?> getRenderType() {
+        Log.d(TAG, "getRenderType => " + mChartViewClass);
         return mChartViewClass;
     }
 }

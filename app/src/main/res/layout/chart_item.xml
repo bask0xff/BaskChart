@@ -5,12 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ru19july.tgchart.view.BaskChartView
-        android:id="@+id/chartControlsView"
-        android:paddingTop="20dp"
+    <LinearLayout
+        android:id="@+id/layout_chart"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-    </ru19july.tgchart.view.BaskChartView>
+    <!-- chart:renderType is required attribute!!! -->
+    <!-- ru19july.tgchart.view.BaskChartView
+        android:id="@+id/chartControlsView"
+        android:paddingTop="20dp"
+        chart:renderType="canvas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" / -->
+
+    </LinearLayout>
 
 </LinearLayout>

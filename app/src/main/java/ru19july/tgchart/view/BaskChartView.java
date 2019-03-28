@@ -81,9 +81,14 @@ public class BaskChartView extends LinearLayout {
                 String titleText = a.getString(R.styleable.BaskChartView_titleText);
                 boolean mShowText = a.getBoolean(R.styleable.ChartCanvasView_showLegend, false);
 
-                int renderType = a.getInteger(R.styleable.BaskChartView_renderType, 0);
-
+                int renderType = a.getInteger(R.styleable.BaskChartView_renderType, -1);
                 Log.d(TAG, "BaskChartView: renderType: " + renderType);
+
+                if(renderType == -1)
+                {
+                    renderType = 1;
+                }
+
                 Log.d(TAG, "BaskChartView: old mChartViewClass: " + mChartViewClass);
 
                 //TODO: here is wrong works!!!

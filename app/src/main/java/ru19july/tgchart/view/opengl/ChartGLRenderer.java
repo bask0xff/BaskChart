@@ -190,7 +190,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void slideFrame(int xStart, int xEnd) {
-        Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
+        //Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
         startX = (500f - xStart) / 500f;
     }
 

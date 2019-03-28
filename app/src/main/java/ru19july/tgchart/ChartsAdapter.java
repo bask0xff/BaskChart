@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 import ru19july.tgchart.view.BaskChartView;
+import ru19july.tgchart.view.canvas.ChartCanvasView;
 
 public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     private static final String TAG = ChartsAdapter.class.getSimpleName();
@@ -50,14 +51,19 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
             LayoutInflater inflater = context.getLayoutInflater();
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
+            Log.d(TAG, "getView: AAAAAAA");
             viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
 
+            Log.d(TAG, "getView: BBBBBBBB");
             //TODO: here!
-            viewHolder.baskChartView.setChartTheme(chartView.getTheme());
-            viewHolder.baskChartView.setRenderType(chartView.getRenderType());
+            Class<?> renderType = chartView.getRenderType();
+            //renderType = ChartCanvasView.class;
+            viewHolder.baskChartView.setRenderType(renderType);
 
+            viewHolder.baskChartView.setChartTheme(chartView.getTheme());
 
             rowView.setTag(viewHolder);
+            Log.d(TAG, "getView: CCCCCCCC");
         }
 
         // fill data

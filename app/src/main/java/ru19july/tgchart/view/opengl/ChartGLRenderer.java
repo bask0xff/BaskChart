@@ -173,6 +173,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
             for (int i = 0; i < 1000; i++) {
                 int x = (int) (Math.cos(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f + (i + ticks-500)/10f)) + Width / 2;
                 int y = (int) (Math.sin(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f)) + Height / 2;
+
+                x = (int) (Width * (i/1000f));
                 pixel(gl, x, y, j < 1 ? Color.RED : (j < 2 ? Color.BLUE : Color.GREEN));
             }
 

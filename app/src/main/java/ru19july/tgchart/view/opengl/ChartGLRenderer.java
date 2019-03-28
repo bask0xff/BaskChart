@@ -42,9 +42,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private float matAmbient[] = new float[]{0.93f, 0.93f, 0.93f, 1.0f};
     private float matDiffuse[] = new float[]{0.96f, 0.96f, 0.96f, 1.0f};
 
-    private final int PERSPECTIVE_MODE = 1;  //with background
-    private int MODE = 0;
-
     private int Width;
     private int Height;
 
@@ -102,8 +99,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
             for(int i=0; i<mChartData.getSeries().get(0).getValues().size(); i++){
                 int x = (int) (Width * (i + 0f)/mChartData.getSeries().get(0).getValues().size());
                 int y = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f)/ (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-                pixel(gl, x, y, j < 1 ? Color.RED : (j < 2 ? Color.BLUE : Color.GREEN));
-                line(gl, x, y, x + 30, y + 20, j < 1 ? Color.RED : (j < 2 ? Color.BLUE : Color.GREEN));
+                pixel(gl, x, y, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+                line(gl, x, y, x + 30, y + 20, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
             }
         }
 
@@ -138,42 +135,14 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
 
-        //3D
-        if (MODE == PERSPECTIVE_MODE) {
-            GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 0.1f, 100.0f);
-            gl.glViewport(0, 0, width, height);
-        } else {
-            gl.glOrthof(-width / 2, width / 2, -height / 2, height / 2, -1000.0f, 1000.0f);
-            gl.glShadeModel(GL10.GL_SMOOTH);
-            if (true) {
-                gl.glEnable(GL10.GL_BLEND);
-                gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-                gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
-                gl.glEnable(GL10.GL_TEXTURE_2D);
-                gl.glEnable(GL10.GL_DEPTH_TEST);
-            }
+        gl.glOrthof(-width / 2, width / 2, -height / 2, height / 2, -1000.0f, 1000.0f);
+        gl.glShadeModel(GL10.GL_SMOOTH);
 
-            gl.glEnable(GL10.GL_LIGHTING);
-            gl.glEnable(GL10.GL_LIGHT0);
-            gl.glEnable(GL10.GL_COLOR_MATERIAL);
-            gl.glEnable(GL10.GL_BLEND);
-
-            gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, matAmbient, 0);
-            gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, matDiffuse, 0);
-
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbientColor, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDiffuseColor, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosition, 0);
-
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, lightSpecular, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosition, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPOT_DIRECTION, lightDirection, 0);
-            gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_CUTOFF, 180f);
-            gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_EXPONENT, 100f);
-            gl.glEnable(GL10.GL_DEPTH_TEST);
-            gl.glDepthFunc(GL10.GL_LESS);
-            gl.glDisable(GL10.GL_DITHER);
-        }
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glEnable(GL10.GL_DEPTH_TEST);
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();

@@ -241,18 +241,13 @@ public class BaskChartView extends LinearLayout {
     }
 
     public void setChartTheme(IChartTheme theme) {
-        Log.d(TAG, "setChartTheme: " + theme);
-
-        Log.d(TAG, "setTheme: " + theme.getClass().getSimpleName());
+        Log.d(TAG, "setChartTheme: " + theme.getClass().getSimpleName());
         mTheme = theme;
         updateTheme();
-        Log.d(TAG, "setChartTheme: 11111");
         setTitle(theme.getClass().getSimpleName());
-        Log.d(TAG, "setChartTheme: 22222");
         Log.d(TAG, "setChartTheme: chartView: " + chartView);
 
         chartView.setTheme(mTheme);
-        Log.d(TAG, "setChartTheme: 33333");
         chartSliderView.setTheme(mTheme);
 
         if(mOnThemeChange != null)
@@ -282,13 +277,9 @@ public class BaskChartView extends LinearLayout {
 
     public void setRenderType(Class<?> chartViewClass) {
         mChartViewClass = chartViewClass;
-
         Log.d(TAG, "setRenderType: " + chartViewClass);
-
         //chartView.setTheme(mTheme);
-        Log.d(TAG, "setChartTheme: 777777");
         //chartSliderView.setTheme(mTheme);
-
         invalidate();
     }
 

@@ -50,11 +50,13 @@ public class MainActivity extends ListActivity {
 
         for (int i = 0; i < chartsData.size(); i++) {
 
-            //Class<?> chartClass = ChartGLView.class;
-            //Class<?> chartClass = ChartCanvasView.class;
+            Class<?> chartClass = ChartGLView.class;
+            if(i % 2 != 0 )
+                chartClass = ChartCanvasView.class;
+
             Log.d(TAG, "initChartView: ------------------ CHART #" + i);
-            final BaskChartView baskChartView = new BaskChartView(this, ChartCanvasView.class);
-            baskChartView.setChartTheme(new LightTheme());
+            final BaskChartView baskChartView = new BaskChartView(this, chartClass);
+            baskChartView.setChartTheme(i % 2 == 0 ? new LightTheme() : new DarkTheme());
             baskChartView.setData(chartsData.get(i));
             /*baskChartView.setOnThemeChange(new IOnThemeChange() {
                 @Override

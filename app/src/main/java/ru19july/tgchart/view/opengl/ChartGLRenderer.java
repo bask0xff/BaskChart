@@ -156,15 +156,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
         //Really Nice Perspective Calculations
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-    	/*
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
-
-        gl.glClearDepthf(1.0f);
-        gl.glEnable(GL10.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL10.GL_LEQUAL);
-
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
-                  GL10.GL_NICEST);*/
     }
 
     private void DrawPixels(GL10 gl) {
@@ -180,8 +171,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
         for (int j = 0; j < 3; j++)
             for (int i = 0; i < 1000; i++) {
-                int x = (int) (Math.cos(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f + (i + ticks-500)/10f));
-                int y = (int) (Math.sin(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f));
+                int x = (int) (Math.cos(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f + (i + ticks-500)/10f)) + Width / 2;
+                int y = (int) (Math.sin(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f)) + Height / 2;
                 pixel(gl, x, y, j < 1 ? Color.RED : (j < 2 ? Color.BLUE : Color.GREEN));
             }
 
@@ -201,6 +192,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     }
 
     private void pixel(GL10 gl, int x, int y, int color) {
+        x = x - Width / 2;
+        y = y - Height / 2;
         gl.glLoadIdentity();
         Random r = new Random();
         gl.glTranslatef(x, y, 0);
@@ -208,165 +201,11 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         mPixel.draw(gl, color);
     }
 
-    public int[] getConfigSpec() {
-        // We don't need a depth buffer, and don't care about our
-        // color depth.
-        //int[] configSpec = { EGL10.EGL_DEPTH_SIZE, 0, EGL10.EGL_NONE };
-        int[] configSpec = {EGL10.EGL_DEPTH_SIZE, 1, EGL10.EGL_NONE};
-        /*
-    	int[] configSpec = {
-                EGL10.EGL_RED_SIZE, 5,
-                EGL10.EGL_GREEN_SIZE, 6,
-                EGL10.EGL_BLUE_SIZE, 5,
-                EGL10.EGL_DEPTH_SIZE, 16,
-                // Requires that setEGLContextClientVersion(2) is called on the view.
-                EGL10.EGL_RENDERABLE_TYPE, 4, // EGL_OPENGL_ES2_BIT
-                EGL10.EGL_SAMPLE_BUFFERS, 1, // true
-                EGL10.EGL_SAMPLES, 2,
-                EGL10.EGL_NONE
-        };
-        */
-        return configSpec;
-    }
-
-    /**
-     * Changes the vertex mode used for drawing.
-     *
-     * @param useVerts           Specifies whether to use a vertex array.  If false, the
-     *                           DrawTexture extension is used.
-     * @param useHardwareBuffers Specifies whether to store vertex arrays in
-     *                           main memory or on the graphics card.  Ignored if useVerts is false.
-     */
-    public void setVertMode(boolean useVerts, boolean useHardwareBuffers) {
-        mUseVerts = useVerts;
-        mUseHardwareBuffers = useVerts ? useHardwareBuffers : false;
-    }
-
-    private void init3(GL10 gl, EGLConfig config) {
-        gl.glEnable(GL_BLEND);
-        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        gl.glMatrixMode(GL_PROJECTION);
-        gl.glPushMatrix();
-        gl.glLoadIdentity();
-        gl.glOrthof( 0,1000,500,0,0.0f,100.0f);
-
-        gl.glEnableClientState(GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL_COLOR_ARRAY);
-        line ( 10,100,100,300,  //coordinates
-                1.2,                //thickness in px
-                0.5, 0.0, 1.0, 1.0, //line color RGBA
-                0,0,                //not used
-                true);              //enable alphablend
-
-        //more line() or glDrawArrays() calls
-        gl.glDisableClientState(GL_VERTEX_ARRAY);
-        gl.glDisableClientState(GL_COLOR_ARRAY);
-
-        //other drawing code...
-        gl.glPopMatrix();
-        gl.glDisable(GL_BLEND); //restore blending options
-    }
-
-    private void line(int i, int i1, int i2, int i3, double v, double v1, double v2, double v3, double v4, int i4, int i5, boolean b) {
-
-    }
-
-
-    /* Called when the size of the window changes. */
-    public void sizeChanged(GL10 gl, int width, int height) {
-        //http://androidcookbook.com/Recipe.seam;jsessionid=C0EC047F8349134EE99E8F376C828E3F?recipeId=1529
-        Width = width;
-        Height = height;
-
-        gl.glViewport(0, 0, width, height);
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glLoadIdentity();
-
-        //3D
-        if (MODE == PERSPECTIVE_MODE) {
-            GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, 0.1f, 100.0f);
-            gl.glViewport(0, 0, width, height);
-        } else {
-            gl.glOrthof(-width / 2, width / 2, -height / 2, height / 2, -1000.0f, 1000.0f);
-            gl.glShadeModel(GL10.GL_SMOOTH);
-            if (true) {
-                gl.glEnable(GL10.GL_BLEND);
-                gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-                gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
-                gl.glEnable(GL10.GL_TEXTURE_2D);
-                gl.glEnable(GL10.GL_DEPTH_TEST);
-            }
-
-            gl.glEnable(GL10.GL_LIGHTING);
-            gl.glEnable(GL10.GL_LIGHT0);
-            gl.glEnable(GL10.GL_COLOR_MATERIAL);
-            gl.glEnable(GL10.GL_BLEND);
-
-            gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, matAmbient, 0);
-            gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, matDiffuse, 0);
-
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbientColor, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDiffuseColor, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosition, 0);
-
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, lightSpecular, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_POSITION, lightPosition, 0);
-            gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPOT_DIRECTION, lightDirection, 0);
-            gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_CUTOFF, 180f);
-            gl.glLightf(GL10.GL_LIGHT0, GL10.GL_SPOT_EXPONENT, 100f);
-            gl.glEnable(GL10.GL_DEPTH_TEST);
-            gl.glDepthFunc(GL10.GL_LESS);
-            gl.glDisable(GL10.GL_DITHER);
-        }
-
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glLoadIdentity();
-
-        //GLU.gluLookAt(gl, 0.0f, 0.0f, -1000.0f, 0.0f, 0.0f, 0.0f, 0, 0, 1);
-    }
-
-
-    private void init1(GL10 gl, EGLConfig config) {
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-        gl.glEnable(GL10.GL_DEPTH_TEST);
-
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-    }
-
-    private void init2(GL10 gl, EGLConfig config) {
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
-
-        //gl.glClearColor(0.5f, 0.5f, 0.5f, 1);
-        gl.glShadeModel(GL10.GL_FLAT);
-        gl.glDisable(GL10.GL_DEPTH_TEST);
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-        /*
-         * By default, OpenGL enables features that improve quality but reduce
-         * performance. One might want to tweak that especially on software
-         * renderer.
-         */
-        gl.glDisable(GL10.GL_DITHER);
-        gl.glDisable(GL10.GL_LIGHTING);
-
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-        //gl.glEnable(GL10.GL_DEPTH_TEST);
-
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-    }
-
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        /*
-        gl.glViewport(0, 0, width, height);
-        float aspect = (float)width / height;
-        gl.glMatrixMode(GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glFrustumf(-aspect, aspect, -1.0f, 1.0f, 1f, 10.0f);*/
-
         //http://androidcookbook.com/Recipe.seam;jsessionid=C0EC047F8349134EE99E8F376C828E3F?recipeId=1529
         Width = width;
         Height = height;
+        Log.d(TAG, "onSurfaceChanged: " + Width + "x" + Height);
 
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL10.GL_PROJECTION);
@@ -411,9 +250,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
-
-        //GLU.gluLookAt(gl, 0.0f, 0.0f, -1000.0f, 0.0f, 0.0f, 0.0f, 0, 0, 1);
-
 
     }
 
@@ -469,7 +305,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
     public void slideFrame(int xStart, int xEnd) {
         //Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
-        startX = (500f - xStart) / 500f;
+        startX = (500f - xStart);
     }
 
     public void setData(ChartData chartData) {

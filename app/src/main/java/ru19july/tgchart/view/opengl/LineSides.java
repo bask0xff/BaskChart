@@ -43,7 +43,7 @@ public class LineSides {
     }
 
     // Draw the shape
-    public void draw(GL10 gl) {
+    public void draw(GL10 gl, int x1, int y1, int x2, int y2, int color) {
         gl.glFrontFace(GL10.GL_CCW);    // Front face in counter-clockwise orientation
         gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
         gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
@@ -51,20 +51,56 @@ public class LineSides {
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 
-        //gl.glScalef(030f, 100f, 30f);
         // Render all the faces
         for (int face = 0; face < numFaces; face++) {
             // Set the color for each of the faces
             gl.glColor4f(colors[0][0], colors[0][1], colors[0][2], colors[0][3]);
             // Draw the primitive from the vertex-array directly
-            gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*4, 4);
+            gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face * 4, 4);
         }
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glDisable(GL10.GL_CULL_FACE);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public void draw(GL10 gl, int color) {
+    public void draw(GL10 gl, float x1, float y1, float x2, float y2, float w, int color) {
+
+        float dx = x2 - x1;
+        float dy = y2 - y1;
+        float d = (float) Math.sqrt(dx * dx + dy * dy);
+        float a = (float) Math.acos(dx / d);
+
+        x2 = x2 - x1;
+        y2 = y2 - y1;
+        x1 = 0;
+        y1 = 0;
+
+        float xx2 = (float) (x1 - Math.cos(a) * w / 2f);
+        float yy2 = (float) (y1 + Math.sin(a) * w / 2f);
+
+        float xx0 = (float) (x1 + Math.cos(a) * w / 2f);
+        float yy0 = (float) (y1 - Math.sin(a) * w / 2f);
+
+        float xx3 = (float) (x2 - Math.cos(a) * w / 2f);
+        float yy3 = (float) (y2 + Math.sin(a) * w / 2f);
+
+        float xx1 = (float) (x2 + Math.cos(a) * w / 2f);
+        float yy1 = (float) (y2 + Math.sin(a) * w / 2f);
+
+        vertices = new float[]{  // Vertices of the 6 faces
+                xx0, yy0, 0f,  // 0. left-bottom-front
+                xx1, yy1, 0f,  // 1. right-bottom-front
+                xx2, yy2, 0f,  // 2. left-top-front
+                xx3, yy3, 0f   // 3. right-top-front
+        };
+
+        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+        vbb.order(ByteOrder.nativeOrder()); // Use native byte order
+        vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
+        vertexBuffer.put(vertices);         // Copy data into buffer
+        vertexBuffer.position(0);
+
+
         gl.glFrontFace(GL10.GL_CCW);    // Front face in counter-clockwise orientation
         gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
         gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
@@ -72,15 +108,12 @@ public class LineSides {
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 
-        //gl.glScalef(030f, 100f, 30f);
-        // Render all the faces
         for (int face = 0; face < numFaces; face++) {
-            // Set the color for each of the faces
             gl.glColor4f(Color.red(color), Color.green(color), Color.blue(color), 1f);
-            // Draw the primitive from the vertex-array directly
-            gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*4, 4);
+            gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face * 4, 4);
         }
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glDisable(GL10.GL_CULL_FACE);
     }
+
 }

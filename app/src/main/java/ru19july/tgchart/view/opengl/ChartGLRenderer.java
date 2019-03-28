@@ -34,14 +34,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
     private ChartData mChartData;
 
-    private float[] lightDiffuseColor = {0.99f, 0.99f, 0.99f, 0};
-    private float[] lightAmbientColor = {0.92f, 0.92f, 0.92f, 0};
-    private float[] lightPosition = {30, 30, 30, 30};
-    private float lightSpecular[] = new float[]{0.97f, 0.97f, 0.97f, 1};
-    private float lightDirection[] = new float[]{0.0f, 0.0f, -1.0f};
-    private float matAmbient[] = new float[]{0.93f, 0.93f, 0.93f, 1.0f};
-    private float matDiffuse[] = new float[]{0.96f, 0.96f, 0.96f, 1.0f};
-
     private int Width;
     private int Height;
 
@@ -100,20 +92,23 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
                 int x = (int) (Width * (i + 0f)/mChartData.getSeries().get(0).getValues().size());
                 int y = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f)/ (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
                 pixel(gl, x, y, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
-                line(gl, x, y, x + 30, y + 20, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+                //line(gl, x, y, x + j*3, y + j*2, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
             }
         }
 
+        line(gl, 100, 100, 150, 120, Color.RED);
+        line(gl, 150, 120, 320, 220, Color.GREEN);
+
     }
 
-    private void line(GL10 gl, int x1, int y1, int x2, int y2, int color) {
+    private void line(GL10 gl, float x1, float y1, float x2, float y2, int color) {
         x1 = x1 - Width / 2;
         y1 = y1 - Height / 2;
         gl.glLoadIdentity();
         Random r = new Random();
         gl.glTranslatef(x1, y1, 0);
         gl.glScalef(1, 1, 1);
-        //mLine.draw(gl, color);
+        new LineSides().draw(gl, x1, y1, x2, y2, 20f, color);
     }
 
     private void pixel(GL10 gl, int x, int y, int color) {
@@ -122,7 +117,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glLoadIdentity();
         Random r = new Random();
         gl.glTranslatef(x, y, 0);
-        gl.glScalef(r.nextFloat()*2f, r.nextFloat()*2f, 1);
+        gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
         new CubeColorSides().draw(gl, color);
     }
 

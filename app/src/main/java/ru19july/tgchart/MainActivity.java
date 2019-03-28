@@ -49,17 +49,21 @@ public class MainActivity extends ListActivity {
         chartsData.addAll(readJson(json));
 
         int charts = chartsData.size();
-        charts = 1;
+        //charts = 1;
 
         for (int i = 0; i < charts; i++) {
 
             Class<?> chartClass = ChartGLView.class;
-            if(i % 2 != 0 )
+
+            if(i % 2 == 0 )
                 chartClass = ChartCanvasView.class;
+            else
+                chartClass = ChartGLView.class;
+
 
             Log.d(TAG, "initChartView: ------------------ CHART #" + i);
             final BaskChartView baskChartView = new BaskChartView(this, chartClass);
-            baskChartView.setChartTheme(i % 2 == 0 ? new LightTheme() : new DarkTheme());
+            baskChartView.setChartTheme(i % 2 != 0 ? new LightTheme() : new DarkTheme());
             baskChartView.setData(chartsData.get(i));
             /*baskChartView.setOnThemeChange(new IOnThemeChange() {
                 @Override

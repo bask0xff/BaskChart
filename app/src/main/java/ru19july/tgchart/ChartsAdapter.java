@@ -35,6 +35,7 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     static class ViewHolder {
         public BaskChartView baskChartView;
         public LinearLayout layout_chart;
+        public Class<?> renderType;
     }
 
 /*
@@ -69,9 +70,9 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
 
             //TODO: here!
             Class<?> renderType = chartView.getRenderType();
-            //renderType = ChartCanvasView.class;
-            viewHolder.baskChartView.setRenderType(renderType);
+            viewHolder.renderType = renderType;
 
+            viewHolder.baskChartView.setRenderType(renderType);
             viewHolder.baskChartView.setChartTheme(chartView.getTheme());
 
             viewHolder.layout_chart.addView(viewHolder.baskChartView);
@@ -84,6 +85,10 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
 
         holder.baskChartView.setData(chartView.getData());
         //holder.baskChartView.setChartTheme(getT);
+
+        holder.baskChartView.setRenderType(holder.renderType);
+//        holder.baskChartView.setChartTheme(chartView.getTheme());
+
         holder.baskChartView.invalidate();
         holder.baskChartView.update();
 

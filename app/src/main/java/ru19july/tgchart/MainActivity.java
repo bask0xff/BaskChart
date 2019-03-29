@@ -52,13 +52,7 @@ public class MainActivity extends ListActivity {
 
         for (int i = 0; i < charts * 10; i++) {
 
-            Class<?> chartClass;
-
-            if(i % 1 == 0 )
-                chartClass = ChartCanvasView.class;
-            else
-                chartClass = ChartGLView.class;
-
+            Class<?> chartClass = i % 2 != 0 ? ChartCanvasView.class : ChartGLView.class;
             IChartTheme theme = i % 2 != 0 ? new LightTheme() : new DarkTheme();
 
             Log.d(TAG, "initChartView: ------------------ CHART #" + i + " => " + theme.getClass().getSimpleName());

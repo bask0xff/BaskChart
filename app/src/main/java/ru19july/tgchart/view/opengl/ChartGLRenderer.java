@@ -93,26 +93,22 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
                 int x2 = (int) (Width * (i + 1f) / mChartData.getSeries().get(0).getValues().size());
                 int y2 = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i + 1) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-                //pixel(gl, x, y, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+                //pixel(gl, x1, y1, 5f, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
                 //line(gl, x, y, x + j*3, y + j*2, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
 
-                drawLine(gl, x1, y1, x2, y2, j < 2 ? Color.BLUE : (j < 3 ? Color.RED : Color.GREEN)/*Color.parseColor(mChartData.getSeries().get(j).getColor())*/);
+                drawLine(gl, x1, y1, x2, y2, 3f, j < 2 ? Color.BLUE : (j < 3 ? Color.RED : Color.GREEN)/*Color.parseColor(mChartData.getSeries().get(j).getColor())*/);
             }
         }
 
     }
 
-    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, int color) {
-        // delta of exact value and rounded value of the dependent variable
+    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color) {
         int d = 0;
-
         int dx = Math.abs(x2 - x1);
         int dy = Math.abs(y2 - y1);
-
-        int dx2 = 2 * dx; // slope scaling factors to
-        int dy2 = 2 * dy; // avoid floating point
-
-        int ix = x1 < x2 ? 1 : -1; // increment direction
+        int dx2 = 2 * dx;
+        int dy2 = 2 * dy;
+        int ix = x1 < x2 ? 1 : -1;
         int iy = y1 < y2 ? 1 : -1;
 
         int x = x1;
@@ -120,7 +116,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
         if (dx >= dy) {
             while (true) {
-                pixel(g, x, y, color);
+                pixel(g, x, y, w, color);
                 if (x == x2)
                     break;
                 x += ix;
@@ -132,7 +128,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
             }
         } else {
             while (true) {
-                pixel(g, x, y, color);
+                pixel(g, x, y, w, color);
                 if (y == y2)
                     break;
                 y += iy;
@@ -155,14 +151,14 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         new LineSides().draw(gl, x1, y1, x2, y2, 20f, color);
     }
 
-    private void pixel(GL10 gl, int x, int y, int color) {
+    private void pixel(GL10 gl, int x, int y, float w, int color) {
         x = x - Width / 2;
         y = y - Height / 2;
         gl.glLoadIdentity();
         Random r = new Random();
         gl.glTranslatef(x, y, 0);
         //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
-        gl.glScalef(1f, 1f, 1);
+        gl.glScalef(w, w, 1);
         new CubeColorSides().draw(gl, color);
     }
 

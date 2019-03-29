@@ -19,7 +19,6 @@ import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.Series;
 import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.view.BaskChartView;
-import ru19july.tgchart.interfaces.IOnThemeChange;
 import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.opengl.ChartGLView;
 import ru19july.tgchart.view.theme.DarkTheme;
@@ -28,7 +27,7 @@ import ru19july.tgchart.view.theme.LightTheme;
 public class MainActivity extends ListActivity {
     private String TAG = MainActivity.class.getSimpleName();
     private boolean nightTheme = true;
-    private List<ChartData> chartsData = new ArrayList<>();
+    public static List<ChartData> chartsData = new ArrayList<>();
     private List<BaskChartView> baskChartViews = new ArrayList<>();
     private ChartsAdapter adapter;
 
@@ -51,20 +50,21 @@ public class MainActivity extends ListActivity {
         int charts = chartsData.size();
         //charts = 1;
 
-        for (int i = 0; i < charts; i++) {
+        for (int i = 0; i < charts * 10; i++) {
 
-            Class<?> chartClass = ChartGLView.class;
+            Class<?> chartClass;
 
-            if(i % 2 == 0 )
+            if(i % 1 == 0 )
                 chartClass = ChartCanvasView.class;
             else
                 chartClass = ChartGLView.class;
 
+            IChartTheme theme = i % 2 != 0 ? new LightTheme() : new DarkTheme();
 
-            Log.d(TAG, "initChartView: ------------------ CHART #" + i);
+            Log.d(TAG, "initChartView: ------------------ CHART #" + i + " => " + theme.getClass().getSimpleName());
             final BaskChartView baskChartView = new BaskChartView(this, chartClass);
-            baskChartView.setChartTheme(i % 2 != 0 ? new LightTheme() : new DarkTheme());
-            baskChartView.setData(chartsData.get(i));
+            baskChartView.setChartTheme(theme);
+            baskChartView.setData(chartsData.get(i % charts));
             /*baskChartView.setOnThemeChange(new IOnThemeChange() {
                 @Override
                 public void OnThemeChange(IChartTheme theme) {
@@ -134,7 +134,7 @@ public class MainActivity extends ListActivity {
                 for (int j = 0; j < series.size(); j++) {
                     String seriesName = series.get(j).getName();
                     if (namesObj.has(seriesName))
-                        series.get(j).setTitle(namesObj.getString(seriesName));
+                        series.get(j).setTitle("Chart #" + i + ", Serie #" + j + " " + namesObj.getString(seriesName));
                     if (colorsObj.has(seriesName))
                         series.get(j).setColor(colorsObj.getString(seriesName));
                     if (typesObj.has(seriesName))

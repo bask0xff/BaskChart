@@ -52,7 +52,7 @@ public class MainActivity extends ListActivity {
 
     private void initChartView() {
         int charts = chartsData.size();
-        //charts = 1;
+        charts = 1;
 
         for (int i = 0; i < charts; i++) {
 
@@ -63,15 +63,6 @@ public class MainActivity extends ListActivity {
             final BaskChartView baskChartView = new BaskChartView(this, chartClass);
             baskChartView.setChartTheme(theme);
             baskChartView.setData(chartsData.get(i % charts));
-            /*baskChartView.setOnThemeChange(new IOnThemeChange() {
-                @Override
-                public void OnThemeChange(IChartTheme theme) {
-                    Log.d(TAG, "OnThemeChange-1: " + theme);
-                    //baskChartView.setChartTheme(theme);
-
-                    adapter.notifyDataSetChanged();
-                }
-            });*/
 
             baskChartViews.add(baskChartView);
 

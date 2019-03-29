@@ -79,26 +79,70 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
         for (int j = 0; j < 3; j++)
             for (int i = 0; i < 1000; i++) {
-                int x = (int) (Math.cos(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f + (i + ticks-500)/10f)) + Width / 2;
+                int x = (int) (Math.cos(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f + (i + ticks - 500) / 10f)) + Width / 2;
                 int y = (int) (Math.sin(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f)) + Height / 2;
 
-                x = (int) (Width * (i/1000f));
+                x = (int) (Width * (i / 1000f));
                 //pixel(gl, x, y, j < 1 ? Color.RED : (j < 2 ? Color.BLUE : Color.GREEN));
             }
 
-        for(int j=1; j<mChartData.getSeries().size(); j++)
-        {
-            for(int i=0; i<mChartData.getSeries().get(0).getValues().size(); i++){
-                int x = (int) (Width * (i + 0f)/mChartData.getSeries().get(0).getValues().size());
-                int y = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f)/ (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-                pixel(gl, x, y, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+        for (int j = 1; j < mChartData.getSeries().size(); j++) {
+            for (int i = 0; i < mChartData.getSeries().get(0).getValues().size() - 1; i++) {
+                int x1 = (int) (Width * (i + 0f) / mChartData.getSeries().get(0).getValues().size());
+                int y1 = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
+
+                int x2 = (int) (Width * (i + 1f) / mChartData.getSeries().get(0).getValues().size());
+                int y2 = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i + 1) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
+                //pixel(gl, x, y, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
                 //line(gl, x, y, x + j*3, y + j*2, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+
+                drawLine(gl, x1, y1, x2, y2, j < 2 ? Color.BLUE : (j < 3 ? Color.RED : Color.GREEN)/*Color.parseColor(mChartData.getSeries().get(j).getColor())*/);
             }
         }
 
-        line(gl, 100, 100, 150, 120, 10, Color.RED);
-        line(gl, 150, 120, 320, 220, 10, Color.GREEN);
+    }
 
+    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, int color) {
+        // delta of exact value and rounded value of the dependent variable
+        int d = 0;
+
+        int dx = Math.abs(x2 - x1);
+        int dy = Math.abs(y2 - y1);
+
+        int dx2 = 2 * dx; // slope scaling factors to
+        int dy2 = 2 * dy; // avoid floating point
+
+        int ix = x1 < x2 ? 1 : -1; // increment direction
+        int iy = y1 < y2 ? 1 : -1;
+
+        int x = x1;
+        int y = y1;
+
+        if (dx >= dy) {
+            while (true) {
+                pixel(g, x, y, color);
+                if (x == x2)
+                    break;
+                x += ix;
+                d += dy2;
+                if (d > dx) {
+                    y += iy;
+                    d -= dx2;
+                }
+            }
+        } else {
+            while (true) {
+                pixel(g, x, y, color);
+                if (y == y2)
+                    break;
+                y += iy;
+                d += dx2;
+                if (d > dy) {
+                    x += ix;
+                    d -= dy2;
+                }
+            }
+        }
     }
 
     private void line(GL10 gl, float x1, float y1, float x2, float y2, int color) {
@@ -117,18 +161,24 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glLoadIdentity();
         Random r = new Random();
         gl.glTranslatef(x, y, 0);
-        gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
+        //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
+        gl.glScalef(1f, 1f, 1);
         new CubeColorSides().draw(gl, color);
     }
 
     private void line(GL10 gl, float x1, float y1, float x2, float y2, float w, int color) {
-        float xc = (x1 + x2)/2;
+        float xc = (x1 + x2) / 2;
         float yc = (y1 + y2) / 2;
         gl.glLoadIdentity();
         gl.glTranslatef(xc, yc, 0);
         gl.glRotatef(ticks * 5, 0.0f, 0.0f, 1.0f);
         gl.glScalef(x2-x1, w, 1);
         new CubeColorSides().draw(gl, color);
+
+        gl.glLoadIdentity();
+        gl.glTranslatef(x1, y1, 0);
+        gl.glScalef(x2-x1, w, 1);
+        //new CubeColorSides().draw(gl, color);
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {

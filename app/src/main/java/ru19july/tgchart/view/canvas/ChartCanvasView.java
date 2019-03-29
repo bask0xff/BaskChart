@@ -122,7 +122,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         W = canvas.getWidth();
         H = canvas.getHeight();
 
-        PrepareCanvas(canvas);
+        DrawChart(canvas, mChartData);
 
         canvas.restore();
     }
@@ -138,37 +138,39 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         return realY;
     }
 
-    public Canvas PrepareCanvas(Canvas canvas) {
-        if (drawing) return canvas;
+    public void DrawChart(Canvas canvas, ChartData chartData) {
+        //if (drawing) return canvas;
+        //drawing = true;
 
-        drawing = true;
-
-        if (mChartData == null) return null;
+        if (chartData == null) return;
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
-        Paint fp = new Paint();
-        fp.setAntiAlias(false);
-        fp.setStyle(Paint.Style.FILL_AND_STROKE);
         long ms = (new Date()).getTime();
 
-        fp.setColor(Color.parseColor(mTheme.backgroundColor()));
+        drawRect(canvas, 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
 
-        canvas.drawRect(0, 0, W, H, fp);
+        if (chartData.getSeries().get(0).getValues().size() > 0) {
 
-        if (mChartData.getSeries().get(0).getValues().size() > 0) {
-
-            NiceScale numScaleV = mChartData.getNiceScale(leftMinValue, rightMaxValue);
+            NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
             DrawHorizontalLines(numScaleV, decimalCount, canvas);
 
             NiceDate numScaleH = new NiceDate(leftMinValue, rightMaxValue);
             DrawVerticalLines(numScaleH, canvas);
 
-            DrawChart(mChartData.getSeries(), canvas);
+            DrawChart(chartData.getSeries(), canvas);
         }
 
-        drawing = false;
-        return canvas;
+        //drawing = false;
+        //return canvas;
+    }
+
+    private void drawRect(Canvas canvas, int x1, int y1, int x2, int y2, int color) {
+        Paint fp = new Paint();
+        fp.setAntiAlias(false);
+        fp.setStyle(Paint.Style.FILL_AND_STROKE);
+        fp.setColor(color);
+        canvas.drawRect(x1, y1, x2, y2, fp);
     }
 
     private void DrawChart(List<Series> series, Canvas canvas) {

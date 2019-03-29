@@ -35,6 +35,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     private float xEndSaved = 0.f;
     private ChartData chartData;
     private IChartTheme mTheme;
+    private int mode = 0;
 
     public ChartSliderView(Context context) {
         super(context);
@@ -161,8 +162,12 @@ public class ChartSliderView extends View implements View.OnTouchListener {
         float dx1 = Math.abs(xx - xStart);
         float dx2 = Math.abs(xx - xEnd);
 
-        if (dx1 < 50 && dx1 < dx2) xStart = xx;
-        if (dx2 < 50 && dx2 < dx1) xEnd = xx;
+        if (event.getAction() == MotionEvent.ACTION_DOWN){
+            if (dx1 < 50 && dx1 < dx2) mode = 1;//left
+            if (dx2 < 50 && dx2 < dx1) mode = 2;//right
+        }
+        if (mode == 1 && event.getAction() ==  MotionEvent.ACTION_MOVE) xStart = xx;
+        if (mode == 2 && event.getAction() ==  MotionEvent.ACTION_MOVE) xEnd = xx;
 
         if (((dx1 > 50 && (dx1 < dx2)) || (dx2 > 50 && (dx2 < dx1))) && event.getAction() == MotionEvent.ACTION_DOWN) {
             slideMoving = true;
@@ -183,6 +188,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             slideMoving = false;
+            mode = 0;
         }
 
         if (mOnSliderListener != null)

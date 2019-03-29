@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,24 +37,27 @@ public class MainActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initChartView();
-    }
-
-    private void initChartView() {
-
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
 
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
+/*
+        BaskChartView baskChartView = findViewById(R.id.baskChartView1);
+        baskChartView.setData(chartsData.get(0));
+        baskChartView.invalidate();
+  */
+        initChartView();
+    }
 
+    private void initChartView() {
         int charts = chartsData.size();
         //charts = 1;
 
-        for (int i = 0; i < charts * 10; i++) {
+        for (int i = 0; i < charts; i++) {
 
-            Class<?> chartClass = i % 2 != 0 ? ChartCanvasView.class : ChartGLView.class;
-            IChartTheme theme = i % 2 != 0 ? new LightTheme() : new DarkTheme();
+            Class<?> chartClass = i % 2 == 0 ? ChartCanvasView.class : ChartGLView.class;
+            IChartTheme theme = i % 2 == 0 ? new DarkTheme() : new LightTheme();
 
             Log.d(TAG, "initChartView: ------------------ CHART #" + i + " => " + theme.getClass().getSimpleName());
             final BaskChartView baskChartView = new BaskChartView(this, chartClass);
@@ -186,7 +190,7 @@ public class MainActivity extends ListActivity {
 
         IChartTheme theme = nightTheme ? new DarkTheme() : new LightTheme();
 
-        for(int i=0; i<1/* baskChartViews.size()*/; i++) {
+        for(int i=0; i< baskChartViews.size(); i++) {
             Log.d(TAG, "toggleTheme, baskChartViews[" + i + "]: " + theme.getClass().getSimpleName());
             updateChart(baskChartViews.get(i), theme, i);
         }

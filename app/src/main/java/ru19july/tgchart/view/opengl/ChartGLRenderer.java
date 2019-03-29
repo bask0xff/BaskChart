@@ -96,8 +96,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
             }
         }
 
-        line(gl, 100, 100, 150, 120, Color.RED);
-        line(gl, 150, 120, 320, 220, Color.GREEN);
+        line(gl, 100, 100, 150, 120, 10, Color.RED);
+        line(gl, 150, 120, 320, 220, 10, Color.GREEN);
 
     }
 
@@ -118,6 +118,16 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         Random r = new Random();
         gl.glTranslatef(x, y, 0);
         gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
+        new CubeColorSides().draw(gl, color);
+    }
+
+    private void line(GL10 gl, float x1, float y1, float x2, float y2, float w, int color) {
+        float xc = (x1 + x2)/2;
+        float yc = (y1 + y2) / 2;
+        gl.glLoadIdentity();
+        gl.glTranslatef(xc, yc, 0);
+        gl.glRotatef(ticks * 5, 0.0f, 0.0f, 1.0f);
+        gl.glScalef(x2-x1, w, 1);
         new CubeColorSides().draw(gl, color);
     }
 

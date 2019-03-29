@@ -83,11 +83,9 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
         // fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
 
-        //holder.baskChartView.setData(chartView.getData());
-        //holder.baskChartView.setChartTheme(getT);
-
-        //holder.baskChartView.setRenderType(holder.renderType);
-//        holder.baskChartView.setChartTheme(chartView.getTheme());
+        holder.baskChartView.setData(chartView.getData());
+        holder.baskChartView.setRenderType(holder.renderType);
+        holder.baskChartView.setChartTheme(chartView.getTheme());
 
         holder.baskChartView.invalidate();
         holder.baskChartView.update();

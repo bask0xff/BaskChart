@@ -50,7 +50,9 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
         Log.d(TAG, "getView #" + position + ": convertView: " + convertView);
+
         BaskChartView chartView = baskChartViewList.get(position);
+        Class<?> renderType = chartView.getRenderType();
 
         Log.d(TAG, "getView, baskChartViewList.get("+position+").getRenderType(): " + chartView.getRenderType().getSimpleName());
 
@@ -59,22 +61,11 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
             rowView = inflater.inflate(R.layout.chart_item, null);
             ViewHolder viewHolder = new ViewHolder();
 
-            //viewHolder.baskChartView = rowView.findViewById(R.id.chartControlsView);
             viewHolder.layout_chart = rowView.findViewById(R.id.layout_chart);
 
-            final BaskChartView baskChartView = new BaskChartView(context, chartView.getRenderType());
-            //baskChartView.setChartTheme(chartView.getTheme());
-            //baskChartView.setData(chartsData.get(i));
+            viewHolder.baskChartView = new BaskChartView(context, renderType);
 
-            viewHolder.baskChartView = baskChartView;
-
-            //TODO: here!
-            Class<?> renderType = chartView.getRenderType();
             viewHolder.renderType = renderType;
-
-            //viewHolder.baskChartView.setRenderType(renderType);
-            //viewHolder.baskChartView.setChartTheme(chartView.getTheme());
-
             viewHolder.layout_chart.addView(viewHolder.baskChartView);
 
             rowView.setTag(viewHolder);
@@ -84,7 +75,7 @@ public class ChartsAdapter extends ArrayAdapter<BaskChartView> {
         ViewHolder holder = (ViewHolder) rowView.getTag();
 
         holder.baskChartView.setData(chartView.getData());
-        holder.baskChartView.setRenderType(chartView.getRenderType());
+        holder.baskChartView.setRenderType(renderType);
         holder.baskChartView.setChartTheme(chartView.getTheme());
 
         holder.baskChartView.invalidate();

@@ -35,6 +35,7 @@ import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.opengl.ChartGLRenderer;
+import ru19july.tgchart.view.theme.DarkTheme;
 
 public class ChartCanvasView extends View implements IChartView, View.OnTouchListener {
 
@@ -58,7 +59,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     private float realW = 1.0f;
     private float leftMinValue = 0;
     private float rightMaxValue = 1;
-    private IChartTheme mTheme;
+    private IChartTheme mTheme = new DarkTheme();
     private boolean mShowVerticalLines = false;
     private String themeName;
 

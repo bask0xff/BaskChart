@@ -14,6 +14,7 @@ import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceScale;
+import ru19july.tgchart.view.theme.DarkTheme;
 
 public class ChartSliderView extends View implements View.OnTouchListener {
 
@@ -34,7 +35,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     private float xStartSaved = 0.0f;
     private float xEndSaved = 0.f;
     private ChartData chartData;
-    private IChartTheme mTheme;
+    private IChartTheme mTheme = new DarkTheme();
     private int mode = 0;
 
     public ChartSliderView(Context context) {

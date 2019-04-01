@@ -17,6 +17,7 @@
         <ru19july.tgchart.view.BaskChartView
             android:id="@+id/baskChartView"
             android:paddingTop="20dp"
+            chart:themeType="dark"
             chart:renderType="canvas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

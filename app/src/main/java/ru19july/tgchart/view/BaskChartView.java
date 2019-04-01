@@ -105,7 +105,7 @@ public class BaskChartView extends LinearLayout {
                 int themeId = a.getInteger(R.styleable.BaskChartView_themeType, 0);
                 Log.d(TAG, "BaskChartView: themeId=" + themeId);
                 switch (themeId) {
-                    case 1:
+                    case 0:
                         mTheme = new LightTheme();
                     default:
                         mTheme = new DarkTheme();

@@ -12,6 +12,7 @@ import android.widget.ScrollView;
 import java.util.List;
 
 import ru19july.tgchart.view.BaskChartView;
+import ru19july.tgchart.view.canvas.ChartCanvasView;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
@@ -39,13 +40,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //viewHolder.baskChartView.setData(record.getData());
 
-
         //viewHolder.layout_chart = findViewById(R.id.layout_chart);
 
         viewHolder.baskChartView = chartView;
-        //viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
-
-        //viewHolder.renderType = renderType;
+        viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
 
         Log.d(TAG, "onBindViewHolder: (" + i + ")" + chartView.getRenderType().getSimpleName());
 
@@ -75,6 +73,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(v);
             layout = v;
             //baskChartView = v.findViewById(R.id.baskChartView);
+
+            baskChartView = new BaskChartView(context, ChartCanvasView.class);
 
             layout_chart = v.findViewById(R.id.layout_chart);
         }

@@ -35,26 +35,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //BaskChartView record = values.get(i);
 
         BaskChartView chartView = values.get(i);
-        Class<?> renderType = chartView.getRenderType();
+        //Class<?> renderType = chartView.getRenderType();
 
         //viewHolder.baskChartView.setData(record.getData());
 
 
         //viewHolder.layout_chart = findViewById(R.id.layout_chart);
 
-        viewHolder.baskChartView = chartView;//new BaskChartView(context, renderType);
+        viewHolder.baskChartView = chartView;
+        //viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
 
         //viewHolder.renderType = renderType;
-        viewHolder.layout_chart.addView(viewHolder.baskChartView);
 
-        Log.d(TAG, "onBindViewHolder: " + renderType.getSimpleName());
+        Log.d(TAG, "onBindViewHolder: (" + i + ")" + chartView.getRenderType().getSimpleName());
 
         viewHolder.baskChartView.setData(chartView.getData());
-        viewHolder.baskChartView.setRenderType(renderType);
+        viewHolder.baskChartView.setRenderType(chartView.getRenderType());
         viewHolder.baskChartView.setChartTheme(chartView.getTheme());
 
         viewHolder.baskChartView.invalidate();
         viewHolder.baskChartView.update();
+
+        viewHolder.layout_chart.addView(viewHolder.baskChartView);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        //private Class<?> renderType;
         private LinearLayout layout_chart;
         private BaskChartView baskChartView;
 

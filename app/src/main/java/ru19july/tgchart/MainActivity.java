@@ -55,23 +55,23 @@ public class MainActivity extends Activity {
         baskChartView.setData(chartsData.get(0));
         baskChartView.invalidate();
 
-/*
+
         initChartView();
 
-        recyclerView.setHasFixedSize(true);
+//        recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new RecyclerViewAdapter(baskChartViews);
         recyclerView.setAdapter(mAdapter);
-*/
+
     }
 
     private void initChartView() {
         int charts = chartsData.size();
-        charts = 1;
+        //charts = 1;
 
-        for (int i = 0; i < charts; i++) {
+        for (int i = 0; i < charts * 10; i++) {
 
             Class<?> chartClass = i % 2 == 0 ? ChartCanvasView.class : ChartGLView.class;
             IChartTheme theme = i % 2 == 0 ? new DarkTheme() : new LightTheme();

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     xmlns:chart="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
 >
 
-    <!--LinearLayout
+    <LinearLayout
         android:id="@+id/layout_chart"
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"-->
+        android:layout_height="wrap_content">
 
         <!-- chart:renderType is required attribute!!! -->
-        <ru19july.tgchart.view.BaskChartView
+        <!--ru19july.tgchart.view.BaskChartView
+            android:background="#0000ff"
             android:id="@+id/baskChartView"
             android:paddingTop="20dp"
             chart:themeType="dark"
             chart:renderType="canvas"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" /-->
 
-    <!--/LinearLayout-->
+    </LinearLayout>
 
 </RelativeLayout>

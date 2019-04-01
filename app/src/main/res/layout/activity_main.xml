@@ -9,7 +9,7 @@
 
     <ru19july.tgchart.view.BaskChartView
         android:id="@+id/baskChartView1"
-        android:visibility="visible"
+        android:visibility="gone"
         chart:renderType="canvas"
         chart:themeType="dark"
         android:layout_width="wrap_content"

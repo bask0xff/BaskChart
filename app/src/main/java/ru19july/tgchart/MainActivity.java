@@ -1,7 +1,10 @@
 package ru19july.tgchart;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,12 +28,14 @@ import ru19july.tgchart.view.opengl.ChartGLView;
 import ru19july.tgchart.view.theme.DarkTheme;
 import ru19july.tgchart.view.theme.LightTheme;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends Activity {
     private String TAG = MainActivity.class.getSimpleName();
     private boolean nightTheme = true;
     public static List<ChartData> chartsData = new ArrayList<>();
     private List<BaskChartView> baskChartViews = new ArrayList<>();
-    private ChartsAdapter adapter;
+    //private ChartsAdapter adapter;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +47,24 @@ public class MainActivity extends ListActivity {
 
         chartsData = new ArrayList<>();
         chartsData.addAll(readJson(json));
-/*
+
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+
         BaskChartView baskChartView = findViewById(R.id.baskChartView1);
         baskChartView.setData(chartsData.get(0));
         baskChartView.invalidate();
-  */
+
+/*
         initChartView();
+
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new RecyclerViewAdapter(baskChartViews);
+        recyclerView.setAdapter(mAdapter);
+*/
     }
 
     private void initChartView() {
@@ -65,14 +82,7 @@ public class MainActivity extends ListActivity {
             baskChartView.setData(chartsData.get(i % charts));
 
             baskChartViews.add(baskChartView);
-
         }
-
-        adapter = new ChartsAdapter(this, baskChartViews);
-        setListAdapter(adapter);
-
-        adapter.notifyDataSetChanged();
-
     }
 
     private List<ChartData> readJson(String json) {
@@ -192,7 +202,7 @@ public class MainActivity extends ListActivity {
     private void updateChart(BaskChartView baskChartView, IChartTheme theme, int position) {
         baskChartView.setChartTheme(theme);
         //adapter.updateTheme(position, theme);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
 
     }
 }

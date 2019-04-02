@@ -43,7 +43,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //viewHolder.layout_chart = findViewById(R.id.layout_chart);
 
         viewHolder.baskChartView = chartView;
-        viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
+        //viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
 
         Log.d(TAG, "onBindViewHolder: (" + i + ")" + chartView.getRenderType().getSimpleName());
 

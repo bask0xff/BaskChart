@@ -201,8 +201,7 @@ public class MainActivity extends Activity {
     //https://stackoverflow.com/questions/3724874/how-can-i-update-a-single-row-in-a-listview
     private void updateChart(BaskChartView baskChartView, IChartTheme theme, int position) {
         baskChartView.setChartTheme(theme);
-        //adapter.updateTheme(position, theme);
-//        adapter.notifyDataSetChanged();
-
+        //mAdapter.updateData();
+        //mAdapter.notifyItemChanged(position);
     }
 }

@@ -57,7 +57,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         gl.glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
         gl.glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
-        //gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f); 	//Black Background
+        //mTheme.backgroundColor()
+        gl.glClearColor(0.0f, .2f, 0.0f, 0.5f); 	//Background
         //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
         gl.glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
         gl.glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
@@ -213,8 +214,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
                 float dx = x - mPreviousX;
                 float dy = y - mPreviousY;
                 ticks = (int) (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR));
- //               mAngleY = (mAngleY + (int)(dx * TOUCH_SCALE_FACTOR) + 360) % 360;
- //               mAngleX = (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR) + 360) % 360;
                 break;
         }
         mPreviousX = x;

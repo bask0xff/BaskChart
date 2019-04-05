@@ -32,11 +32,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         BaskChartView chartView = values.get(i);
 
@@ -53,6 +48,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         viewHolder.baskChartView.invalidate();
         viewHolder.baskChartView.update();
         viewHolder.layout_chart.addView(viewHolder.baskChartView);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     @Override

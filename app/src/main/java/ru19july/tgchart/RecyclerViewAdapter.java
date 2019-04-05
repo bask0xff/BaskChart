@@ -38,19 +38,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        //BaskChartView record = values.get(i);
-
         BaskChartView chartView = values.get(i);
-        //Class<?> renderType = chartView.getRenderType();
-
-        //viewHolder.baskChartView.setData(record.getData());
-
-        //viewHolder.layout_chart = findViewById(R.id.layout_chart);
 
         viewHolder.layout_chart.removeAllViews();
 
         viewHolder.baskChartView = chartView;
-        //viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
 
         Log.d(TAG, "onBindViewHolder: (" + i + ")" + chartView.getRenderType().getSimpleName());
 

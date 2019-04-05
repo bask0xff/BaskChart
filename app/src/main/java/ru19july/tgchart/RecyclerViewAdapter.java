@@ -32,6 +32,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         //BaskChartView record = values.get(i);
 
@@ -41,6 +46,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //viewHolder.baskChartView.setData(record.getData());
 
         //viewHolder.layout_chart = findViewById(R.id.layout_chart);
+
+        viewHolder.layout_chart.removeAllViews();
 
         viewHolder.baskChartView = chartView;
         //viewHolder.baskChartView = new BaskChartView(context, chartView.getRenderType());
@@ -53,7 +60,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         viewHolder.baskChartView.invalidate();
         viewHolder.baskChartView.update();
-
         viewHolder.layout_chart.addView(viewHolder.baskChartView);
     }
 
@@ -63,19 +69,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //private Class<?> renderType;
-        private LinearLayout layout_chart;
-        private BaskChartView baskChartView;
-
-        public View layout;
+        public LinearLayout layout_chart;
+        public BaskChartView baskChartView;
+        public View mView;
 
         public ViewHolder(View v) {
             super(v);
-            layout = v;
-            //baskChartView = v.findViewById(R.id.baskChartView);
-
+            mView = v;
             baskChartView = new BaskChartView(context, ChartCanvasView.class);
-
             layout_chart = v.findViewById(R.id.layout_chart);
         }
     }

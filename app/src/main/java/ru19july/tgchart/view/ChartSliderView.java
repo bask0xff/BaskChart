@@ -72,6 +72,15 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = View.MeasureSpec.getSize(widthMeasureSpec);
+        int height = View.MeasureSpec.getSize(heightMeasureSpec);
+        setMeasuredDimension(width, height);
+
+        if(xEnd<1) xEnd = width;
+    }
+
+    @Override
     protected void onDraw(final Canvas canvas) {
 
         canvas.save();

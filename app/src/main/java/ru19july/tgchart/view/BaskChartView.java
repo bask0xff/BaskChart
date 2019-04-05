@@ -16,6 +16,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.interfaces.IChartTheme;
@@ -294,6 +296,22 @@ public class BaskChartView extends LinearLayout {
         if (obj == this) return true;
         BaskChartView bcv = (BaskChartView)obj;
         return bcv.getData() == getData();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = getHash(title) + getHash(mTheme) + getHash(mContext) + getHash(mChartViewClass) + getHash(chartView)
+                + getHash(chartSliderView) + getHash(mChartData) + getHash(mOnThemeChange) + getHash(linearlayout);
+
+        return hash;
+    }
+
+    private int getHash(Object obj) {
+        if (obj == null)
+            return 0;
+        int result = 1;
+        result = 31 * result + (obj == null ? 0 : obj.hashCode());
+        return result;
     }
 }
 

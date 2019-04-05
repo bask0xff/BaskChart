@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import ru19july.tgchart.ICanvas;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.MinMaxIndex;
@@ -62,6 +63,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     private IChartTheme mTheme = new DarkTheme();
     private boolean mShowVerticalLines = false;
     private String themeName;
+    private Graphix graphics;
 
     public ChartCanvasView(Context context) {
         super(context);
@@ -89,10 +91,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
 
-        paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStrokeWidth(1);
-        paint.setStyle(Paint.Style.STROKE);
+        graphics = new Graphix();
 
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -117,13 +116,8 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     protected void onDraw(final Canvas canvas) {
         canvas.save();
 
-        //Log.d(TAG, "onDraw, theme: " + mTheme.getClass().getSimpleName());
-        Log.d(TAG, "onDraw " + this + ", theme: " + mTheme + " / " + themeName);
-
-        W = canvas.getWidth();
-        H = canvas.getHeight();
-
-        DrawChart(canvas, mChartData);
+        graphics.setCanvas(canvas);
+        DrawChart(graphics, mChartData);
 
         canvas.restore();
     }
@@ -139,9 +133,11 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         return realY;
     }
 
-    public void DrawChart(Canvas canvas, ChartData chartData) {
+    public void DrawChart(ICanvas canvas, ChartData chartData) {
         //if (drawing) return canvas;
         //drawing = true;
+        W = canvas.getWidth();
+        H = canvas.getHeight();
 
         if (chartData == null) return;
 
@@ -149,7 +145,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
         long ms = (new Date()).getTime();
 
-        drawRect(canvas, 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
+        canvas.drawRect( 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
 
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
@@ -166,15 +162,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         //return canvas;
     }
 
-    private void drawRect(Canvas canvas, int x1, int y1, int x2, int y2, int color) {
-        Paint fp = new Paint();
-        fp.setAntiAlias(false);
-        fp.setStyle(Paint.Style.FILL_AND_STROKE);
-        fp.setColor(color);
-        canvas.drawRect(x1, y1, x2, y2, fp);
-    }
-
-    private void DrawChart(List<Series> series, Canvas canvas) {
+    private void DrawChart(List<Series> series, ICanvas canvas) {
         Paint lp = new Paint();
         lp.setAntiAlias(false);
         lp.setStrokeWidth(1);
@@ -255,9 +243,9 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
                 if(series.get(j).isChecked()) {
                     fp.setColor(Color.parseColor(series.get(j).getColor()));
-                    canvas.drawCircle(xk, yk, 10, fp);
+                    canvas.drawCircle(xk, yk, 10f, fp);
                     fp.setColor(Color.parseColor(mTheme.backgroundColor()));
-                    canvas.drawCircle(xk, yk, 5, fp);
+                    canvas.drawCircle(xk, yk, 5f, fp);
                 }
             }
         }
@@ -289,7 +277,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         return result;
     }
 
-    private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {
+    private void DrawHorizontalLines(NiceScale numScale, int decimalCount, ICanvas canvas) {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
         while (yLine <= numScale.niceMax) {
@@ -321,7 +309,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         }
     }
 
-    private void DrawVerticalLines(NiceDate numScale, Canvas canvas) {
+    private void DrawVerticalLines(NiceDate numScale, ICanvas canvas) {
         double xLine = numScale.niceMin;
 
         while (xLine <= numScale.niceMax) {
@@ -352,7 +340,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         }
     }
 
-    private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
+    private void DrawMarker(ICanvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

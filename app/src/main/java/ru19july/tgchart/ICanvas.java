@@ -22,4 +22,7 @@ public interface ICanvas {
 
     void drawRoundRect(RectF rect, int i, int i1, Paint paint);
 
+    void save();
+
+    void restore();
 }

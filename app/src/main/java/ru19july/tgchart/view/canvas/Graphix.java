@@ -58,6 +58,16 @@ public class Graphix implements ICanvas {
         canvas.drawRoundRect(rect, i, i1, paint);
     }
 
+    @Override
+    public void save() {
+        canvas.save();
+    }
+
+    @Override
+    public void restore() {
+        canvas.restore();
+    }
+
     public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
     }

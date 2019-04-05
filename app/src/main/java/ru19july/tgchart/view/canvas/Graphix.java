@@ -1,11 +1,14 @@
 package ru19july.tgchart.view.canvas;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
 import ru19july.tgchart.ICanvas;
+import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.view.ChartEngine;
 
 public class Graphix implements ICanvas {
 
@@ -68,7 +71,25 @@ public class Graphix implements ICanvas {
         canvas.restore();
     }
 
+    @Override
+    public Canvas getCanvas() {
+        return canvas;
+    }
+
     public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
+    }
+
+    public void onDraw(Canvas canvas, ChartEngine chartEngine, ChartData mChartData) {
+        Paint fp = new Paint();
+        fp.setAntiAlias(false);
+        fp.setStyle(Paint.Style.FILL_AND_STROKE);
+        fp.setColor(Color.RED);
+        canvas.drawRect( 0, 0, 511, 333, fp);
+
+
+        setCanvas(canvas);
+        canvas = chartEngine.DrawChart(this, mChartData);
+
     }
 }

@@ -76,8 +76,16 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     @Override
     protected void onDraw(final Canvas canvas) {
+        //graphics.onDraw(canvas, chartEngine, mChartData);
+
+        Log.d(TAG, "onDraw: -> " + canvas);
+
         graphics.setCanvas(canvas);
         chartEngine.DrawChart(graphics, mChartData);
+
+        Log.d(TAG, "onDraw: <- " + canvas);
+
+
     }
 
 

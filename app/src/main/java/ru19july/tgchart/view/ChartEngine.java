@@ -54,15 +54,15 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    public void DrawChart(ICanvas canvas, ChartData chartData) {
+    public Canvas DrawChart(ICanvas canvas, ChartData chartData) {
+        //canvas.setCanvas();
         canvas.save();
-
         mChartData = chartData;
 
         W = canvas.getWidth();
         H = canvas.getHeight();
 
-        if (chartData == null) return;
+        if (chartData == null) return canvas.getCanvas();
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
@@ -83,7 +83,7 @@ public class ChartEngine {
 
         canvas.restore();
         //drawing = false;
-        //return canvas;
+        return canvas.getCanvas();
     }
 
 

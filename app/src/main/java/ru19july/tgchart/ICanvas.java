@@ -25,4 +25,6 @@ public interface ICanvas {
     void save();
 
     void restore();
+
+    Canvas getCanvas();
 }

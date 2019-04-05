@@ -287,5 +287,13 @@ public class BaskChartView extends LinearLayout {
         Log.d(TAG, "getRenderType => " + mChartViewClass);
         return mChartViewClass;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this) return true;
+        BaskChartView bcv = (BaskChartView)obj;
+        return bcv.getData() == getData();
+    }
 }
 

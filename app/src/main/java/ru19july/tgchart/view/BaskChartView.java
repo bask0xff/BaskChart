@@ -300,17 +300,23 @@ public class BaskChartView extends LinearLayout {
 
     @Override
     public int hashCode() {
-        int hash = getHash(title) + getHash(mTheme) + getHash(mContext) + getHash(mChartViewClass) + getHash(chartView)
-                + getHash(chartSliderView) + getHash(mChartData) + getHash(mOnThemeChange) + getHash(linearlayout);
+        int hash = getHash(1, title);
+        hash = getHash(hash, mContext);
+        hash = getHash(hash, mTheme);
+        hash = getHash(hash, mChartViewClass);
+        hash = getHash(hash, chartView);
+        hash = getHash(hash, chartSliderView);
+        hash = getHash(hash, mChartData);
+        hash = getHash(hash, mOnThemeChange);
+        hash = getHash(hash, linearlayout);
 
         return hash;
     }
 
-    private int getHash(Object obj) {
+    private int getHash(int hash, Object obj) {
         if (obj == null)
             return 0;
-        int result = 1;
-        result = 31 * result + (obj == null ? 0 : obj.hashCode());
+        int result = 31 * hash + (obj == null ? 0 : obj.hashCode());
         return result;
     }
 }

@@ -443,6 +443,17 @@ public class ChartEngine {
         view.invalidate();
     }
 
-    public void showChart(ChartCanvasView chartCanvasView, int k, float from, float to) {
+    public void showChart(final View view, final int k, float from, float to) {
+        ValueAnimator va = ValueAnimator.ofFloat(from, to);
+        int mDuration = 1000;
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                if(mChartData.getSeries() != null)
+                    mChartData.getSeries().get(k).setAlpha((float)animation.getAnimatedValue());
+                view.invalidate();
+            }
+        });
+        va.start();
     }
 }

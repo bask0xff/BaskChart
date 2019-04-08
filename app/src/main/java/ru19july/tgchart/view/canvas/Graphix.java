@@ -89,7 +89,7 @@ public class Graphix implements ICanvas {
 
 
         setCanvas(canvas);
-        canvas = chartEngine.DrawChart(this, mChartData);
+        //canvas = chartEngine.DrawChart(this, mChartData);
 
     }
 }

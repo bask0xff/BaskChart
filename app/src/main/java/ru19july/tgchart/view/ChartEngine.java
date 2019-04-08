@@ -54,7 +54,7 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    public Canvas DrawChart(ICanvas canvas, ChartData chartData) {
+    public Canvas DrawChart(Canvas canvas, ChartData chartData) {
         //canvas.setCanvas();
         canvas.save();
         mChartData = chartData;
@@ -62,13 +62,13 @@ public class ChartEngine {
         W = canvas.getWidth();
         H = canvas.getHeight();
 
-        if (chartData == null) return canvas.getCanvas();
+        if (chartData == null) return canvas;//.getCanvas();
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
         long ms = (new Date()).getTime();
 
-        canvas.drawRect( 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
+        //canvas.drawRect( 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
 
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
@@ -83,7 +83,7 @@ public class ChartEngine {
 
         canvas.restore();
         //drawing = false;
-        return canvas.getCanvas();
+        return canvas;//.getCanvas();
     }
 
 
@@ -98,7 +98,7 @@ public class ChartEngine {
         return realY;
     }
 
-    private void DrawChart(List<Series> series, ICanvas canvas) {
+    private void DrawChart(List<Series> series, Canvas canvas) {
         Paint lp = new Paint();
         lp.setAntiAlias(false);
         lp.setStrokeWidth(1);
@@ -213,7 +213,7 @@ public class ChartEngine {
         return result;
     }
 
-    private void DrawHorizontalLines(NiceScale numScale, int decimalCount, ICanvas canvas) {
+    private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
         while (yLine <= numScale.niceMax) {
@@ -245,7 +245,7 @@ public class ChartEngine {
         }
     }
 
-    private void DrawVerticalLines(NiceDate numScale, ICanvas canvas) {
+    private void DrawVerticalLines(NiceDate numScale, Canvas canvas) {
         double xLine = numScale.niceMin;
 
         while (xLine <= numScale.niceMax) {
@@ -276,7 +276,7 @@ public class ChartEngine {
         }
     }
 
-    private void DrawMarker(ICanvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
+    private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

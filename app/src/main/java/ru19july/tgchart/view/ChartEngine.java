@@ -54,15 +54,15 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    public Canvas DrawChart(Canvas canvas, ChartData chartData) {
+    public Canvas DrawChart(Object canvas, ChartData chartData) {
         //canvas.setCanvas();
-        canvas.save();
+        ((Canvas)canvas).save();
         mChartData = chartData;
 
-        W = canvas.getWidth();
-        H = canvas.getHeight();
+        W = ((Canvas)canvas).getWidth();
+        H = ((Canvas)canvas).getHeight();
 
-        if (chartData == null) return canvas;//.getCanvas();
+        if (chartData == null) return ((Canvas)canvas);//.getCanvas();
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
@@ -73,17 +73,17 @@ public class ChartEngine {
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
             NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
-            DrawHorizontalLines(numScaleV, decimalCount, canvas);
+            DrawHorizontalLines(numScaleV, decimalCount, ((Canvas)canvas));
 
             NiceDate numScaleH = new NiceDate(leftMinValue, rightMaxValue);
-            DrawVerticalLines(numScaleH, canvas);
+            DrawVerticalLines(numScaleH, ((Canvas)canvas));
 
-            DrawChart(chartData.getSeries(), canvas);
+            DrawChart(chartData.getSeries(), ((Canvas)canvas));
         }
 
-        canvas.restore();
+        ((Canvas)canvas).restore();
         //drawing = false;
-        return canvas;//.getCanvas();
+        return ((Canvas)canvas);//.getCanvas();
     }
 
 
@@ -213,7 +213,7 @@ public class ChartEngine {
         return result;
     }
 
-    private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Canvas canvas) {
+    private void DrawHorizontalLines(NiceScale numScale, int decimalCount, Object canvas) {
         //drawing horizontal lines
         double yLine = numScale.niceMin;
         while (yLine <= numScale.niceMax) {
@@ -228,7 +228,7 @@ public class ChartEngine {
             mPaint.setColor(Color.BLACK);
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-            canvas.drawPath(mPath, mPaint);
+            ((Canvas)canvas).drawPath(mPath, mPaint);
 
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) yLine);
@@ -239,13 +239,13 @@ public class ChartEngine {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            canvas.drawText(str, 40f, yL - textSize * 0.3f, p);
+            ((Canvas)canvas).drawText(str, 40f, yL - textSize * 0.3f, p);
 
             yLine += numScale.tickSpacing;
         }
     }
 
-    private void DrawVerticalLines(NiceDate numScale, Canvas canvas) {
+    private void DrawVerticalLines(NiceDate numScale, Object canvas) {
         double xLine = numScale.niceMin;
 
         while (xLine <= numScale.niceMax) {
@@ -260,7 +260,7 @@ public class ChartEngine {
                 mPaint.setColor(Color.BLACK);
                 mPaint.setStyle(Paint.Style.STROKE);
                 mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-                canvas.drawPath(mPath, mPaint);
+                ((Canvas)canvas).drawPath(mPath, mPaint);
             }
 
             String str = Utils.unixtimeToString((long)xLine, "MMM dd");
@@ -270,13 +270,13 @@ public class ChartEngine {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            canvas.drawText(str, xL - xw, H* 0.85f, p);
+            ((Canvas)canvas).drawText(str, xL - xw, H* 0.85f, p);
 
             xLine += numScale.tickSpacing;
         }
     }
 
-    private void DrawMarker(Canvas canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
+    private void DrawMarker(Object canvas, long timestamp, float[] values, String[] colors, float lastX, float lastY) {
         int decimalCount = 0;
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -318,11 +318,11 @@ public class ChartEngine {
                 rightX,
                 lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
 
-        canvas.drawRoundRect(rect, 8, 8, paint);
+        ((Canvas)canvas).drawRoundRect(rect, 8, 8, paint);
 
         //date
         p.setColor(Color.parseColor(mTheme.markerFontColor()));
-        canvas.drawText(dat, leftX + 50, lastY + 16, p);
+        ((Canvas)canvas).drawText(dat, leftX + 50, lastY + 16, p);
 
         int k = 0;
         for (int i = 0; i < values.length; i++) {
@@ -330,7 +330,7 @@ public class ChartEngine {
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            canvas.drawText(str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
+            ((Canvas)canvas).drawText(str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
             k++;
         }
     }

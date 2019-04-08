@@ -26,9 +26,6 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     private final String TAG = ChartCanvasView.class.getSimpleName();
 
-    private ChartData mChartData;
-
-    private Graphix graphics;
     private ChartEngine chartEngine = new ChartEngine();
 
     public ChartCanvasView(Context context) {
@@ -57,8 +54,6 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
 
-        graphics = new Graphix();
-
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
@@ -83,7 +78,6 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         chartEngine.DrawChart(canvas);
     }
 
-
     public void updateSlideFrameWindow(int startX, int endX) {
         chartEngine.updateSlideFrameWindow(startX, endX);
 
@@ -95,35 +89,8 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     }
 
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
-
-        oldChartData.getNiceScale();
-        newChartData.getNiceScale();
-
-        float scaleFrom = (float) (oldChartData.getMaxValue() - (oldChartData.getMinValue() + 0f));
-        float scaleTo = (float) (newChartData.getMaxValue() - (newChartData.getMinValue() + 0f));
-        float ratio = scaleTo / scaleFrom;
-
-        ValueAnimator va = ValueAnimator.ofFloat(ratio, 1f);
-        int mDuration = 1000;
-        va.setDuration(mDuration);
-        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                for (int i = 1; i < mChartData.getSeries().size(); i++)
-                    mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
-
-                invalidate();
-            }
-        });
-
-        va.start();
-
-        invalidate();
+        chartEngine.animateChanges(this, oldChartData, newChartData);
     }
-/*
-    public void setTheme(IChartTheme theme) {
-        chartEngine.setTheme(theme);
-    }
-*/
     @Override
     public void setRenderer(ChartGLRenderer mRenderer) {
 
@@ -131,7 +98,6 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int x = (int) event.getX();
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             invalidate();
         }
@@ -141,22 +107,11 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         invalidate();
-
         return chartEngine.onTouchEvent(event);
     }
 
     public void showChart(final int k, float from, float to) {
-        ValueAnimator va = ValueAnimator.ofFloat(from, to);
-        int mDuration = 1000;
-        va.setDuration(mDuration);
-        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                if(mChartData.getSeries() != null)
-                    mChartData.getSeries().get(k).setAlpha((float)animation.getAnimatedValue());
-                invalidate();
-            }
-        });
-        va.start();
+        chartEngine.showChart(this, k, from, to);
     }
 
     private int W, H;
@@ -175,11 +130,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     private String themeName;
 
     public void setTheme(IChartTheme theme) {
-        mTheme = theme;
-        themeName = mTheme.getClass().getSimpleName() + ":" + r.nextDouble();
-
-        Log.d(TAG, "setTheme: " + mTheme + " / " + mTheme.getClass().getSimpleName() + " => " + themeName);
-
+        chartEngine.setTheme(theme);
     }
 }
 

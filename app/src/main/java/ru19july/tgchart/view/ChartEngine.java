@@ -1,5 +1,6 @@
 package ru19july.tgchart.view;
 
+import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
@@ -13,6 +14,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.Date;
 import java.util.List;
@@ -26,6 +28,7 @@ import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
+import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.theme.DarkTheme;
 
 public class ChartEngine {
@@ -409,5 +412,37 @@ public class ChartEngine {
         oldTouchIndex = touchIndex;
 
         return true;
+    }
+
+    public ChartData getData() {
+        return mChartData;
+    }
+
+    public void animateChanges(final View view, ChartData oldChartData, ChartData newChartData) {
+        oldChartData.getNiceScale();
+        newChartData.getNiceScale();
+
+        float scaleFrom = (float) (oldChartData.getMaxValue() - (oldChartData.getMinValue() + 0f));
+        float scaleTo = (float) (newChartData.getMaxValue() - (newChartData.getMinValue() + 0f));
+        float ratio = scaleTo / scaleFrom;
+
+        ValueAnimator va = ValueAnimator.ofFloat(ratio, 1f);
+        int mDuration = 1000;
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                for (int i = 1; i < mChartData.getSeries().size(); i++)
+                    mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
+
+                view.invalidate();
+            }
+        });
+
+        va.start();
+
+        view.invalidate();
+    }
+
+    public void showChart(ChartCanvasView chartCanvasView, int k, float from, float to) {
     }
 }

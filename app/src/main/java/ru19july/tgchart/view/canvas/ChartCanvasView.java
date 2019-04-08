@@ -4,39 +4,20 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.R;
-import ru19july.tgchart.data.MinMaxIndex;
-import ru19july.tgchart.data.Series;
 import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.interfaces.IChartView;
-import ru19july.tgchart.utils.NiceDate;
-import ru19july.tgchart.utils.NiceScale;
-import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.ChartEngine;
 import ru19july.tgchart.view.opengl.ChartGLRenderer;
 import ru19july.tgchart.view.theme.DarkTheme;
@@ -99,7 +80,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     @Override
     protected void onDraw(final Canvas canvas) {
-        chartEngine.DrawChart(canvas, mChartData);
+        chartEngine.DrawChart(canvas);
     }
 
 
@@ -108,13 +89,11 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
         invalidate();
     }
-/*
+
     public void setData(ChartData chartData) {
         chartEngine.setData(chartData);
-
-        invalidate();
     }
-*/
+
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
 
         oldChartData.getNiceScale();
@@ -194,22 +173,6 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     private float xTouched = 0.0f;
     int touchIndex = -1;
     private String themeName;
-/*
-    public void updateSlideFrameWindow(int startX, int endX) {
-        xStart = startX;
-        xEnd = endX;
-
-        startNormalized = (xStart + 0.f) / W;
-        endNormalized = (xEnd + 0.f) / W;
-    }
-*/
-    public void setData(ChartData chartData) {
-        Log.d(TAG, "setData: " + chartData);
-        mChartData = chartData;
-        if (endNormalized <= 0.0E-10)
-            endNormalized = 1.0f;
-        touchIndex = -1;
-    }
 
     public void setTheme(IChartTheme theme) {
         mTheme = theme;

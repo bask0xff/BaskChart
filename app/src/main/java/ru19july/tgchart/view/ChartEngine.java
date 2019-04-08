@@ -53,8 +53,8 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    public Canvas DrawChart(Object canvas, ChartData chartData) {
-        mChartData = chartData;
+    public Canvas DrawChart(Object canvas) {
+        ChartData chartData = mChartData;
 
         ((Canvas)canvas).save();
 

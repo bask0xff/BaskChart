@@ -26,7 +26,6 @@ import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
-import ru19july.tgchart.view.canvas.Graphix;
 import ru19july.tgchart.view.theme.DarkTheme;
 
 public class ChartEngine {
@@ -55,12 +54,14 @@ public class ChartEngine {
     private ChartData mChartData;
 
     public Canvas DrawChart(Object canvas, ChartData chartData) {
-        //canvas.setCanvas();
-        ((Canvas)canvas).save();
         mChartData = chartData;
 
-        W = ((Canvas)canvas).getWidth();
-        H = ((Canvas)canvas).getHeight();
+        ((Canvas)canvas).save();
+
+        if(canvas instanceof Canvas) {
+            W = ((Canvas) canvas).getWidth();
+            H = ((Canvas) canvas).getHeight();
+        }
 
         if (chartData == null) return ((Canvas)canvas);//.getCanvas();
 
@@ -73,12 +74,12 @@ public class ChartEngine {
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
             NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
-            DrawHorizontalLines(numScaleV, decimalCount, ((Canvas)canvas));
+            DrawHorizontalLines(numScaleV, decimalCount, canvas);
 
             NiceDate numScaleH = new NiceDate(leftMinValue, rightMaxValue);
-            DrawVerticalLines(numScaleH, ((Canvas)canvas));
+            DrawVerticalLines(numScaleH, canvas);
 
-            DrawChart(chartData.getSeries(), ((Canvas)canvas));
+            DrawChart(chartData.getSeries(), canvas);
         }
 
         ((Canvas)canvas).restore();
@@ -98,7 +99,7 @@ public class ChartEngine {
         return realY;
     }
 
-    private void DrawChart(List<Series> series, Canvas canvas) {
+    private void DrawChart(List<Series> series, Object canvas) {
         Paint lp = new Paint();
         lp.setAntiAlias(false);
         lp.setStrokeWidth(1);
@@ -144,7 +145,8 @@ public class ChartEngine {
         mPaint.setStrokeWidth(3f);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-        canvas.drawPath(mPath, mPaint);
+
+        drawPath(canvas, mPath, mPaint);
 
         for (int j = 1; j < series.size(); j++) {
             //if (!series.get(j).isChecked()) continue;
@@ -162,9 +164,9 @@ public class ChartEngine {
                 fp.setAlpha((int) (series.get(j).getAlpha() * 255));
                 fpc.setAlpha((int) (series.get(j).getAlpha() * 255));
 
-                canvas.drawLine(x1, y1, x2, y2, fp);
+                drawLine(canvas, x1, y1, x2, y2, fp);
                 if(series.get(j).getAlpha() > 0.95)
-                    canvas.drawCircle(x1, y1, 2.0f, fpc);
+                    drawCircle(canvas, x1, y1, 2.0f, fpc);
             }
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
@@ -179,9 +181,9 @@ public class ChartEngine {
 
                 if(series.get(j).isChecked()) {
                     fp.setColor(Color.parseColor(series.get(j).getColor()));
-                    canvas.drawCircle(xk, yk, 10f, fp);
+                    drawCircle(canvas, xk, yk, 10f, fp);
                     fp.setColor(Color.parseColor(mTheme.backgroundColor()));
-                    canvas.drawCircle(xk, yk, 5f, fp);
+                    drawCircle(canvas, xk, yk, 5f, fp);
                 }
             }
         }
@@ -189,6 +191,32 @@ public class ChartEngine {
         yMin = 50;
         if (touchIndex > 0)
             DrawMarker(canvas, timestamp, markerValues, markerColors, xk + 20, yMin);
+    }
+
+    private void drawText(Object canvas, String str, float x, float y, Paint p) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawText(str, x, y,  p);
+    }
+
+    private void drawRoundRect(Object canvas, RectF rect, int x, int y, Paint paint) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawRoundRect(rect, x, y,  paint);
+    }
+
+
+    private void drawPath(Object canvas, Path mPath, Paint mPaint) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawPath(mPath, mPaint);
+    }
+
+    private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawCircle(x1, y1, v, fp);
+    }
+
+    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, Paint fp) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
@@ -228,7 +256,7 @@ public class ChartEngine {
             mPaint.setColor(Color.BLACK);
             mPaint.setStyle(Paint.Style.STROKE);
             mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-            ((Canvas)canvas).drawPath(mPath, mPaint);
+            drawPath(canvas, mPath, mPaint);
 
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) yLine);
@@ -239,7 +267,7 @@ public class ChartEngine {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            ((Canvas)canvas).drawText(str, 40f, yL - textSize * 0.3f, p);
+            drawText(canvas, str, 40f, yL - textSize * 0.3f, p);
 
             yLine += numScale.tickSpacing;
         }
@@ -260,7 +288,7 @@ public class ChartEngine {
                 mPaint.setColor(Color.BLACK);
                 mPaint.setStyle(Paint.Style.STROKE);
                 mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-                ((Canvas)canvas).drawPath(mPath, mPaint);
+                drawPath(canvas, mPath, mPaint);
             }
 
             String str = Utils.unixtimeToString((long)xLine, "MMM dd");
@@ -270,7 +298,7 @@ public class ChartEngine {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            ((Canvas)canvas).drawText(str, xL - xw, H* 0.85f, p);
+            drawText(canvas, str, xL - xw, H* 0.85f, p);
 
             xLine += numScale.tickSpacing;
         }
@@ -318,11 +346,11 @@ public class ChartEngine {
                 rightX,
                 lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
 
-        ((Canvas)canvas).drawRoundRect(rect, 8, 8, paint);
+        drawRoundRect(canvas, rect, 8, 8, paint);
 
         //date
         p.setColor(Color.parseColor(mTheme.markerFontColor()));
-        ((Canvas)canvas).drawText(dat, leftX + 50, lastY + 16, p);
+        drawText(canvas, dat, leftX + 50, lastY + 16, p);
 
         int k = 0;
         for (int i = 0; i < values.length; i++) {
@@ -330,43 +358,10 @@ public class ChartEngine {
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            ((Canvas)canvas).drawText(str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
+            drawText(canvas, str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
             k++;
         }
     }
-
-    public Bitmap addShadow(final Bitmap bm, final int dstHeight, final int dstWidth, int color, int size, float dx, float dy) {
-        final Bitmap mask = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ALPHA_8);
-
-        final Matrix scaleToFit = new Matrix();
-        final RectF src = new RectF(0, 0, bm.getWidth(), bm.getHeight());
-        final RectF dst = new RectF(0, 0, dstWidth - dx, dstHeight - dy);
-        scaleToFit.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER);
-
-        final Matrix dropShadow = new Matrix(scaleToFit);
-        dropShadow.postTranslate(dx, dy);
-
-        final Canvas maskCanvas = new Canvas(mask);
-        final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        maskCanvas.drawBitmap(bm, scaleToFit, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
-        maskCanvas.drawBitmap(bm, dropShadow, paint);
-
-        final BlurMaskFilter filter = new BlurMaskFilter(size, BlurMaskFilter.Blur.NORMAL);
-        paint.reset();
-        paint.setAntiAlias(true);
-        paint.setColor(color);
-        paint.setMaskFilter(filter);
-        paint.setFilterBitmap(true);
-
-        final Bitmap ret = Bitmap.createBitmap(dstWidth, dstHeight, Bitmap.Config.ARGB_8888);
-        final Canvas retCanvas = new Canvas(ret);
-        retCanvas.drawBitmap(mask, 0, 0, paint);
-        retCanvas.drawBitmap(bm, scaleToFit, null);
-        mask.recycle();
-        return ret;
-    }
-
 
     public void updateSlideFrameWindow(int startX, int endX) {
         xStart = startX;

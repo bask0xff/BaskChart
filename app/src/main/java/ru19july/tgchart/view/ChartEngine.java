@@ -184,6 +184,18 @@ public class ChartEngine {
 
         for (int j = 1; j < series.size(); j++) {
             //if (!series.get(j).isChecked()) continue;
+            fp.setColor(Color.parseColor(series.get(j).getColor()));
+            fpc.setColor(Color.parseColor(series.get(j).getColor()));
+
+            float normalizator = 1f;
+            if(canvas instanceof Canvas)
+                normalizator = 255;
+
+            fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
+            fpc.setAlpha((int) (series.get(j).getAlpha() * normalizator));
+
+            Log.d(TAG, "DrawChart: alpha: " + fp.getAlpha() + " <- " + series.get(j).getAlpha());
+
             for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
                 //float deltaX = ()
                 int x1 = GetX(series.get(0).getValues().get(i - 1));
@@ -192,17 +204,7 @@ public class ChartEngine {
                 int y1 = (int) GetY(series.get(j).getValues().get(i - 1), series.get(j).getScale());
                 int y2 = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
-                fp.setColor(Color.parseColor(series.get(j).getColor()));
-                fpc.setColor(Color.parseColor(series.get(j).getColor()));
-
-                float normalizator = 1f;
-                if(canvas instanceof Canvas)
-                    normalizator = 255;
-
-                fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
-                fpc.setAlpha((int) (series.get(j).getAlpha() * normalizator));
-
-                drawLine(canvas, x1, y1, x2, y2, fp);
+                drawLine(canvas, x1, y1, x2, y2, fp.getColor(), series.get(j).getAlpha());
                 if(series.get(j).getAlpha() > 0.95)
                     drawCircle(canvas, x1, y1, 2.0f, fpc);
             }
@@ -491,11 +493,19 @@ public class ChartEngine {
             ((Canvas)canvas).drawCircle(x1, y1, v, fp);
     }
 
-    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, Paint fp) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
+    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, int color, float alpha) {
+        if(canvas instanceof Canvas) {
+            Paint fp = new Paint();
+            fp.setColor(color);
+            fp.setAlpha((int)(alpha * 255));
+            fp.setAntiAlias(true);
+            fp.setStyle(Paint.Style.FILL_AND_STROKE);
+            fp.setStrokeWidth(5.0f);
+
+            ((Canvas) canvas).drawLine(x1, y1, x2, y2, fp);
+        }
         if(canvas instanceof GL10)
-            drawLineGL((GL10)canvas, x1, H-y1, x2, H-y2, 1f , fp.getColor(), fp.getAlpha());
+            drawLineGL((GL10)canvas, x1, H-y1, x2, H-y2, 1f , color, alpha);
             //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
     }
 
@@ -527,12 +537,11 @@ public class ChartEngine {
         gl.glLoadIdentity();
         Random r = new Random();
         gl.glTranslatef(x, y, 0);
-        //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
         gl.glScalef(w, w, 1);
         new CubeColorSides().draw(gl, color, alpha);
     }
 
-    private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
+    private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, float alpha) {
         float vertices[] = {x1-W/2, y1-H/2, x2-W/2, y2-H/2};
 
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -547,8 +556,8 @@ public class ChartEngine {
 
         gl.glEnableClientState(GL_VERTEX_ARRAY);
         gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
-        gl.glColor4f(r, g, b, 1f);
-        gl.glLineWidth(8f);
+        gl.glColor4f(r, g, b, alpha);
+        gl.glLineWidth(5f);
         gl.glDrawArrays(GL_LINES, 0, 2);
     }
 

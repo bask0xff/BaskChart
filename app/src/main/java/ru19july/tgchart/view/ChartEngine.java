@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.Date;
@@ -36,6 +38,11 @@ import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.opengl.CubeColorSides;
 import ru19july.tgchart.view.theme.DarkTheme;
+
+import static android.opengl.GLES20.GL_UNSIGNED_INT;
+import static javax.microedition.khronos.opengles.GL10.GL_FLOAT;
+import static javax.microedition.khronos.opengles.GL10.GL_LINES;
+import static javax.microedition.khronos.opengles.GL10.GL_VERTEX_ARRAY;
 
 public class ChartEngine {
 
@@ -488,8 +495,27 @@ public class ChartEngine {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
         if(canvas instanceof GL10)
-            drawLine((GL10)canvas, x1, H-y1, x2, H-y2, 1f , fp.getColor(), fp.getAlpha());
+            drawLineGL((GL10)canvas, x1, H-y1, x2, H-y2, 1f , fp.getColor(), fp.getAlpha());
             //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
+    }
+
+    private void drawLineGL(GL10 canvas, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
+        float vertices[] = {x1-W/2, y1-H/2, x2-W/2, y2-H/2};
+        byte indices[] = {0, 1};
+
+        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+        vbb.order(ByteOrder.nativeOrder()); // Use native byte order
+        FloatBuffer vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
+        vertexBuffer.put(vertices);         // Copy data into buffer
+        vertexBuffer.position(0);
+
+        ((GL10)canvas).glEnableClientState(GL_VERTEX_ARRAY);
+        ((GL10)canvas).glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
+        ((GL10)canvas).glDrawArrays(GL_LINES, 0, 2);
+/*
+        ((GL10)canvas).glEnableClientState(GL_VERTEX_ARRAY);
+        ((GL10)canvas).glVertexPointer(2, GL_FLOAT, 0, vertices);
+        ((GL10)canvas).glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, indices);*/
     }
 
     //// OpenGL

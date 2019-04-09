@@ -16,9 +16,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import ru19july.tgchart.ICanvas;
 import ru19july.tgchart.data.ChartData;
@@ -29,6 +34,7 @@ import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.canvas.ChartCanvasView;
+import ru19july.tgchart.view.opengl.CubeColorSides;
 import ru19july.tgchart.view.theme.DarkTheme;
 
 public class ChartEngine {
@@ -56,8 +62,55 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
+    private FloatBuffer mVertexBuffer = null;
+    private ShortBuffer mTriangleBorderIndicesBuffer = null;
+    private int mNumOfTriangleBorderIndices = 0;
+
+    public float mAngleX = 0.0f;
+    private float mPreviousX;
+    private float mPreviousY;
+    private final float TOUCH_SCALE_FACTOR = 0.6f;
+
+    private int ticks = 0;
+
+    private void DrawPixels(GL10 gl) {
+        //chart
+        Log.d(TAG, "DrawPixels: " + mChartData.getSeries().get(0).getValues().size());
+        /*if (mVertexBuffer != null) {
+            gl.glLoadIdentity();
+            gl.glTranslatef(0, 0, 0);
+            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+            gl.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+            gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
+                    GL10.GL_UNSIGNED_SHORT, mTriangleBorderIndicesBuffer);
+        }*/
+
+        for(int i=0;i < W; i++)
+        {
+            pixel(gl, i, i / 2, 1f, Color.RED);
+
+        }
+
+        for (int j = 1; j < mChartData.getSeries().size(); j++) {
+            for (int i = 0; i < mChartData.getSeries().get(0).getValues().size() - 1; i++) {
+                int x1 = (int) (W * (i + 0f) / mChartData.getSeries().get(0).getValues().size());
+                int y1 = (int) (H * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
+
+                int x2 = (int) (W * (i + 1f) / mChartData.getSeries().get(0).getValues().size());
+                int y2 = (int) (H * (mChartData.getSeries().get(j).getValues().get(i + 1) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
+                pixel(gl, x1, y1, 1f, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+                //line(gl, x, y, x + j*3, y + j*2, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
+
+                //drawLine(gl, x1, y1, x2, y2, 3f, j < 2 ? Color.BLUE : (j < 3 ? Color.RED : Color.GREEN)/*Color.parseColor(mChartData.getSeries().get(j).getColor())*/);
+            }
+        }
+
+    }
+
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
+
+        if (chartData == null) return;
 
         if(canvas instanceof Canvas) {
             ((Canvas)canvas).save();
@@ -65,7 +118,13 @@ public class ChartEngine {
             H = ((Canvas) canvas).getHeight();
         }
 
-        if (chartData == null) return;//.getCanvas();
+        if(canvas instanceof GL10) {
+            ((GL10)canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+            ((GL10)canvas).glLoadIdentity();
+            DrawPixels(((GL10)canvas));
+            //ticks++;
+            ((GL10)canvas).glLoadIdentity();
+        }
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
@@ -462,5 +521,54 @@ public class ChartEngine {
             ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
     }
 
+    private void pixel(GL10 gl, int x, int y, float w, int color) {
+        x = x - W / 2;
+        y = y - H / 2;
+        gl.glLoadIdentity();
+        Random r = new Random();
+        gl.glTranslatef(x, y, 0);
+        //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
+        gl.glScalef(w, w, 1);
+        new CubeColorSides().draw(gl, color);
+    }
 
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        gl.glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
+        gl.glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
+        //mTheme.backgroundColor()
+        gl.glClearColor(0.0f, .2f, 0.0f, 0.5f); 	//Background
+        //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
+        gl.glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
+        gl.glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
+
+        //Really Nice Perspective Calculations
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+    }
+
+    public void onSurfaceChanged(GL10 gl, int width, int height) {
+        W = width;
+        H = height;
+        Log.d(TAG, "onSurfaceChanged: " + W + "x" + H );
+
+        gl.glViewport(0, 0, width, height);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glLoadIdentity();
+
+        gl.glOrthof(-width / 2, width / 2, -height / 2, height / 2, -1000.0f, 1000.0f);
+        gl.glShadeModel(GL10.GL_SMOOTH);
+
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+
+
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+        gl.glDepthFunc(GL10.GL_LESS);
+        gl.glDisable(GL10.GL_DITHER);
+
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
+    }
 }

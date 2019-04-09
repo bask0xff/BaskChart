@@ -3,12 +3,9 @@ package ru19july.tgchart.view.opengl;
 import android.content.Context;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLU;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.Random;
@@ -44,31 +41,11 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onDrawFrame(GL10 gl) {
-
         chartEngine.DrawChart(gl);
-
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-        gl.glLoadIdentity();
-
-        DrawPixels(gl);
-
-        ticks++;
-
-        gl.glLoadIdentity();
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        gl.glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
-        gl.glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
-        //mTheme.backgroundColor()
-        gl.glClearColor(0.0f, .2f, 0.0f, 0.5f); 	//Background
-        //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
-        gl.glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
-        gl.glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
-
-        //Really Nice Perspective Calculations
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+        chartEngine.onSurfaceCreated(gl, config);
     }
 
     private void DrawPixels(GL10 gl) {
@@ -81,15 +58,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
             gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
                     GL10.GL_UNSIGNED_SHORT, mTriangleBorderIndicesBuffer);
         }
-
-        for (int j = 0; j < 3; j++)
-            for (int i = 0; i < 1000; i++) {
-                int x = (int) (Math.cos(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f + (i + ticks - 500) / 10f)) + Width / 2;
-                int y = (int) (Math.sin(i / 1000f * (2 * Math.PI)) * (j + 1) * (100f)) + Height / 2;
-
-                x = (int) (Width * (i / 1000f));
-                //pixel(gl, x, y, j < 1 ? Color.RED : (j < 2 ? Color.BLUE : Color.GREEN));
-            }
 
         for (int j = 1; j < mChartData.getSeries().size(); j++) {
             for (int i = 0; i < mChartData.getSeries().get(0).getValues().size() - 1; i++) {
@@ -183,30 +151,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        Width = width;
-        Height = height;
-        Log.d(TAG, "onSurfaceChanged: " + Width + "x" + Height);
-
-        gl.glViewport(0, 0, width, height);
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glLoadIdentity();
-
-        gl.glOrthof(-width / 2, width / 2, -height / 2, height / 2, -1000.0f, 1000.0f);
-        gl.glShadeModel(GL10.GL_SMOOTH);
-
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-        gl.glEnable(GL10.GL_DEPTH_TEST);
-
-
-        gl.glEnable(GL10.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL10.GL_LESS);
-        gl.glDisable(GL10.GL_DITHER);
-
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glLoadIdentity();
+        chartEngine.onSurfaceChanged(gl, width, height);
 
     }
 
@@ -231,6 +176,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void setData(ChartData chartData) {
-        mChartData = chartData;
+        chartEngine.setData(chartData);
     }
 }

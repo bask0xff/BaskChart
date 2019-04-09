@@ -47,6 +47,7 @@ public class BaskChartView extends LinearLayout {
 
     private IOnThemeChange mOnThemeChange;
     private LinearLayout linearlayout;
+    private TextView titleView;
 /*
     public BaskChartView(Context context) {
         super(context, null);
@@ -166,11 +167,13 @@ public class BaskChartView extends LinearLayout {
             linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
         }
 
+        titleView = (TextView) linearlayout.getChildAt(0);
+        titleView.setText("render type: " + chartView.getClass().getSimpleName());
+
         chartSliderView = (ChartSliderView) linearlayout.getChildAt(2);
         chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {
             @Override
             public void onSlide(int xStart, int xEnd) {
-                Log.d(TAG, "onSlide: -> " + chartView.getClass().getSimpleName());
                 chartView.updateSlideFrameWindow(xStart, xEnd);
             }
         });

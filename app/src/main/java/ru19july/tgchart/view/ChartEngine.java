@@ -194,8 +194,6 @@ public class ChartEngine {
             fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
             fpc.setAlpha((int) (series.get(j).getAlpha() * normalizator));
 
-            Log.d(TAG, "DrawChart: alpha: " + fp.getAlpha() + " <- " + series.get(j).getAlpha());
-
             for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
                 //float deltaX = ()
                 int x1 = GetX(series.get(0).getValues().get(i - 1));
@@ -398,11 +396,9 @@ public class ChartEngine {
         themeName = mTheme.getClass().getSimpleName() + ":" + r.nextDouble();
 
         Log.d(TAG, "setTheme: " + mTheme + " / " + mTheme.getClass().getSimpleName() + " => " + themeName);
-
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "onTouchEvent: " + mChartData);
         if(mChartData == null) return false;
 
         xTouched = event.getX();

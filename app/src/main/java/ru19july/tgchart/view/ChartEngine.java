@@ -499,7 +499,7 @@ public class ChartEngine {
             //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
     }
 
-    private void drawLineGL(GL10 canvas, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
+    private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
         float vertices[] = {x1-W/2, y1-H/2, x2-W/2, y2-H/2};
         byte indices[] = {0, 1};
 
@@ -513,10 +513,10 @@ public class ChartEngine {
         float g = ((color >>  8) & 0xff) / 255f;
         float b = ((color >>  0) & 0xff) / 255f;
 
-        ((GL10)canvas).glEnableClientState(GL_VERTEX_ARRAY);
-        ((GL10)canvas).glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
-        ((GL10)canvas).glColor4f(r, g, b, 1f);
-        ((GL10)canvas).glDrawArrays(GL_LINES, 0, 2);
+        gl.glEnableClientState(GL_VERTEX_ARRAY);
+        gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
+        gl.glColor4f(r, g, b, 1f);
+        gl.glDrawArrays(GL_LINES, 0, 2);
 /*
         ((GL10)canvas).glEnableClientState(GL_VERTEX_ARRAY);
         ((GL10)canvas).glVertexPointer(2, GL_FLOAT, 0, vertices);

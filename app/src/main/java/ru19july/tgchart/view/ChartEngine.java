@@ -121,9 +121,9 @@ public class ChartEngine {
         if(canvas instanceof GL10) {
             ((GL10)canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
             ((GL10)canvas).glLoadIdentity();
-            DrawPixels(((GL10)canvas));
+            //DrawPixels(((GL10)canvas));
             //ticks++;
-            ((GL10)canvas).glLoadIdentity();
+            //((GL10)canvas).glLoadIdentity();
         }
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
@@ -519,6 +519,9 @@ public class ChartEngine {
     private void drawLine(Object canvas, int x1, int y1, int x2, int y2, Paint fp) {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
+        if(canvas instanceof GL10)
+            pixel((GL10)canvas, x1, y1, 1f, fp.getColor());
+
     }
 
     private void pixel(GL10 gl, int x, int y, float w, int color) {

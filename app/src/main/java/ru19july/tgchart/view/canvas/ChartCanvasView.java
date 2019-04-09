@@ -78,6 +78,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         chartEngine.DrawChart(canvas);
     }
 
+    @Override
     public void updateSlideFrameWindow(int startX, int endX) {
         chartEngine.updateSlideFrameWindow(startX, endX);
 

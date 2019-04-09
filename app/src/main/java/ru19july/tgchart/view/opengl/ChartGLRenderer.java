@@ -14,9 +14,11 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.interfaces.IChartTheme;
+import ru19july.tgchart.interfaces.IChartView;
 import ru19july.tgchart.view.ChartEngine;
 
-public class ChartGLRenderer implements GLSurfaceView.Renderer {
+public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
     private static final String TAG = ChartGLRenderer.class.getSimpleName();
     private Context mContext;
     private FloatBuffer mVertexBuffer = null;
@@ -177,5 +179,35 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
     public void setData(ChartData chartData) {
         chartEngine.setData(chartData);
+    }
+
+    @Override
+    public void updateSlideFrameWindow(int startX, int endX) {
+        chartEngine.updateSlideFrameWindow(startX, endX);
+    }
+
+    @Override
+    public void showChart(int position, float v, float v1) {
+
+    }
+
+    @Override
+    public void animateChanges(ChartData oldChartData, ChartData mChartData) {
+
+    }
+
+    @Override
+    public void invalidate() {
+
+    }
+
+    @Override
+    public void setTheme(IChartTheme mTheme) {
+
+    }
+
+    @Override
+    public void setRenderer(ChartGLRenderer mRenderer) {
+
     }
 }

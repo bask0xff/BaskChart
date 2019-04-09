@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
 
         for (int i = 0; i < charts; i++) {
 
-            Class<?> chartClass = i % 2 == 0 ? ChartCanvasView.class : ChartGLView.class;
+            Class<?> chartClass = i % 2 != 0 ? ChartCanvasView.class : ChartGLView.class;
             IChartTheme theme = i % 2 == 0 ? new DarkTheme() : new LightTheme();
 
             Log.d(TAG, "initChartView: ------------------ CHART #" + i + " => " + theme.getClass().getSimpleName());

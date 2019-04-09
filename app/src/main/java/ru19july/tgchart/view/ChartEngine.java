@@ -509,8 +509,13 @@ public class ChartEngine {
         vertexBuffer.put(vertices);         // Copy data into buffer
         vertexBuffer.position(0);
 
+        float r = ((color >> 16) & 0xff) / 255f;
+        float g = ((color >>  8) & 0xff) / 255f;
+        float b = ((color >>  0) & 0xff) / 255f;
+
         ((GL10)canvas).glEnableClientState(GL_VERTEX_ARRAY);
         ((GL10)canvas).glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
+        ((GL10)canvas).glColor4f(r, g, b, 1f);
         ((GL10)canvas).glDrawArrays(GL_LINES, 0, 2);
 /*
         ((GL10)canvas).glEnableClientState(GL_VERTEX_ARRAY);

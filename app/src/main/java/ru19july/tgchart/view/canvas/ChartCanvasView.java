@@ -80,8 +80,8 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     @Override
     public void updateSlideFrameWindow(int startX, int endX) {
+        Log.d(TAG, "updateSlideFrameWindow: " + startX + " / " + endX);
         chartEngine.updateSlideFrameWindow(startX, endX);
-
         invalidate();
     }
 

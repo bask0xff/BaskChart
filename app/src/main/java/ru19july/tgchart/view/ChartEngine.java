@@ -401,6 +401,7 @@ public class ChartEngine {
     }
 
     public void updateSlideFrameWindow(int startX, int endX) {
+        Log.d(TAG, "updateSlideFrameWindow: " + startX + " / " + endX);
         xStart = startX;
         xEnd = endX;
 
@@ -520,7 +521,8 @@ public class ChartEngine {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
         if(canvas instanceof GL10)
-            pixel((GL10)canvas, x1, y1, 1f, fp.getColor());
+            drawLine((GL10)canvas, x1, y1, x2, y2, 1f, fp.getColor());
+        //pixel((GL10)canvas, x1, y1, 1f, fp.getColor());
 
     }
 
@@ -533,6 +535,45 @@ public class ChartEngine {
         //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
         gl.glScalef(w, w, 1);
         new CubeColorSides().draw(gl, color);
+    }
+
+    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color) {
+        int d = 0;
+        int dx = Math.abs(x2 - x1);
+        int dy = Math.abs(y2 - y1);
+        int dx2 = 2 * dx;
+        int dy2 = 2 * dy;
+        int ix = x1 < x2 ? 1 : -1;
+        int iy = y1 < y2 ? 1 : -1;
+
+        int x = x1;
+        int y = y1;
+
+        if (dx >= dy) {
+            while (true) {
+                pixel(g, x, y, w, color);
+                if (x == x2)
+                    break;
+                x += ix;
+                d += dy2;
+                if (d > dx) {
+                    y += iy;
+                    d -= dx2;
+                }
+            }
+        } else {
+            while (true) {
+                pixel(g, x, y, w, color);
+                if (y == y2)
+                    break;
+                y += iy;
+                d += dx2;
+                if (d > dy) {
+                    x += ix;
+                    d -= dy2;
+                }
+            }
+        }
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {

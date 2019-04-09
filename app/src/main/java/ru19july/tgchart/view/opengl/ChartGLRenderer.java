@@ -88,44 +88,7 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
         new CubeColorSides().draw(gl, color);
     }
 
-    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color) {
-        int d = 0;
-        int dx = Math.abs(x2 - x1);
-        int dy = Math.abs(y2 - y1);
-        int dx2 = 2 * dx;
-        int dy2 = 2 * dy;
-        int ix = x1 < x2 ? 1 : -1;
-        int iy = y1 < y2 ? 1 : -1;
 
-        int x = x1;
-        int y = y1;
-
-        if (dx >= dy) {
-            while (true) {
-                pixel(g, x, y, w, color);
-                if (x == x2)
-                    break;
-                x += ix;
-                d += dy2;
-                if (d > dx) {
-                    y += iy;
-                    d -= dx2;
-                }
-            }
-        } else {
-            while (true) {
-                pixel(g, x, y, w, color);
-                if (y == y2)
-                    break;
-                y += iy;
-                d += dx2;
-                if (d > dy) {
-                    x += ix;
-                    d -= dy2;
-                }
-            }
-        }
-    }
 
     private void line(GL10 gl, float x1, float y1, float x2, float y2, int color) {
         x1 = x1 - Width / 2;
@@ -158,18 +121,8 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
     }
 
     public boolean onTouchEvent(MotionEvent e) {
-        float x = e.getX();
-        float y = e.getY();
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-                float dx = x - mPreviousX;
-                float dy = y - mPreviousY;
-                ticks = (int) (mAngleX + (int)(dy * TOUCH_SCALE_FACTOR));
-                break;
-        }
-        mPreviousX = x;
-        mPreviousY = y;
-        return true;
+        Log.d(TAG, "onTouchEvent: " + e);
+        return chartEngine.onTouchEvent(e);
     }
 
     public void slideFrame(int xStart, int xEnd) {
@@ -183,6 +136,7 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
 
     @Override
     public void updateSlideFrameWindow(int startX, int endX) {
+        Log.d(TAG, "updateSlideFrameWindow: " + startX + " / " + endX);
         chartEngine.updateSlideFrameWindow(startX, endX);
     }
 

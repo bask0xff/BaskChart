@@ -401,7 +401,6 @@ public class ChartEngine {
     }
 
     public void updateSlideFrameWindow(int startX, int endX) {
-        Log.d(TAG, "updateSlideFrameWindow: " + startX + " / " + endX);
         xStart = startX;
         xEnd = endX;
 

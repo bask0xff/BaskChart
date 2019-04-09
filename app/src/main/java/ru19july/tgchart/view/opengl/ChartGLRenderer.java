@@ -53,78 +53,11 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
         chartEngine.onSurfaceCreated(gl, config);
     }
 
-    private void DrawPixels(GL10 gl) {
-        //chart
-        if (mVertexBuffer != null) {
-            gl.glLoadIdentity();
-            gl.glTranslatef(0, 0, 0);
-            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
-            gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-            gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
-                    GL10.GL_UNSIGNED_SHORT, mTriangleBorderIndicesBuffer);
-        }
-
-        for (int j = 1; j < mChartData.getSeries().size(); j++) {
-            for (int i = 0; i < mChartData.getSeries().get(0).getValues().size() - 1; i++) {
-                int x1 = (int) (Width * (i + 0f) / mChartData.getSeries().get(0).getValues().size());
-                int y1 = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-
-                int x2 = (int) (Width * (i + 1f) / mChartData.getSeries().get(0).getValues().size());
-                int y2 = (int) (Height * (mChartData.getSeries().get(j).getValues().get(i + 1) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-                pixel(gl, x1, y1, 1f, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
-                //line(gl, x, y, x + j*3, y + j*2, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
-
-                //drawLine(gl, x1, y1, x2, y2, 3f, j < 2 ? Color.BLUE : (j < 3 ? Color.RED : Color.GREEN)/*Color.parseColor(mChartData.getSeries().get(j).getColor())*/);
-            }
-        }
-
-    }
-
-    private void pixel(GL10 gl, int x, int y, float w, int color) {
-        x = x - Width / 2;
-        y = y - Height / 2;
-        gl.glLoadIdentity();
-        Random r = new Random();
-        gl.glTranslatef(x, y, 0);
-        //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
-        gl.glScalef(w, w, 1);
-        new CubeColorSides().draw(gl, color);
-    }
-
-
-
-    private void line(GL10 gl, float x1, float y1, float x2, float y2, int color) {
-        x1 = x1 - Width / 2;
-        y1 = y1 - Height / 2;
-        gl.glLoadIdentity();
-        Random r = new Random();
-        gl.glTranslatef(x1, y1, 0);
-        gl.glScalef(1, 1, 1);
-        new LineSides().draw(gl, x1, y1, x2, y2, 20f, color);
-    }
-
-    private void line(GL10 gl, float x1, float y1, float x2, float y2, float w, int color) {
-        float xc = (x1 + x2) / 2;
-        float yc = (y1 + y2) / 2;
-        gl.glLoadIdentity();
-        gl.glTranslatef(xc, yc, 0);
-        gl.glRotatef(ticks * 5, 0.0f, 0.0f, 1.0f);
-        gl.glScalef(x2-x1, w, 1);
-        new CubeColorSides().draw(gl, color);
-
-        gl.glLoadIdentity();
-        gl.glTranslatef(x1, y1, 0);
-        gl.glScalef(x2-x1, w, 1);
-        //new CubeColorSides().draw(gl, color);
-    }
-
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         chartEngine.onSurfaceChanged(gl, width, height);
-
     }
 
     public boolean onTouchEvent(MotionEvent e) {
-        Log.d(TAG, "onTouchEvent: " + e);
         return chartEngine.onTouchEvent(e);
     }
 
@@ -134,7 +67,6 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
 
     @Override
     public void updateSlideFrameWindow(int startX, int endX) {
-        Log.d(TAG, "updateSlideFrameWindow: " + startX + " / " + endX);
         chartEngine.updateSlideFrameWindow(startX, endX);
     }
 

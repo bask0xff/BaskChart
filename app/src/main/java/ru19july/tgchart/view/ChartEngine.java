@@ -131,6 +131,7 @@ public class ChartEngine {
         long ms = (new Date()).getTime();
 
         //canvas.drawRect( 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
+        setBackground(canvas, mTheme.backgroundColor());
 
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
@@ -148,6 +149,26 @@ public class ChartEngine {
 
         //drawing = false;
         return;//.getCanvas();
+    }
+
+    private void setBackground(Object canvas, String backgroundColor) {
+        if(canvas instanceof GL10)
+        {
+            ((GL10)canvas).glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
+            ((GL10)canvas).glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
+            //mTheme.backgroundColor()
+            float r = ((Color.parseColor(backgroundColor) >> 16) & 0xff) / 255f;
+            float g = ((Color.parseColor(backgroundColor) >>  8) & 0xff) / 255f;
+            float b = ((Color.parseColor(backgroundColor) >>  0) & 0xff) / 255f;
+
+            ((GL10)canvas).glClearColor(r, g, b, 1f); 	//Background
+            //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
+            ((GL10)canvas).glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
+            ((GL10)canvas).glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
+
+            //Really Nice Perspective Calculations
+            ((GL10)canvas).glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+        }
     }
 
 
@@ -578,7 +599,11 @@ public class ChartEngine {
         gl.glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
         gl.glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
         //mTheme.backgroundColor()
-        gl.glClearColor(0.0f, .2f, 0.0f, 0.5f); 	//Background
+        float r = ((Color.parseColor(mTheme.backgroundColor()) >> 16) & 0xff) / 255f;
+        float g = ((Color.parseColor(mTheme.backgroundColor()) >>  8) & 0xff) / 255f;
+        float b = ((Color.parseColor(mTheme.backgroundColor()) >>  0) & 0xff) / 255f;
+
+        gl.glClearColor(r, g, b, 1f); 	//Background
         //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
         gl.glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
         gl.glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do

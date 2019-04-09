@@ -17,6 +17,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import ru19july.tgchart.data.ChartData;
+import ru19july.tgchart.view.ChartEngine;
 
 public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = ChartGLRenderer.class.getSimpleName();
@@ -33,6 +34,7 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     private int ticks = 0;
 
     private ChartData mChartData;
+    private ChartEngine chartEngine = new ChartEngine();
 
     private int Width;
     private int Height;
@@ -42,6 +44,8 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onDrawFrame(GL10 gl) {
+
+        chartEngine.DrawChart(gl);
 
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
@@ -103,6 +107,17 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
 
     }
 
+    private void pixel(GL10 gl, int x, int y, float w, int color) {
+        x = x - Width / 2;
+        y = y - Height / 2;
+        gl.glLoadIdentity();
+        Random r = new Random();
+        gl.glTranslatef(x, y, 0);
+        //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
+        gl.glScalef(w, w, 1);
+        new CubeColorSides().draw(gl, color);
+    }
+
     private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color) {
         int d = 0;
         int dx = Math.abs(x2 - x1);
@@ -150,17 +165,6 @@ public class ChartGLRenderer implements GLSurfaceView.Renderer {
         gl.glTranslatef(x1, y1, 0);
         gl.glScalef(1, 1, 1);
         new LineSides().draw(gl, x1, y1, x2, y2, 20f, color);
-    }
-
-    private void pixel(GL10 gl, int x, int y, float w, int color) {
-        x = x - Width / 2;
-        y = y - Height / 2;
-        gl.glLoadIdentity();
-        Random r = new Random();
-        gl.glTranslatef(x, y, 0);
-        //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
-        gl.glScalef(w, w, 1);
-        new CubeColorSides().draw(gl, color);
     }
 
     private void line(GL10 gl, float x1, float y1, float x2, float y2, float w, int color) {

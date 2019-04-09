@@ -110,24 +110,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         return chartEngine.onTouchEvent(event);
     }
 
-    public void showChart(final int k, float from, float to) {
-        chartEngine.showChart(this, k, from, to);
-    }
-
-    private int W, H;
-
-    Paint paint;
-    Random r = new Random();
-
-    private float xStart = 50.0f;
-    private float xEnd = 450.0f;
-    private IChartTheme mTheme = new DarkTheme();
-
-    float startNormalized = 0.0f;
-    float endNormalized = 0.0f;
-    private float xTouched = 0.0f;
-    int touchIndex = -1;
-    private String themeName;
+    public void showChart(final int k, float from, float to) { chartEngine.showChart(this, k, from, to); }
 
     public void setTheme(IChartTheme theme) {
         chartEngine.setTheme(theme);

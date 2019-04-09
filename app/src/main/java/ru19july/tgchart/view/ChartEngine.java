@@ -56,17 +56,16 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    public Canvas DrawChart(Object canvas) {
+    public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
 
-        ((Canvas)canvas).save();
-
         if(canvas instanceof Canvas) {
+            ((Canvas)canvas).save();
             W = ((Canvas) canvas).getWidth();
             H = ((Canvas) canvas).getHeight();
         }
 
-        if (chartData == null) return ((Canvas)canvas);//.getCanvas();
+        if (chartData == null) return;//.getCanvas();
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
@@ -85,9 +84,11 @@ public class ChartEngine {
             DrawChart(chartData.getSeries(), canvas);
         }
 
-        ((Canvas)canvas).restore();
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).restore();
+
         //drawing = false;
-        return ((Canvas)canvas);//.getCanvas();
+        return;//.getCanvas();
     }
 
 
@@ -194,32 +195,6 @@ public class ChartEngine {
         yMin = 50;
         if (touchIndex > 0)
             DrawMarker(canvas, timestamp, markerValues, markerColors, xk + 20, yMin);
-    }
-
-    private void drawText(Object canvas, String str, float x, float y, Paint p) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawText(str, x, y,  p);
-    }
-
-    private void drawRoundRect(Object canvas, RectF rect, int x, int y, Paint paint) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawRoundRect(rect, x, y,  paint);
-    }
-
-
-    private void drawPath(Object canvas, Path mPath, Paint mPaint) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawPath(mPath, mPaint);
-    }
-
-    private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawCircle(x1, y1, v, fp);
-    }
-
-    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, Paint fp) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
@@ -456,4 +431,36 @@ public class ChartEngine {
         });
         va.start();
     }
+
+
+    ///////////////////////////////////
+    // Draw methods
+    ///////////////////////////////////
+
+    private void drawText(Object canvas, String str, float x, float y, Paint p) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawText(str, x, y, p);
+    }
+
+    private void drawRoundRect(Object canvas, RectF rect, int x, int y, Paint paint) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawRoundRect(rect, x, y,  paint);
+    }
+
+    private void drawPath(Object canvas, Path mPath, Paint mPaint) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawPath(mPath, mPaint);
+    }
+
+    private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawCircle(x1, y1, v, fp);
+    }
+
+    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, Paint fp) {
+        if(canvas instanceof Canvas)
+            ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
+    }
+
+
 }

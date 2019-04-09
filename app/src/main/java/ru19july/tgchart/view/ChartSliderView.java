@@ -1,7 +1,6 @@
 package ru19july.tgchart.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,7 +9,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceScale;
@@ -22,7 +20,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
     int slLeft;
     int slRight;
-    private int W, H;
+    private int w, h;
     private final String TAG = ChartSliderView.class.getSimpleName();
 
     ISliderListener mOnSliderListener;
@@ -62,8 +60,8 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
 
-        slRight = W;
-        slLeft = W * 3 / 4;
+        slRight = w;
+        slLeft = w * 3 / 4;
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -85,8 +83,8 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
         canvas.save();
 
-        W = canvas.getWidth();
-        H = canvas.getHeight();
+        w = canvas.getWidth();
+        h = canvas.getHeight();
 
         if (chartData != null)
             PrepareCanvas(canvas);
@@ -107,11 +105,11 @@ public class ChartSliderView extends View implements View.OnTouchListener {
             for (int j = 1; j < chartData.getSeries().size(); j++) {
                 if (!chartData.getSeries().get(j).isChecked()) continue;
 
-                int x1 = (int) (W * ((i - 1.f) / (chartData.getSeries().get(0).getValues().size() - 1)));
-                int x2 = (int) (W * ((i - 0.f) / (chartData.getSeries().get(0).getValues().size() - 1)));
+                int x1 = (int) (w * ((i - 1.f) / (chartData.getSeries().get(0).getValues().size() - 1)));
+                int x2 = (int) (w * ((i - 0.f) / (chartData.getSeries().get(0).getValues().size() - 1)));
 
-                int y1 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * H);
-                int y2 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * H);
+                int y1 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * h);
+                int y2 = (int) ((1 - chartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * h);
 
                 fp.setColor(Color.parseColor(chartData.getSeries().get(j).getColor()));
 
@@ -124,14 +122,14 @@ public class ChartSliderView extends View implements View.OnTouchListener {
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         fp.setColor(Color.parseColor(mTheme.sliderBackground()));
 
-        canvas.drawRect(0, 0, xStart, H, fp);
+        canvas.drawRect(0, 0, xStart, h, fp);
 
         //right part
-        canvas.drawRect(xEnd, 0, W, H, fp);
+        canvas.drawRect(xEnd, 0, w, h, fp);
 
         //slider window
         fp.setColor(Color.parseColor(mTheme.sliderInner()));
-        canvas.drawRect(xStart + 16, 4, xEnd - 16, H - 4, fp);
+        canvas.drawRect(xStart + 16, 4, xEnd - 16, h - 4, fp);
 
         drawing = false;
         return canvas;
@@ -190,7 +188,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
             xStart = xStartSaved + (xx - startMoveX);
             if (xStart < 0) xStart = 0;
             xEnd = xEndSaved + (xx - startMoveX);
-            if (xEnd >= W) xEnd = W;
+            if (xEnd >= w) xEnd = w;
         }
 
         if(event.getAction() == MotionEvent.ACTION_MOVE )

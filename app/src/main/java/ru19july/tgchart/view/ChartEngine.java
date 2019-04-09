@@ -548,6 +548,7 @@ public class ChartEngine {
         gl.glEnableClientState(GL_VERTEX_ARRAY);
         gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
         gl.glColor4f(r, g, b, 1f);
+        gl.glLineWidth(8f);
         gl.glDrawArrays(GL_LINES, 0, 2);
     }
 

@@ -156,6 +156,7 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        //Log.d(TAG, "onTouch: " + event);
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             invalidate();
         }
@@ -164,6 +165,41 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //Log.d(TAG, "onTouchEvent: " + event);
+        touch01(event);
+
+        return true;
+    }
+
+    private void touch02(MotionEvent event) {
+        float xx = event.getX();
+        float dx1 = Math.abs(xx - xStart);
+        float dx2 = Math.abs(xx - xEnd);
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            slideMoving = true;
+            xStartSaved = xStart;
+            xEndSaved = xEnd;
+            startMoveX = xx;
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_MOVE && slideMoving) {
+            xStart = xStartSaved + (xx - startMoveX);
+            if (xStart < 0) xStart = 0;
+            xEnd = xEndSaved + (xx - startMoveX);
+            if (xEnd >= w) xEnd = w;
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            slideMoving = false;
+            mode = 0;
+        }
+
+        if (mOnSliderListener != null)
+            mOnSliderListener.onSlide((int) xStart, (int) xEnd);
+    }
+
+    private void touch01(MotionEvent event) {
         int x = (int) event.getX();
 
         float xx = event.getX();
@@ -201,8 +237,6 @@ public class ChartSliderView extends View implements View.OnTouchListener {
 
         if (mOnSliderListener != null)
             mOnSliderListener.onSlide((int) xStart, (int) xEnd);
-
-        return true;
     }
 
     interface ISliderListener {

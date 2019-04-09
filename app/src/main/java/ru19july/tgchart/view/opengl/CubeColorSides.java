@@ -97,7 +97,7 @@ public class CubeColorSides {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public void draw(GL10 gl, int color) {
+    public void draw(GL10 gl, int color, int alpha) {
         gl.glFrontFace(GL10.GL_CCW);    // Front face in counter-clockwise orientation
         gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
         gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
@@ -109,7 +109,7 @@ public class CubeColorSides {
         // Render all the faces
         for (int face = 0; face < numFaces; face++) {
             // Set the color for each of the faces
-            gl.glColor4f(Color.red(color), Color.green(color), Color.blue(color), 1f);
+            gl.glColor4f(Color.red(color)/255f, Color.green(color)/255f, Color.blue(color)/255f, alpha);
             // Draw the primitive from the vertex-array directly
             gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*4, 4);
         }

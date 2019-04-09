@@ -73,40 +73,6 @@ public class ChartEngine {
 
     private int ticks = 0;
 
-    private void DrawPixels(GL10 gl) {
-        //chart
-        Log.d(TAG, "DrawPixels: " + mChartData.getSeries().get(0).getValues().size());
-        /*if (mVertexBuffer != null) {
-            gl.glLoadIdentity();
-            gl.glTranslatef(0, 0, 0);
-            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
-            gl.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
-            gl.glDrawElements(GL10.GL_LINES, mNumOfTriangleBorderIndices,
-                    GL10.GL_UNSIGNED_SHORT, mTriangleBorderIndicesBuffer);
-        }*/
-
-        for(int i=0;i < W; i++)
-        {
-            pixel(gl, i, i / 2, 1f, Color.RED);
-
-        }
-
-        for (int j = 1; j < mChartData.getSeries().size(); j++) {
-            for (int i = 0; i < mChartData.getSeries().get(0).getValues().size() - 1; i++) {
-                int x1 = (int) (W * (i + 0f) / mChartData.getSeries().get(0).getValues().size());
-                int y1 = (int) (H * (mChartData.getSeries().get(j).getValues().get(i) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-
-                int x2 = (int) (W * (i + 1f) / mChartData.getSeries().get(0).getValues().size());
-                int y2 = (int) (H * (mChartData.getSeries().get(j).getValues().get(i + 1) - mChartData.getSeries().get(j).getMinValue() - 0f) / (mChartData.getSeries().get(j).getMaxValue() - mChartData.getSeries().get(j).getMinValue()));
-                pixel(gl, x1, y1, 1f, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
-                //line(gl, x, y, x + j*3, y + j*2, j < 1 ? Color.BLUE : (j < 2 ? Color.RED : Color.GREEN));
-
-                //drawLine(gl, x1, y1, x2, y2, 3f, j < 2 ? Color.BLUE : (j < 3 ? Color.RED : Color.GREEN)/*Color.parseColor(mChartData.getSeries().get(j).getColor())*/);
-            }
-        }
-
-    }
-
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
 
@@ -128,8 +94,6 @@ public class ChartEngine {
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
-        long ms = (new Date()).getTime();
-
         //canvas.drawRect( 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
         setBackground(canvas, mTheme.backgroundColor());
 
@@ -150,27 +114,6 @@ public class ChartEngine {
         //drawing = false;
         return;//.getCanvas();
     }
-
-    private void setBackground(Object canvas, String backgroundColor) {
-        if(canvas instanceof GL10)
-        {
-            ((GL10)canvas).glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
-            ((GL10)canvas).glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
-            //mTheme.backgroundColor()
-            float r = ((Color.parseColor(backgroundColor) >> 16) & 0xff) / 255f;
-            float g = ((Color.parseColor(backgroundColor) >>  8) & 0xff) / 255f;
-            float b = ((Color.parseColor(backgroundColor) >>  0) & 0xff) / 255f;
-
-            ((GL10)canvas).glClearColor(r, g, b, 1f); 	//Background
-            //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
-            ((GL10)canvas).glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
-            ((GL10)canvas).glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
-
-            //Really Nice Perspective Calculations
-            ((GL10)canvas).glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
-        }
-    }
-
 
     private int GetX(double x) {
         return (int) (((x - leftMinValue) / (rightMaxValue - leftMinValue)) * W * 1f + W * 0.0f);
@@ -245,8 +188,12 @@ public class ChartEngine {
                 fp.setColor(Color.parseColor(series.get(j).getColor()));
                 fpc.setColor(Color.parseColor(series.get(j).getColor()));
 
-                fp.setAlpha((int) (series.get(j).getAlpha() * 255));
-                fpc.setAlpha((int) (series.get(j).getAlpha() * 255));
+                float normalizator = 1f;
+                if(canvas instanceof Canvas)
+                    normalizator = 255;
+
+                fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
+                fpc.setAlpha((int) (series.get(j).getAlpha() * normalizator));
 
                 drawLine(canvas, x1, y1, x2, y2, fp);
                 if(series.get(j).getAlpha() > 0.95)
@@ -541,11 +488,33 @@ public class ChartEngine {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
         if(canvas instanceof GL10)
-            //drawLine((GL10)canvas, x1, y1, x2, y2, 1f , fp.getColor());
-            pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor());
+            drawLine((GL10)canvas, x1, H-y1, x2, H-y2, 1f , fp.getColor(), fp.getAlpha());
+            //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
     }
 
-    private void pixel(GL10 gl, int x, int y, float w, int color) {
+    //// OpenGL
+
+    private void setBackground(Object canvas, String backgroundColor) {
+        if(canvas instanceof GL10)
+        {
+            ((GL10)canvas).glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
+            ((GL10)canvas).glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
+            //mTheme.backgroundColor()
+            float r = ((Color.parseColor(backgroundColor) >> 16) & 0xff) / 255f;
+            float g = ((Color.parseColor(backgroundColor) >>  8) & 0xff) / 255f;
+            float b = ((Color.parseColor(backgroundColor) >>  0) & 0xff) / 255f;
+
+            ((GL10)canvas).glClearColor(r, g, b, 1f); 	//Background
+            //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
+            ((GL10)canvas).glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
+            ((GL10)canvas).glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
+
+            //Really Nice Perspective Calculations
+            ((GL10)canvas).glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+        }
+    }
+
+    private void pixel(GL10 gl, int x, int y, float w, int color, int alpha) {
         x = x - W / 2;
         y = y - H / 2;
         gl.glLoadIdentity();
@@ -553,10 +522,10 @@ public class ChartEngine {
         gl.glTranslatef(x, y, 0);
         //gl.glScalef(r.nextFloat()*20f, r.nextFloat()*20f, 1);
         gl.glScalef(w, w, 1);
-        new CubeColorSides().draw(gl, color);
+        new CubeColorSides().draw(gl, color, alpha);
     }
 
-    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color) {
+    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
         int d = 0;
         int dx = Math.abs(x2 - x1);
         int dy = Math.abs(y2 - y1);
@@ -570,7 +539,7 @@ public class ChartEngine {
 
         if (dx >= dy) {
             while (true) {
-                pixel(g, x, y, w, color);
+                pixel(g, x, y, w, color, alpha);
                 if (x == x2)
                     break;
                 x += ix;
@@ -582,7 +551,7 @@ public class ChartEngine {
             }
         } else {
             while (true) {
-                pixel(g, x, y, w, color);
+                pixel(g, x, y, w, color, alpha);
                 if (y == y2)
                     break;
                 y += iy;

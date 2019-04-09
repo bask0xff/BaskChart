@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -153,7 +154,7 @@ public class BaskChartView extends LinearLayout {
         Log.d(TAG, "init: " + chartViewClass.getCanonicalName() + " ???-equals-??? " + ChartGLView.class.getCanonicalName());
         if(chartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
             chartView = new ChartGLView(context);
-            ChartGLRenderer mRenderer = new ChartGLRenderer(context);
+            ChartGLRenderer mRenderer = new ChartGLRenderer((View)chartView, context);
             chartView.setRenderer(mRenderer);
             Log.d(TAG, "init: ADD CHARTGLVIEW");
             linearlayout.addView((ChartGLView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 500));
@@ -169,6 +170,7 @@ public class BaskChartView extends LinearLayout {
         chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {
             @Override
             public void onSlide(int xStart, int xEnd) {
+                Log.d(TAG, "onSlide: -> " + chartView.getClass().getSimpleName());
                 chartView.updateSlideFrameWindow(xStart, xEnd);
             }
         });

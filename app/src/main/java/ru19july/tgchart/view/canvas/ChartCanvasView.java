@@ -92,6 +92,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     public void animateChanges(final ChartData oldChartData, final ChartData newChartData) {
         chartEngine.animateChanges(this, oldChartData, newChartData);
     }
+
     @Override
     public void setRenderer(ChartGLRenderer mRenderer) {
 

@@ -521,7 +521,8 @@ public class ChartEngine {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawLine(x1, y1, x2, y2, fp);
         if(canvas instanceof GL10)
-            drawLine((GL10)canvas, x1, y1, x2, y2, 1f, fp.getColor());
+            drawLine((GL10)canvas, x1, y1, x2, y2, 1f
+                    , fp.getColor());
         //pixel((GL10)canvas, x1, y1, 1f, fp.getColor());
 
     }

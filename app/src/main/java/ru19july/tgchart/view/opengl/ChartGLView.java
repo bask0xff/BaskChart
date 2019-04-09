@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -15,6 +16,7 @@ import ru19july.tgchart.interfaces.IChartView;
 import ru19july.tgchart.view.ChartEngine;
 
 public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTouchListener  {
+    private static final String TAG = ChartGLView.class.getSimpleName();
     private ChartGLRenderer mRenderer;
 
     private ChartEngine chartEngine = new ChartEngine();
@@ -40,22 +42,23 @@ public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTou
 
     @Override
     public void updateSlideFrameWindow(int xStart, int xEnd) {
-        mRenderer.slideFrame(xStart, xEnd);
+        Log.d(TAG, "updateSlideFrameWindow: ");
+        mRenderer.updateSlideFrameWindow(xStart, xEnd);
     }
 
     @Override
     public void showChart(int position, float v, float v1) {
-
+        mRenderer.showChart(position, v, v1);
     }
 
     @Override
-    public void animateChanges(ChartData oldChartData, ChartData mChartData) {
-
+    public void animateChanges(ChartData oldChartData, ChartData newChartData) {
+        mRenderer.animateChanges(oldChartData, newChartData);
     }
 
     @Override
     public void setTheme(IChartTheme mTheme) {
-
+        mRenderer.setTheme(mTheme);
     }
 
     @Override

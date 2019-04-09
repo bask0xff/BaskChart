@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
@@ -18,8 +19,9 @@ import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.interfaces.IChartView;
 import ru19july.tgchart.view.ChartEngine;
 
-public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
+public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View.OnTouchListener  {
     private static final String TAG = ChartGLRenderer.class.getSimpleName();
+    private final View view;
     private Context mContext;
     private FloatBuffer mVertexBuffer = null;
     private ShortBuffer mTriangleBorderIndicesBuffer = null;
@@ -38,8 +40,9 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
     private int Width;
     private int Height;
 
-    public ChartGLRenderer(Context context) {
+    public ChartGLRenderer(View chartView, Context context) {
         mContext = context;
+        this.view = chartView;
     }
 
     public void onDrawFrame(GL10 gl) {
@@ -125,11 +128,6 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
         return chartEngine.onTouchEvent(e);
     }
 
-    public void slideFrame(int xStart, int xEnd) {
-        //Log.d(TAG, "slideFrame: " + xStart + " / " + xEnd);
-        //startX = (500f - xStart);
-    }
-
     public void setData(ChartData chartData) {
         chartEngine.setData(chartData);
     }
@@ -142,26 +140,33 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer {
 
     @Override
     public void showChart(int position, float v, float v1) {
-
+        chartEngine.showChart(view, position, v, v1);
     }
 
     @Override
-    public void animateChanges(ChartData oldChartData, ChartData mChartData) {
-
+    public void animateChanges(ChartData oldChartData, ChartData newChartData) {
+        chartEngine.animateChanges(view, oldChartData, newChartData);
     }
 
     @Override
     public void invalidate() {
-
     }
 
     @Override
     public void setTheme(IChartTheme mTheme) {
-
+        chartEngine.setTheme(mTheme);
     }
 
     @Override
     public void setRenderer(ChartGLRenderer mRenderer) {
 
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            invalidate();
+        }
+        return false;
     }
 }

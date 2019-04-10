@@ -74,7 +74,7 @@ public class ChartEngine {
     private float chartYstartsFactor = .2f;
     private float chartYfinishFactor = .5f;
     private float chartYendsFactor = .8f;
-    private float textYFactor = 0.85f;
+    private float textYFactor = 0.8f;
     private float textAxisSize = 0.033f;
     private float sliderYfactor = textYFactor + textAxisSize + 0.01f;
     private boolean catchedLeft = false;
@@ -435,7 +435,7 @@ public class ChartEngine {
         if(yTouched >= H * sliderYfactor && event.getAction() == MotionEvent.ACTION_DOWN){
 
             int leftDist = (int) Math.abs( xStart - xTouched);
-            int rightDist = (int) Math.abs( xStart - xTouched);
+            int rightDist = (int) Math.abs( xEnd - xTouched);
 
             catchedLeft = leftDist < 150;
             catchedRight = rightDist < 150;
@@ -452,6 +452,8 @@ public class ChartEngine {
                 if(xTouched < xEnd && xTouched > xStart) {
                     movingSlider = true;
                     xMoveTouched = xTouched;
+                    xStartSaved = xStart;
+                    xEndSaved = xEnd;
                 }
             }
 
@@ -466,16 +468,16 @@ public class ChartEngine {
 
             if(catchedLeft){
                 Log.d(TAG, "catchedLeft: " + deltaMove);
-                xStart = xStartTouched - deltaMove;
+                xStart = xTouched; //xStartTouched - deltaMove;
             }
             if(catchedRight){
                 Log.d(TAG, "catchedRight: " + deltaMove);
-                xEnd = xEndTouched - deltaMove;
+                xEnd = xTouched;// xEndTouched - deltaMove;
             }
             if(movingSlider){
                 Log.d(TAG, "movingSlider: " + deltaMove);
-                xStart = xStartTouched + deltaMove;
-                xEnd = xEndTouched - deltaMove;
+                xStart = xStartSaved + (xTouched - xMoveTouched);
+                xEnd = xEndSaved + (xTouched - xMoveTouched);
             }
 
             if(xStart < 0) xStart = 0;
@@ -487,6 +489,9 @@ public class ChartEngine {
             catchedLeft = false;
             catchedRight = false;
         }
+
+        startNormalized = (xStart + 0.f) / W;
+        endNormalized = (xEnd + 0.f) / W;
 
         if(yTouched >= H * sliderYfactor) return true;
 

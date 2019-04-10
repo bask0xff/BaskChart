@@ -35,13 +35,14 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
     private int ticks = 0;
 
     private ChartData mChartData;
-    private ChartEngine chartEngine = new ChartEngine();
+    private ChartEngine chartEngine;
 
     private int Width;
     private int Height;
 
     public ChartGLRenderer(View chartView, Context context) {
         mContext = context;
+        chartEngine = new ChartEngine(context);
         this.view = chartView;
     }
 

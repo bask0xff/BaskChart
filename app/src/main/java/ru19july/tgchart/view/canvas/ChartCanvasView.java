@@ -26,7 +26,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     private final String TAG = ChartCanvasView.class.getSimpleName();
 
-    private ChartEngine chartEngine = new ChartEngine();
+    private ChartEngine chartEngine;
 
     public ChartCanvasView(Context context) {
         super(context);
@@ -53,6 +53,8 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     @TargetApi(Build.VERSION_CODES.FROYO)
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
+
+        chartEngine = new ChartEngine(getContext());
 
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(

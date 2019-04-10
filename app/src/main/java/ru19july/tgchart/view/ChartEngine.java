@@ -1,7 +1,9 @@
 package ru19july.tgchart.view;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,10 +14,17 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.opengl.GLES20;
+import android.opengl.GLU;
+import android.opengl.GLUtils;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -28,6 +37,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import ru19july.tgchart.ICanvas;
+import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.MinMaxIndex;
 import ru19july.tgchart.data.Series;
@@ -84,6 +94,17 @@ public class ChartEngine {
     private float xEndTouched = 0.0f;
     private float xMoveTouched = 0.0f;
 
+    public ChartEngine(Context ctx){
+        mContext = ctx;
+
+        mTriangle = new Triangle();
+        mProjector = new Projector();
+        mLabelPaint = new Paint();
+        mLabelPaint.setTextSize(32);
+        mLabelPaint.setAntiAlias(true);
+        mLabelPaint.setARGB(0xff, 0x00, 0xff, 0x00);
+    }
+
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
 
@@ -102,6 +123,68 @@ public class ChartEngine {
             //DrawPixels(((GL10)canvas));
             //ticks++;
             //((GL10)canvas).glLoadIdentity();
+
+            ((GL10)canvas).glDisable(GL10.GL_DITHER);
+
+            ((GL10)canvas).glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+                    GL10.GL_MODULATE);
+
+            /*
+             * Usually, the first thing one might want to do is to clear
+             * the screen. The most efficient way of doing this is to use
+             * glClear().
+             */
+
+            ((GL10)canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+            /*
+             * Now we're ready to draw some 3D objects
+             */
+
+            ((GL10)canvas).glMatrixMode(GL10.GL_MODELVIEW);
+            ((GL10)canvas).glLoadIdentity();
+
+            GLU.gluLookAt(((GL10)canvas), 0.0f, 0.0f, -2.5f,
+                    0.0f, 0.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f);
+
+            ((GL10)canvas).glEnableClientState(GL10.GL_VERTEX_ARRAY);
+            ((GL10)canvas).glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+            ((GL10)canvas).glActiveTexture(GL10.GL_TEXTURE0);
+            ((GL10)canvas).glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+            ((GL10)canvas).glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+                    GL10.GL_REPEAT);
+            ((GL10)canvas).glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+                    GL10.GL_REPEAT);
+
+            if (false) {
+                long time = SystemClock.uptimeMillis();
+                if (mLastTime != 0) {
+                    long delta = time - mLastTime;
+                    Log.w("time", Long.toString(delta));
+                }
+                mLastTime = time;
+            }
+
+            long time = SystemClock.uptimeMillis() % 4000L;
+            float angle = 0.090f * ((int) time);
+
+            ((GL10)canvas).glRotatef(angle, 0, 0, 1.0f);
+            ((GL10)canvas).glScalef(2.0f, 2.0f, 2.0f);
+
+            mTriangle.draw(((GL10)canvas));
+
+            mProjector.getCurrentModelView(((GL10)canvas));
+            mLabels.beginDrawing(((GL10)canvas), mWidth, mHeight);
+            drawLabel(((GL10)canvas), 0, mLabelA);
+            drawLabel(((GL10)canvas), 1, mLabelB);
+            drawLabel(((GL10)canvas), 2, mLabelC);
+            float msPFX = mWidth - mLabels.getWidth(mLabelMsPF) - 1;
+            mLabels.draw(((GL10)canvas), msPFX, 0, mLabelMsPF);
+            mLabels.endDrawing(((GL10)canvas));
+
+            drawMsPF(((GL10)canvas), msPFX);
         }
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
@@ -126,6 +209,42 @@ public class ChartEngine {
 
         //drawing = false;
         return;//.getCanvas();
+    }
+
+    private void drawMsPF(GL10 gl, float rightMargin) {
+        long time = SystemClock.uptimeMillis();
+        if (mStartTime == 0) {
+            mStartTime = time;
+        }
+        if (mFrames++ == SAMPLE_PERIOD_FRAMES) {
+            mFrames = 0;
+            long delta = time - mStartTime;
+            mStartTime = time;
+            mMsPerFrame = (int) (delta * SAMPLE_FACTOR);
+        }
+        if (mMsPerFrame > 0) {
+            mNumericSprite.setValue(mMsPerFrame);
+            float numWidth = mNumericSprite.width();
+            float x = rightMargin - numWidth;
+            mNumericSprite.draw(gl, x, 0, mWidth, mHeight);
+        }
+    }
+
+    private void drawLabel(GL10 gl, int triangleVertex, int labelId) {
+        float x = mTriangle.getX(triangleVertex);
+        float y = mTriangle.getY(triangleVertex);
+        mScratch[0] = x;
+        mScratch[1] = y;
+        mScratch[2] = 0.0f;
+        mScratch[3] = 1.0f;
+        mProjector.project(mScratch, 0, mScratch, 4);
+        float sx = mScratch[4];
+        float sy = mScratch[5];
+        float height = mLabels.getHeight(labelId);
+        float width = mLabels.getWidth(labelId);
+        float tx = sx - width * 0.5f;
+        float ty = sy - height * 0.5f;
+        mLabels.draw(gl, tx, ty, labelId);
     }
 
     private int GetX(double x) {
@@ -557,12 +676,114 @@ public class ChartEngine {
     // Draw methods
     ///////////////////////////////////
 
-    private void drawText(Object canvas, String str, float x, float y, Paint p) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawText(str, x, y, p);
-        if(canvas instanceof GL10) {
-            pixel((GL10)canvas, (int)x, (int)y, 50f, 30f, p.getColor(), 1);
+    /*private void drawCanvasToTexture(
+            String aText,
+            float aFontSize) {
+        if (aFontSize < 8.0f)
+            aFontSize = 8.0f;
+        if (aFontSize > 500.0f)
+            aFontSize = 500.0f;
+        Paint textPaint = new Paint();
+        textPaint.setTextSize(aFontSize);
+        textPaint.setFakeBoldText(false);
+        textPaint.setAntiAlias(true);
+        textPaint.setARGB(255, 255, 255, 255);
+        // If a hinting is available on the platform you are developing, you should enable it (uncomment the line below).
+        //textPaint.setHinting(Paint.HINTING_ON);
+        textPaint.setSubpixelText(true);
+        textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
+        float realTextWidth = textPaint.measureText(aText);
+        // Creates a new mutable bitmap, with 128px of width and height
+        int bitmapWidth = (int)(realTextWidth + 2.0f);
+        int bitmapHeight = (int)aFontSize + 2;
+        Bitmap textBitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
+        textBitmap.eraseColor(Color.argb(0, 255, 255, 255));
+        // Creates a new canvas that will draw into a bitmap instead of rendering into the screen
+        Canvas bitmapCanvas = new Canvas(textBitmap);
+        // Set start drawing position to [1, base_line_position]
+        // The base_line_position may vary from one font to another but it usually is equal to 75% of font size (height).
+        bitmapCanvas.drawText(aText, 1, 1.0f + aFontSize * 0.75f, textPaint);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId[0]);
+        //HighQualityTextRenderer.checkGLError("glBindTexture");
+        // Assigns the OpenGL texture with the Bitmap
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, textBitmap, 0);
+        // Free memory resources associated with this texture
+        textBitmap.recycle();
+        // After the image has been subloaded to texture, regenerate mipmaps
+        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
+        //HighQualityTextRenderer.checkGLError("glGenerateMipmap");
+    }*/
+
+    /*public void makePixelCoords(float[] aMatrix,
+                                int aViewportWidth,
+                                int aViewportHeight) {
+        // Transform the vector into screen coordinates we assumes aMatrix is ModelViewProjection matrix
+        // transform method multiplies this vector by the matrix
+        transform(aMatrix);
+        // Make coordinates as homogenous
+        x /= w;
+        y /= w;
+        z /= w;
+        w = 1.0f;
+        // Now the vector is normalized to the range [-1.0, 1.0]
+        // Normalize values into NDC.
+        x = 0.5f + x * 0.5f;
+        y = 0.5f + y * 0.5f;
+        z = 0.5f + z * 0.5f;
+        w = 1.0f;
+        // Currently the valuse are clipped to the [0.0, 1.0] range
+        // Move coordinates into window space (in pixels)
+        x *= (float) aViewportWidth;
+        y *= (float) aViewportHeight;
+    }*/
+
+    private void drawText(Object canvas1, String str, float x, float y, Paint p) {
+        if(canvas1 instanceof Canvas)
+            ((Canvas)canvas1).drawText(str, x, y, p);
+        if(canvas1 instanceof GL10) {
+            //pixel((GL10)canvas, (int)x, (int)y, 50f, 30f, p.getColor(), 1);
             //drawRectGL((GL10)canvas, x, y, x + 50, y+10, p.getColor(), 1);
+/*
+
+            // Create an empty, mutable bitmap
+            Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
+// get a canvas to paint over the bitmap
+            Canvas canvas = new Canvas(bitmap);
+            bitmap.eraseColor(0);
+
+// get a background image from resources
+// note the image format must match the bitmap format
+            Drawable background = context.getResources().getDrawable(R.drawable.background);
+            background.setBounds(0, 0, 256, 256);
+            background.draw(canvas); // draw the background to our bitmap
+
+// Draw the text
+            Paint textPaint = new Paint();
+            textPaint.setTextSize(32);
+            textPaint.setAntiAlias(true);
+            textPaint.setARGB(0xff, 0x00, 0x00, 0x00);
+// draw the text centered
+            canvas.drawText("Hello World", 16,112, textPaint);
+
+//Generate one texture pointer...
+            ((GL10)canvas1).glGenTextures(1, textures, 0);
+//...and bind it to our array
+            ((GL10)canvas1).glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+
+//Create Nearest Filtered Texture
+            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+
+//Different possible texture parameters, e.g. GL10.GL_CLAMP_TO_EDGE
+            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
+            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
+
+//Use the Android GLUtils to specify a two-dimensional texture image from our bitmap
+            GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+
+//Clean up
+            bitmap.recycle();
+*/
         }
     }
 
@@ -727,6 +948,65 @@ public class ChartEngine {
 
         //Really Nice Perspective Calculations
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+
+
+
+        int[] textures = new int[1];
+        gl.glGenTextures(1, textures, 0);
+
+        mTextureID = textures[0];
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
+                GL10.GL_NEAREST);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D,
+                GL10.GL_TEXTURE_MAG_FILTER,
+                GL10.GL_LINEAR);
+
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+                GL10.GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+                GL10.GL_CLAMP_TO_EDGE);
+
+        gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+                GL10.GL_REPLACE);
+
+        InputStream is = mContext.getResources()
+                .openRawResource(R.raw.robot);
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeStream(is);
+        } finally {
+            try {
+                is.close();
+            } catch(IOException e) {
+                // Ignore.
+            }
+        }
+
+        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+        bitmap.recycle();
+
+        if (mLabels != null) {
+            mLabels.shutdown(gl);
+        } else {
+            mLabels = new LabelMaker(true, 256, 64);
+        }
+        mLabels.initialize(gl);
+        mLabels.beginAdding(gl);
+        mLabelA = mLabels.add(gl, "A", mLabelPaint);
+        mLabelB = mLabels.add(gl, "B", mLabelPaint);
+        mLabelC = mLabels.add(gl, "C", mLabelPaint);
+        mLabelMsPF = mLabels.add(gl, "ms/f", mLabelPaint);
+        mLabels.endAdding(gl);
+
+        if (mNumericSprite != null) {
+            mNumericSprite.shutdown(gl);
+        } else {
+            mNumericSprite = new NumericSprite();
+        }
+        mNumericSprite.initialize(gl, mLabelPaint);
+
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -754,5 +1034,102 @@ public class ChartEngine {
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
+    }
+
+
+    private int mWidth;
+    private int mHeight;
+    private Context mContext;
+    private Triangle mTriangle;
+    private int mTextureID;
+    private int mFrames;
+    private int mMsPerFrame;
+    private final static int SAMPLE_PERIOD_FRAMES = 12;
+    private final static float SAMPLE_FACTOR = 1.0f / SAMPLE_PERIOD_FRAMES;
+    private long mStartTime;
+    private LabelMaker mLabels;
+    private Paint mLabelPaint;
+    private int mLabelA;
+    private int mLabelB;
+    private int mLabelC;
+    private int mLabelMsPF;
+    private Projector mProjector;
+    private NumericSprite mNumericSprite;
+    private float[] mScratch = new float[8];
+    private long mLastTime;
+
+    class Triangle {
+        public Triangle() {
+
+            // Buffers to be passed to gl*Pointer() functions
+            // must be direct, i.e., they must be placed on the
+            // native heap where the garbage collector cannot
+            // move them.
+            //
+            // Buffers with multi-byte datatypes (e.g., short, int, float)
+            // must have their byte order set to native order
+
+            ByteBuffer vbb = ByteBuffer.allocateDirect(VERTS * 3 * 4);
+            vbb.order(ByteOrder.nativeOrder());
+            mFVertexBuffer = vbb.asFloatBuffer();
+
+            ByteBuffer tbb = ByteBuffer.allocateDirect(VERTS * 2 * 4);
+            tbb.order(ByteOrder.nativeOrder());
+            mTexBuffer = tbb.asFloatBuffer();
+
+            ByteBuffer ibb = ByteBuffer.allocateDirect(VERTS * 2);
+            ibb.order(ByteOrder.nativeOrder());
+            mIndexBuffer = ibb.asShortBuffer();
+
+            for (int i = 0; i < VERTS; i++) {
+                for(int j = 0; j < 3; j++) {
+                    mFVertexBuffer.put(sCoords[i*3+j]);
+                }
+            }
+
+            for (int i = 0; i < VERTS; i++) {
+                for(int j = 0; j < 2; j++) {
+                    mTexBuffer.put(sCoords[i*3+j] * 2.0f + 0.5f);
+                }
+            }
+
+            for(int i = 0; i < VERTS; i++) {
+                mIndexBuffer.put((short) i);
+            }
+
+            mFVertexBuffer.position(0);
+            mTexBuffer.position(0);
+            mIndexBuffer.position(0);
+        }
+
+        public void draw(GL10 gl) {
+            gl.glFrontFace(GL10.GL_CCW);
+            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer);
+            gl.glEnable(GL10.GL_TEXTURE_2D);
+            gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
+            gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, VERTS,
+                    GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
+        }
+
+        public float getX(int vertex) {
+            return sCoords[3*vertex];
+        }
+
+        public float getY(int vertex) {
+            return sCoords[3*vertex+1];
+        }
+
+        private final static int VERTS = 3;
+
+        private FloatBuffer mFVertexBuffer;
+        private FloatBuffer mTexBuffer;
+        private ShortBuffer mIndexBuffer;
+        // A unit-sided equalateral triangle centered on the origin.
+        private final float[] sCoords = {
+                // X, Y, Z
+                -0.5f, -0.25f, 0,
+                0.5f, -0.25f, 0,
+                0.0f,  0.559016994f, 0
+        };
     }
 }

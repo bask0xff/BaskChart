@@ -19,7 +19,7 @@ public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTou
     private static final String TAG = ChartGLView.class.getSimpleName();
     private ChartGLRenderer mRenderer;
 
-    private ChartEngine chartEngine = new ChartEngine();
+    private ChartEngine chartEngine;
 
     public ChartGLView(Context context) {
         super(context);
@@ -32,6 +32,7 @@ public class ChartGLView extends GLSurfaceView implements IChartView, View.OnTou
     }
 
     private void init() {
+        chartEngine = new ChartEngine(getContext());
         setOnTouchListener(this);
     }
 

@@ -130,8 +130,20 @@ public class ChartEngine {
         return realY;
     }
 
+    private boolean slideMoving = false;
+    private float startMoveX = 0.0f;
+    private float xStartSaved = 0.0f;
+    private float xEndSaved = 0.f;
+
     private void drawSlider(Object canvas) {
-        drawRect( canvas, 0, H*sliderYfactor, W, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+        //left part
+        drawRect( canvas, 0, H*sliderYfactor, xStart, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+
+        //right part
+        drawRect(canvas, xEnd, H*sliderYfactor, W, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+
+        //slider window
+        drawRect(canvas,xStart + 16, H*sliderYfactor + 4, xEnd - 16, H - 4, Color.parseColor(mTheme.sliderInner()), Color.alpha(Color.parseColor(mTheme.sliderInner())));
     }
 
     private void DrawChart(List<Series> series, Object canvas) {

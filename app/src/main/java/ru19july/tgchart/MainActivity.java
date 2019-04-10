@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
         int charts = chartsData.size();
         //charts = 1;
 
-        for (int i = 0; i < charts; i++) {
+        for (int i = 4; i < charts; i++) {
 
             Class<?> chartClass =
                     //i % 2 != 0

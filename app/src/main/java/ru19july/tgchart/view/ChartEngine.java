@@ -31,7 +31,6 @@ import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.opengl.CubeColorSides;
 import ru19july.tgchart.view.theme.DarkTheme;
 
-import static android.opengl.GLES20.GL_UNSIGNED_INT;
 import static javax.microedition.khronos.opengles.GL10.GL_FLOAT;
 import static javax.microedition.khronos.opengles.GL10.GL_LINES;
 import static javax.microedition.khronos.opengles.GL10.GL_VERTEX_ARRAY;
@@ -76,6 +75,7 @@ public class ChartEngine {
     private float xStartTouched = 0.0f;
     private float xEndTouched = 0.0f;
     private float xMoveTouched = 0.0f;
+    private RectF legendRect;
 
     public ChartEngine(Context ctx) {
         mContext = ctx;
@@ -297,7 +297,7 @@ public class ChartEngine {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            drawText(canvas, str, 40f, yL - textSize * 0.3f, p);
+            drawText(canvas, str, 40f, yL - textSize * 0.3f, 8f, p);
 
             yLine += numScale.tickSpacing;
         }
@@ -328,7 +328,7 @@ public class ChartEngine {
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            drawText(canvas, str, xL - xw, H * textYFactor, p);
+            drawText(canvas, str, xL - xw, H * textYFactor, 8f, p);
 
             xLine += numScale.tickSpacing;
         }
@@ -370,17 +370,17 @@ public class ChartEngine {
 
         //TODO hide on click legend
         paint.setColor(Color.parseColor(mTheme.legendBackgroundColor()));
-        RectF rect = new RectF(
+        legendRect = new RectF(
                 leftX,
                 lastY - H * 1f / 15f,
                 rightX,
                 lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
 
-        drawRoundRect(canvas, rect, 8, 8, paint);
+        drawRoundRect(canvas, legendRect, 8, 8, paint);
 
         //date
         p.setColor(Color.parseColor(mTheme.markerFontColor()));
-        drawText(canvas, dat, leftX + 50, lastY + 16, p);
+        drawText(canvas, dat, leftX + 50, lastY + 16, 30f, p);
 
         int k = 0;
         for (int i = 0; i < values.length; i++) {
@@ -388,7 +388,7 @@ public class ChartEngine {
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            drawText(canvas, str, leftX + 50, lastY + 16 + (k + 1) * 80, p);
+            drawText(canvas, str, leftX + 50, lastY + 16 + (k + 1) * 80, 30f, p);
             k++;
         }
     }
@@ -497,7 +497,7 @@ public class ChartEngine {
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN && isLegend(xTouched, yTouched)) {
-
+            startTransformAnimation();
         }
 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -545,8 +545,25 @@ public class ChartEngine {
         return true;
     }
 
+    private void startTransformAnimation() {
+        ValueAnimator va = ValueAnimator.ofFloat(0, 1f);
+        int mDuration = 1000;
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                for (int i = 1; i < mChartData.getSeries().size(); i++)
+                    mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
+
+                //this.invalidate();
+            }
+        });
+
+        va.start();
+    }
+
     private boolean isLegend(float x, float y) {
-        return false;
+        if(legendRect == null) return false;
+        return (x >= legendRect.left && x <= legendRect.right && y >= legendRect.top && y <= legendRect.bottom);
     }
 
 
@@ -554,23 +571,26 @@ public class ChartEngine {
     // Draw methods
     ///////////////////////////////////
 
-    private void drawText(Object canvas1, String str, float x, float y, Paint p) {
-        if (canvas1 instanceof Canvas)
-            ((Canvas) canvas1).drawText(str, x, y, p);
-        if (canvas1 instanceof GL10) {
-            drawTextGl((GL10)canvas1, str, (int)x, (int)y, p.getColor(), 1);
+    private void drawText(Object canvas, String str, float x, float y, float size, Paint p) {
+        if (canvas instanceof Canvas)
+            ((Canvas) canvas).drawText(str, x, y, p);
+        if (canvas instanceof GL10) {
+            drawTextGl((GL10)canvas, str, (int)x, (int)y, size, p.getColor(), 1);
         }
     }
 
-    private void drawTextGl(GL10 gl, String text, int x, int y, int color, int alpha) {
+    private void drawTextGl(GL10 gl, String text, int x, int y, float size, int color, int alpha) {
         for(int i=0; i<text.length(); i++) {
-            pixel(gl, (int) x + i * 10, (int) y, 8f, 30f, color, alpha);
+            pixel(gl, (int) (x + i * size), (int) y, size * 0.8f, size, color, alpha);
         }
     }
 
     private void drawRoundRect(Object canvas, RectF rect, int x, int y, Paint paint) {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawRoundRect(rect, x, y, paint);
+        if (canvas instanceof GL10) {
+            pixel((GL10)canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, paint.getColor(), 1);
+        }
     }
 
     private void drawPath(Object canvas, Path mPath, Paint mPaint) {
@@ -633,7 +653,7 @@ public class ChartEngine {
         }
     }
 
-    private void pixel(GL10 gl, int x, int y, float w, float h, int color, int alpha) {
+    private void pixel(GL10 gl, float x, float y, float w, float h, int color, int alpha) {
         x = x - W / 2;
         y = -(y - H / 2);
         gl.glLoadIdentity();

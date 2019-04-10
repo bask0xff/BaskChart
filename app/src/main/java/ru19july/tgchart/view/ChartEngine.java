@@ -558,6 +558,13 @@ public class ChartEngine {
         if (canvas1 instanceof Canvas)
             ((Canvas) canvas1).drawText(str, x, y, p);
         if (canvas1 instanceof GL10) {
+            drawTextGl((GL10)canvas1, str, (int)x, (int)y, p.getColor(), 1);
+        }
+    }
+
+    private void drawTextGl(GL10 gl, String text, int x, int y, int color, int alpha) {
+        for(int i=0; i<text.length(); i++) {
+            pixel(gl, (int) x + i * 10, (int) y, 8f, 30f, color, alpha);
         }
     }
 

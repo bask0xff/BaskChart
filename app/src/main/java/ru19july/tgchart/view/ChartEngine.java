@@ -561,7 +561,7 @@ public class ChartEngine {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawText(str, x, y, p);
         if(canvas instanceof GL10) {
-            pixel((GL10)canvas, (int)x, (int)y, 50f, 10f, p.getColor(), 1);
+            pixel((GL10)canvas, (int)x, (int)y, 50f, 30f, p.getColor(), 1);
             //drawRectGL((GL10)canvas, x, y, x + 50, y+10, p.getColor(), 1);
         }
     }

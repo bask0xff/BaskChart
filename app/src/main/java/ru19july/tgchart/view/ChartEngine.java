@@ -548,18 +548,50 @@ public class ChartEngine {
     }
 
     private void startTransformAnimation() {
-        ValueAnimator va = ValueAnimator.ofFloat(0, 1f);
+        final ChartData oldChartData = mChartData;
+        //final ChartData newChartData = createNewForm(mChartData);
+
+        ValueAnimator va = ValueAnimator.ofFloat(1, 2f);
         int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                for (int i = 1; i < mChartData.getSeries().size(); i++)
-                    mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
+
+                    for (int i = 0; i < mChartData.getSeries().get(0).getValues().size(); i++) {
+                        long newValue = mChartData.getSeries().get(0).getValues().get(i)/10;
+                        //mChartData.getSeries().get(0).getValues().set(i, newValue);
+                        for (int j = 1; j < mChartData.getSeries().size(); j++) {
+                            long newValue2 = (long) (mChartData.getSeries().get(j).getValues().get(i) * (float) animation.getAnimatedValue());
+
+                            //Log.d(TAG, "onAnimationUpdate: " + i + "(" + j + ") " + mChartData.getSeries().get(j).getValues().get(i) + " =(" + (float) animation.getAnimatedValue()  + ")=> " + newValue);
+                            mChartData.getSeries().get(j).getValues().set(i, newValue2);
+                        }
+                    }
+
+                //for (int i = 1; i < mChartData.getSeries().size(); i++)
+                //    mChartData.getSeries().get(i).updateMorphTransformation(oldChartData, newChartData, (float) animation.getAnimatedValue());
                 mView.invalidate();
             }
         });
 
         va.start();
+    }
+
+    private ChartData createNewForm(ChartData chartData) {
+        ChartData newChart = new ChartData();
+        //new X coordinates
+        for(int i=0; i< chartData.getSeries().get(0).getValues().size(); i++){
+            long newValue = 0;
+            chartData.getSeries().get(0).getValues().set(i, newValue);
+        }
+        //change Y coordinates
+        for(int j=1; j<chartData.getSeries().size(); j++)
+            for(int i=0; i< chartData.getSeries().get(0).getValues().size(); i++) {
+                long newValue = 0;
+                chartData.getSeries().get(j).getValues().set(i, newValue);
+            }
+
+        return newChart;
     }
 
     private boolean isLegend(float x, float y) {

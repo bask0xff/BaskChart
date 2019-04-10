@@ -127,4 +127,10 @@ public class Series implements Serializable {
     public void setScale(float scale){
         mScale = scale;
     }
+
+    public void updateMorphTransformation(ChartData oldChartData, ChartData newChartData, float animatedValue) {
+//        for(int i=0; i< mValues.size(); i++){
+
+//        }
+    }
 }

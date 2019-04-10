@@ -2,6 +2,7 @@ package ru19july.tgchart;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,13 +37,15 @@ public class MainActivity extends Activity {
     //private ChartsAdapter adapter;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter mAdapter;
+    private int chartType = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int[] rcids = new int[]{1561, 1557, 1528, 1513, 1502, 1471, 1455, 1451, 1443, 1411, 1402, 1397, 1386, 1378, 1374, 1372, 1351, 1346, 1345, 1338, 1329, 1328, 1318, 1306, 1300, 1255, 1247, 1151, 1122, 1085, 1071, 1059, 1017, 1013, 1005, 999, 945, 942, 899, 896, 882, 871, 858, 849, 838, 821, 801, 800, 792, 768, 761, 712, 704, 683, 679, 677, 652, 608, 540, 505, 470, 360, 341, 262, 252, 214, 212, 165, 155, 135, 122, 120, 115, 113, 2421, 2386, 2373, 2370, 2366, 2355, 2351, 2336, 2287, 2278, 2246, 2163, 2151, 2143, 2098, 2094, 2004, 1911, 1910, 1899, 1897, 1876, 1865, 1810, 1776, 1771, 1768, 1738, 1709, 1687, 1686, 1676, 1670, 1669, 1657, 1607, 1606};
+        Intent intent = getIntent();
+        chartType = intent.getIntExtra("chart_type", 0);
 
         String json = loadJSONFromAsset();
         Log.d(TAG, "JSON: " + json);
@@ -55,7 +58,6 @@ public class MainActivity extends Activity {
         BaskChartView baskChartView = findViewById(R.id.baskChartView1);
         baskChartView.setData(chartsData.get(0));
         baskChartView.invalidate();
-
 
         initChartView();
 
@@ -73,8 +75,11 @@ public class MainActivity extends Activity {
 
         for (int i = 0; i < charts; i++) {
 
-            Class<?> chartClass = i % 2 != 0 ? ChartCanvasView.class : ChartGLView.class;
-            IChartTheme theme = i % 2 == 0 ? new DarkTheme() : new LightTheme();
+            Class<?> chartClass =
+                    //i % 2 != 0
+                    chartType == 1
+                    ? ChartCanvasView.class : ChartGLView.class;
+            IChartTheme theme = i % 1 == 0 ? new DarkTheme() : new LightTheme();
 
             Log.d(TAG, "initChartView: ------------------ CHART #" + i + " => " + theme.getClass().getSimpleName());
             final BaskChartView baskChartView = new BaskChartView(this, chartClass);

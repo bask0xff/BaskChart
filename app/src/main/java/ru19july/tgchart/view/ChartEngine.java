@@ -53,13 +53,15 @@ public class ChartEngine {
     Random r = new Random();
 
     private boolean drawing = false;
-    private float xStart = 50.0f;
-    private float xEnd = 450.0f;
+    private float xStart = 0.0f;
+    private float xEnd = 0.0f;
     private IChartTheme mTheme = new DarkTheme();
 
     float startNormalized = 0.0f;
     float endNormalized = 0.0f;
+    private float catchX = 0.0f;
     private float xTouched = 0.0f;
+    private float yTouched = 0.0f;
     int touchIndex = -1;
     private int oldTouchIndex = -111;
     private float realW = 1.0f;
@@ -75,6 +77,12 @@ public class ChartEngine {
     private float textYFactor = 0.85f;
     private float textAxisSize = 0.033f;
     private float sliderYfactor = textYFactor + textAxisSize + 0.01f;
+    private boolean catchedLeft = false;
+    private boolean catchedRight = false;
+    private boolean movingSlider = false;
+    private float xStartTouched = 0.0f;
+    private float xEndTouched = 0.0f;
+    private float xMoveTouched = 0.0f;
 
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
@@ -86,6 +94,7 @@ public class ChartEngine {
             W = ((Canvas) canvas).getWidth();
             H = ((Canvas) canvas).getHeight();
         }
+        if(xEnd < 1) xEnd = W;
 
         if(canvas instanceof GL10) {
             ((GL10)canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -414,8 +423,72 @@ public class ChartEngine {
         if(mChartData == null) return false;
 
         xTouched = event.getX();
+        yTouched = event.getY();
+
+        //startNormalized
+
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
+
+        //Log.d(TAG, "onTouchEvent: " + xTouched + "; start=" + startNormalized + "; end=" + endNormalized);
+
+        if(yTouched >= H * sliderYfactor && event.getAction() == MotionEvent.ACTION_DOWN){
+
+            int leftDist = (int) Math.abs( xStart - xTouched);
+            int rightDist = (int) Math.abs( xStart - xTouched);
+
+            catchedLeft = leftDist < 150;
+            catchedRight = rightDist < 150;
+
+            if(catchedLeft) catchedRight = false;
+            if(catchedRight) catchedLeft = false;
+
+            if(catchedLeft)
+                xStartTouched = xTouched;
+            if(catchedRight)
+                xEndTouched = xTouched;
+
+            if(!catchedLeft && !catchedRight){
+                if(xTouched < xEnd && xTouched > xStart) {
+                    movingSlider = true;
+                    xMoveTouched = xTouched;
+                }
+            }
+
+            catchX = xTouched;
+
+            Log.w(TAG, "onTouchEvent: TOUCH!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CATCH: " + catchedLeft + " / " + catchedRight + " / " + movingSlider);
+        }
+
+        if(event.getAction() == MotionEvent.ACTION_MOVE){
+
+            float deltaMove = catchX - xTouched;
+
+            if(catchedLeft){
+                Log.d(TAG, "catchedLeft: " + deltaMove);
+                xStart = xStartTouched - deltaMove;
+            }
+            if(catchedRight){
+                Log.d(TAG, "catchedRight: " + deltaMove);
+                xEnd = xEndTouched - deltaMove;
+            }
+            if(movingSlider){
+                Log.d(TAG, "movingSlider: " + deltaMove);
+                xStart = xStartTouched + deltaMove;
+                xEnd = xEndTouched - deltaMove;
+            }
+
+            if(xStart < 0) xStart = 0;
+            if(xEnd > W) xEnd = W;
+        }
+
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            movingSlider = false;
+            catchedLeft = false;
+            catchedRight = false;
+        }
+
+        if(yTouched >= H * sliderYfactor) return true;
 
         float min = Float.MAX_VALUE;
         touchIndex = 0;

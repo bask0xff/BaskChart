@@ -26,16 +26,16 @@ public class LightTheme implements IChartTheme {
 
     @Override
     public String sliderBackground() {
-        return "#77007700";
+        return "#33000000";
     }
 
     @Override
     public String sliderBorder() {
-        return "#ff0000ff";
+        return "#99000000";
     }
 
     @Override
     public String sliderInner() {
-        return "#77ff0000";
+        return "#77ffffff";
     }
 }

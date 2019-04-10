@@ -136,21 +136,19 @@ public class BaskChartView extends LinearLayout {
 
         linearlayout = (LinearLayout) getChildAt(0);
 
+        int height = 700;
+
         //dynamically add canvas/OpenGL chart
-        Log.d(TAG, "init: " + chartViewClass.getCanonicalName() + " ???-equals-??? " + ChartGLView.class.getCanonicalName());
-        if(chartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
+        if (chartViewClass.getCanonicalName().equals(ChartGLView.class.getCanonicalName())) {
             chartView = new ChartGLView(context);
-            ChartGLRenderer mRenderer = new ChartGLRenderer((View)chartView, context);
+            ChartGLRenderer mRenderer = new ChartGLRenderer((View) chartView, context);
             chartView.setRenderer(mRenderer);
-            Log.d(TAG, "init: ADD CHARTGLVIEW");
-            linearlayout.addView((ChartGLView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 500));
-        }
-        else
-        {
+        } else {
             chartView = new ChartCanvasView(context);
-            Log.d(TAG, "init: ADD CHARTCANVASVIEW");
-            linearlayout.addView((ChartCanvasView) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 1100));
+            height = (int) (height * 2);
         }
+
+        linearlayout.addView((View) chartView, 1, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, height));
 
         titleView = (TextView) linearlayout.getChildAt(0);
         titleView.setText("render type: " + chartView.getClass().getSimpleName());

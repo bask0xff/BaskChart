@@ -69,16 +69,12 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    private FloatBuffer mVertexBuffer = null;
-    private ShortBuffer mTriangleBorderIndicesBuffer = null;
-    private int mNumOfTriangleBorderIndices = 0;
-
-    public float mAngleX = 0.0f;
-    private float mPreviousX;
-    private float mPreviousY;
-    private final float TOUCH_SCALE_FACTOR = 0.6f;
-
-    private int ticks = 0;
+    private float chartYstartsFactor = .2f;
+    private float chartYfinishFactor = .5f;
+    private float chartYendsFactor = .8f;
+    private float textYFactor = 0.85f;
+    private float textAxisSize = 0.033f;
+    private float sliderYfactor = textYFactor + textAxisSize + 0.01f;
 
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
@@ -101,7 +97,6 @@ public class ChartEngine {
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
-        //canvas.drawRect( 0, 0, W, H, Color.parseColor(mTheme.backgroundColor()));
         setBackground(canvas, mTheme.backgroundColor());
 
         if (chartData.getSeries().get(0).getValues().size() > 0) {
@@ -114,6 +109,8 @@ public class ChartEngine {
 
             DrawChart(chartData.getSeries(), canvas);
         }
+
+        drawSlider(canvas);
 
         if(canvas instanceof Canvas)
             ((Canvas)canvas).restore();
@@ -129,8 +126,12 @@ public class ChartEngine {
     private float GetY(double y, float scale) {
         float realY = 0;
         if ((mChartData.getMaxValue() - mChartData.getMinValue()) > 0)
-            realY = (float) (H * (1 - 0.2 - 0.6 * scale * (y - mChartData.getMinValue()) / (mChartData.getMaxValue() - mChartData.getMinValue())));
+            realY = (float) (H * (1 - chartYstartsFactor - chartYfinishFactor * scale * (y - mChartData.getMinValue()) / (mChartData.getMaxValue() - mChartData.getMinValue())));
         return realY;
+    }
+
+    private void drawSlider(Object canvas) {
+        drawRect( canvas, 0, H*sliderYfactor, W, H, Color.RED);
     }
 
     private void DrawChart(List<Series> series, Object canvas) {
@@ -148,12 +149,11 @@ public class ChartEngine {
         fp.setAntiAlias(true);
         fp.setStyle(Paint.Style.FILL_AND_STROKE);
         fp.setStrokeWidth(5.0f);
+
         Paint fpc = new Paint();
         fpc.setAntiAlias(true);
         fpc.setStyle(Paint.Style.FILL_AND_STROKE);
         fpc.setStrokeWidth(1.0f);
-
-        Random r = new Random();
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
@@ -172,7 +172,7 @@ public class ChartEngine {
 
         Path mPath = new Path();
         mPath.moveTo(xk, H * 0.f);
-        mPath.quadTo(xk, H / 2, xk, H * 0.8f);
+        mPath.quadTo(xk, H / 2, xk, H * chartYendsFactor );
         Paint mPaint = new Paint();
         mPaint.setAntiAlias(false);
         mPaint.setColor(Color.BLACK);
@@ -294,7 +294,7 @@ public class ChartEngine {
             if(mShowVerticalLines) {
                 Path mPath = new Path();
                 mPath.moveTo(xL, H * 0.2f);
-                mPath.quadTo(xL, H / 2, xL, H * 0.8f);
+                mPath.quadTo(xL, H / 2, xL, H * chartYendsFactor);
                 Paint mPaint = new Paint();
                 mPaint.setAntiAlias(false);
                 mPaint.setColor(Color.BLACK);
@@ -305,12 +305,12 @@ public class ChartEngine {
 
             String str = Utils.unixtimeToString((long)xLine, "MMM dd");
             Paint p = new Paint();
-            float textSize = H * 0.033f;
+            float textSize = H * textAxisSize;
             int xw = (int) p.measureText(str);
             p.setTextSize(textSize);
             p.setAntiAlias(true);
             p.setColor(Color.parseColor(mTheme.fontColor()));
-            drawText(canvas, str, xL - xw, H* 0.85f, p);
+            drawText(canvas, str, xL - xw, H * textYFactor, p);
 
             xLine += numScale.tickSpacing;
         }
@@ -489,6 +489,18 @@ public class ChartEngine {
             ((Canvas)canvas).drawCircle(x1, y1, v, fp);
     }
 
+    private void drawRect(Object canvas, float x1, float y1, float x2, float y2, int color) {
+        if(canvas instanceof Canvas) {
+            Paint fp = new Paint();
+            fp.setColor(color);
+            fp.setStyle(Paint.Style.FILL_AND_STROKE);
+            ((Canvas) canvas).drawRect(x1, y1, x2, y2, fp);
+        }
+        if(canvas instanceof GL10) {
+            drawRectGL((GL10)canvas, x1, y1, x2, y2, color);
+        }
+    }
+
     private void drawLine(Object canvas, int x1, int y1, int x2, int y2, int color, float alpha) {
         if(canvas instanceof Canvas) {
             Paint fp = new Paint();
@@ -500,9 +512,10 @@ public class ChartEngine {
 
             ((Canvas) canvas).drawLine(x1, y1, x2, y2, fp);
         }
-        if(canvas instanceof GL10)
-            drawLineGL((GL10)canvas, x1, H-y1, x2, H-y2, 1f , color, alpha);
+        if(canvas instanceof GL10) {
+            drawLineGL((GL10) canvas, x1, H - y1, x2, H - y2, 1f, color, alpha);
             //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
+        }
     }
 
     //// OpenGL
@@ -531,10 +544,20 @@ public class ChartEngine {
         x = x - W / 2;
         y = y - H / 2;
         gl.glLoadIdentity();
-        Random r = new Random();
         gl.glTranslatef(x, y, 0);
         gl.glScalef(w, w, 1);
         new CubeColorSides().draw(gl, color, alpha);
+    }
+
+    private void drawRectGL(GL10 gl, float x1, float y1, float x2, float y2, int color) {
+        x1 = x1 - W / 2;
+        y1 = y1 - H / 2 - H * .9f;
+        x2 = x2 - W / 2;
+        y2 = (y2 - H / 2) - H * .9f;
+        gl.glLoadIdentity();
+        gl.glTranslatef(x1, y1, 0);
+        gl.glScalef(x2 - x1, y2 - y1, 0);
+        new CubeColorSides().draw(gl, color, 1);
     }
 
     private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, float alpha) {
@@ -557,7 +580,7 @@ public class ChartEngine {
         gl.glDrawArrays(GL_LINES, 0, 2);
     }
 
-    private void drawLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
+    private void drawBresenhamsLine(GL10 g, int x1, int y1, int x2, int y2, float w, int color, int alpha) {
         int d = 0;
         int dx = Math.abs(x2 - x1);
         int dy = Math.abs(y2 - y1);

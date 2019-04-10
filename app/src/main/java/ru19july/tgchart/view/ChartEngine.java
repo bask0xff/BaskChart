@@ -39,6 +39,7 @@ public class ChartEngine {
 
     private static final String TAG = ChartEngine.class.getSimpleName();
     private final Context mContext;
+    private final View mView;
     private int W, H;
 
     Paint paint;
@@ -77,8 +78,9 @@ public class ChartEngine {
     private float xMoveTouched = 0.0f;
     private RectF legendRect;
 
-    public ChartEngine(Context ctx) {
+    public ChartEngine(Context ctx, View v) {
         mContext = ctx;
+        mView = v;
     }
 
     public void DrawChart(Object canvas) {
@@ -553,8 +555,7 @@ public class ChartEngine {
             public void onAnimationUpdate(ValueAnimator animation) {
                 for (int i = 1; i < mChartData.getSeries().size(); i++)
                     mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
-
-                //this.invalidate();
+                mView.invalidate();
             }
         });
 

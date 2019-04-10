@@ -1,15 +1,12 @@
 package ru19july.tgchart.view.opengl;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -42,7 +39,7 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
 
     public ChartGLRenderer(View chartView, Context context) {
         mContext = context;
-        chartEngine = new ChartEngine(context);
+        chartEngine = new ChartEngine(context, chartView);
         this.view = chartView;
     }
 

@@ -54,7 +54,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
 
-        chartEngine = new ChartEngine(getContext());
+        chartEngine = new ChartEngine(getContext(), this);
 
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(

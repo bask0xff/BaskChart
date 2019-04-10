@@ -698,9 +698,9 @@ public class ChartEngine {
 
     private void drawRectGL(GL10 gl, float x1, float y1, float x2, float y2, int color, float alpha) {
         x1 = x1 - W / 2;
-        y1 = (y1 - H / 2) - H * .9f;
+        y1 = (y1 - H / 2) - H * sliderYfactor;
         x2 = x2 - W / 2;
-        y2 = (y2 - H / 2) - H * .9f;
+        y2 = (y2 - H / 2) - H * sliderYfactor;
         gl.glLoadIdentity();
         gl.glTranslatef(x1, y1, 0);
         gl.glScalef(x2 - x1, y2 - y1, 0);

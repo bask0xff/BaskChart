@@ -14,14 +14,14 @@ import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.view.theme.DarkTheme;
 
-public class ChartSliderView extends View implements View.OnTouchListener {
+public class _Chart_Slider_View extends View implements View.OnTouchListener {
 
     Paint paint;
 
     int slLeft;
     int slRight;
     private int w, h;
-    private final String TAG = ChartSliderView.class.getSimpleName();
+    private final String TAG = _Chart_Slider_View.class.getSimpleName();
 
     ISliderListener mOnSliderListener;
 
@@ -36,21 +36,21 @@ public class ChartSliderView extends View implements View.OnTouchListener {
     private IChartTheme mTheme = new DarkTheme();
     private int mode = 0;
 
-    public ChartSliderView(Context context) {
+    public _Chart_Slider_View(Context context) {
         super(context);
         Log.d(TAG, "ChartSliderView(Context context)");
 
         initView(context, null);
     }
 
-    public ChartSliderView(Context context, AttributeSet attrs) {
+    public _Chart_Slider_View(Context context, AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "ChartSliderView(Context context, AttributeSet attrs) ");
 
         initView(context, attrs);
     }
 
-    public ChartSliderView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public _Chart_Slider_View(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         Log.d(TAG, "ChartSliderView(Context context, AttributeSet attrs, int defStyleAttr)");
 

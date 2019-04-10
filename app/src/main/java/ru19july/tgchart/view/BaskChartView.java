@@ -17,8 +17,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Objects;
-
 import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.interfaces.IChartTheme;
@@ -42,21 +40,11 @@ public class BaskChartView extends LinearLayout {
     private Class<?> mChartViewClass;
     private IChartView chartView;
 
-    private ChartSliderView chartSliderView;
     private ChartData mChartData;
 
     private IOnThemeChange mOnThemeChange;
     private LinearLayout linearlayout;
     private TextView titleView;
-/*
-    public BaskChartView(Context context) {
-        super(context, null);
-
-        Log.d(TAG, "BaskChartView");
-
-        init(context);
-    }
-*/
 
     public BaskChartView(Context context, Class<?> chartViewClass) {
         super(context, null);
@@ -74,9 +62,6 @@ public class BaskChartView extends LinearLayout {
         mContext = context;
 
         Log.d(TAG, "BaskChartView(Context context, AttributeSet attrs: " );
-        //mChartViewClass = chartViewClass;
-
-        //chartView = new ChartCanvasView(context);
 
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs,
@@ -170,20 +155,12 @@ public class BaskChartView extends LinearLayout {
         titleView = (TextView) linearlayout.getChildAt(0);
         titleView.setText("render type: " + chartView.getClass().getSimpleName());
 
-        chartSliderView = (ChartSliderView) linearlayout.getChildAt(2);
-        chartSliderView.setSliderListener(new ChartSliderView.ISliderListener() {
-            @Override
-            public void onSlide(int xStart, int xEnd) {
-                chartView.updateSlideFrameWindow(xStart, xEnd);
-            }
-        });
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setData(ChartData chartData) {
         mChartData = chartData;
         chartView.setData(mChartData);
-        chartSliderView.setData(mChartData);
 
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
         insertPoint.removeAllViews();
@@ -228,8 +205,6 @@ public class BaskChartView extends LinearLayout {
                         chartView.showChart(finalI, 0f, 1f);
 
                     chartView.animateChanges(oldChartData, mChartData);
-                    chartSliderView.animateChanges(oldChartData, mChartData);
-
                 }
             });
         }
@@ -255,7 +230,6 @@ public class BaskChartView extends LinearLayout {
         Log.d(TAG, "setChartTheme: chartView: " + chartView);
 
         chartView.setTheme(mTheme);
-        chartSliderView.setTheme(mTheme);
 
         if(mOnThemeChange != null)
             mOnThemeChange.OnThemeChange(theme);
@@ -274,7 +248,6 @@ public class BaskChartView extends LinearLayout {
     }
 
     public void update() {
-        chartSliderView.invalidate();
         chartView.invalidate();
     }
 
@@ -285,8 +258,6 @@ public class BaskChartView extends LinearLayout {
     public void setRenderType(Class<?> chartViewClass) {
         mChartViewClass = chartViewClass;
         Log.d(TAG, "setRenderType: " + chartViewClass);
-        //chartView.setTheme(mTheme);
-        //chartSliderView.setTheme(mTheme);
         invalidate();
     }
 
@@ -310,7 +281,6 @@ public class BaskChartView extends LinearLayout {
         hash = getHash(hash, mTheme);
         hash = getHash(hash, mChartViewClass);
         hash = getHash(hash, chartView);
-        hash = getHash(hash, chartSliderView);
         hash = getHash(hash, mChartData);
         hash = getHash(hash, mOnThemeChange);
         hash = getHash(hash, linearlayout);

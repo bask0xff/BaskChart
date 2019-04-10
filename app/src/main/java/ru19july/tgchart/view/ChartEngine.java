@@ -131,7 +131,7 @@ public class ChartEngine {
     }
 
     private void drawSlider(Object canvas) {
-        drawRect( canvas, 0, H*sliderYfactor, W, H, Color.RED);
+        drawRect( canvas, 0, H*sliderYfactor, W, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
     }
 
     private void DrawChart(List<Series> series, Object canvas) {
@@ -489,7 +489,7 @@ public class ChartEngine {
             ((Canvas)canvas).drawCircle(x1, y1, v, fp);
     }
 
-    private void drawRect(Object canvas, float x1, float y1, float x2, float y2, int color) {
+    private void drawRect(Object canvas, float x1, float y1, float x2, float y2, int color, int alpha) {
         if(canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
@@ -497,7 +497,7 @@ public class ChartEngine {
             ((Canvas) canvas).drawRect(x1, y1, x2, y2, fp);
         }
         if(canvas instanceof GL10) {
-            drawRectGL((GL10)canvas, x1, y1, x2, y2, color);
+            drawRectGL((GL10)canvas, x1, y1, x2, y2, color, alpha/255f);
         }
     }
 
@@ -549,7 +549,7 @@ public class ChartEngine {
         new CubeColorSides().draw(gl, color, alpha);
     }
 
-    private void drawRectGL(GL10 gl, float x1, float y1, float x2, float y2, int color) {
+    private void drawRectGL(GL10 gl, float x1, float y1, float x2, float y2, int color, float alpha) {
         x1 = x1 - W / 2;
         y1 = y1 - H / 2 - H * .9f;
         x2 = x2 - W / 2;
@@ -557,7 +557,7 @@ public class ChartEngine {
         gl.glLoadIdentity();
         gl.glTranslatef(x1, y1, 0);
         gl.glScalef(x2 - x1, y2 - y1, 0);
-        new CubeColorSides().draw(gl, color, 1);
+        new CubeColorSides().draw(gl, color, alpha);
     }
 
     private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, float alpha) {

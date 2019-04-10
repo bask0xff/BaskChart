@@ -97,7 +97,7 @@ public class CubeColorSides {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public void draw(GL10 gl, int color, int alpha) {
+    public void draw(GL10 gl, int color, float alpha) {
         gl.glFrontFace(GL10.GL_CCW);    // Front face in counter-clockwise orientation
         gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
         gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)

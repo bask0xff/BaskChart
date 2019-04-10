@@ -2,42 +2,25 @@ package ru19july.tgchart.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.opengl.GLES20;
-import android.opengl.GLU;
-import android.opengl.GLUtils;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import ru19july.tgchart.ICanvas;
-import ru19july.tgchart.R;
 import ru19july.tgchart.data.ChartData;
 import ru19july.tgchart.data.MinMaxIndex;
 import ru19july.tgchart.data.Series;
@@ -45,7 +28,6 @@ import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
-import ru19july.tgchart.view.canvas.ChartCanvasView;
 import ru19july.tgchart.view.opengl.CubeColorSides;
 import ru19july.tgchart.view.theme.DarkTheme;
 
@@ -57,6 +39,7 @@ import static javax.microedition.khronos.opengles.GL10.GL_VERTEX_ARRAY;
 public class ChartEngine {
 
     private static final String TAG = ChartEngine.class.getSimpleName();
+    private final Context mContext;
     private int W, H;
 
     Paint paint;
@@ -94,15 +77,8 @@ public class ChartEngine {
     private float xEndTouched = 0.0f;
     private float xMoveTouched = 0.0f;
 
-    public ChartEngine(Context ctx){
+    public ChartEngine(Context ctx) {
         mContext = ctx;
-
-        mTriangle = new Triangle();
-        mProjector = new Projector();
-        mLabelPaint = new Paint();
-        mLabelPaint.setTextSize(32);
-        mLabelPaint.setAntiAlias(true);
-        mLabelPaint.setARGB(0xff, 0x00, 0xff, 0x00);
     }
 
     public void DrawChart(Object canvas) {
@@ -110,81 +86,19 @@ public class ChartEngine {
 
         if (chartData == null) return;
 
-        if(canvas instanceof Canvas) {
-            ((Canvas)canvas).save();
+        if (canvas instanceof Canvas) {
+            ((Canvas) canvas).save();
             W = ((Canvas) canvas).getWidth();
             H = ((Canvas) canvas).getHeight();
         }
-        if(xEnd < 1) xEnd = W;
+        if (xEnd < 1) xEnd = W;
 
-        if(canvas instanceof GL10) {
-            ((GL10)canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-            ((GL10)canvas).glLoadIdentity();
+        if (canvas instanceof GL10) {
+            ((GL10) canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+            ((GL10) canvas).glLoadIdentity();
             //DrawPixels(((GL10)canvas));
             //ticks++;
             //((GL10)canvas).glLoadIdentity();
-
-            ((GL10)canvas).glDisable(GL10.GL_DITHER);
-
-            ((GL10)canvas).glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
-                    GL10.GL_MODULATE);
-
-            /*
-             * Usually, the first thing one might want to do is to clear
-             * the screen. The most efficient way of doing this is to use
-             * glClear().
-             */
-
-            ((GL10)canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
-            /*
-             * Now we're ready to draw some 3D objects
-             */
-
-            ((GL10)canvas).glMatrixMode(GL10.GL_MODELVIEW);
-            ((GL10)canvas).glLoadIdentity();
-
-            GLU.gluLookAt(((GL10)canvas), 0.0f, 0.0f, -2.5f,
-                    0.0f, 0.0f, 0.0f,
-                    0.0f, 1.0f, 0.0f);
-
-            ((GL10)canvas).glEnableClientState(GL10.GL_VERTEX_ARRAY);
-            ((GL10)canvas).glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-
-            ((GL10)canvas).glActiveTexture(GL10.GL_TEXTURE0);
-            ((GL10)canvas).glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
-            ((GL10)canvas).glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
-                    GL10.GL_REPEAT);
-            ((GL10)canvas).glTexParameterx(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
-                    GL10.GL_REPEAT);
-
-            if (false) {
-                long time = SystemClock.uptimeMillis();
-                if (mLastTime != 0) {
-                    long delta = time - mLastTime;
-                    Log.w("time", Long.toString(delta));
-                }
-                mLastTime = time;
-            }
-
-            long time = SystemClock.uptimeMillis() % 4000L;
-            float angle = 0.090f * ((int) time);
-
-            ((GL10)canvas).glRotatef(angle, 0, 0, 1.0f);
-            ((GL10)canvas).glScalef(2.0f, 2.0f, 2.0f);
-
-            mTriangle.draw(((GL10)canvas));
-
-            mProjector.getCurrentModelView(((GL10)canvas));
-            mLabels.beginDrawing(((GL10)canvas), mWidth, mHeight);
-            drawLabel(((GL10)canvas), 0, mLabelA);
-            drawLabel(((GL10)canvas), 1, mLabelB);
-            drawLabel(((GL10)canvas), 2, mLabelC);
-            float msPFX = mWidth - mLabels.getWidth(mLabelMsPF) - 1;
-            mLabels.draw(((GL10)canvas), msPFX, 0, mLabelMsPF);
-            mLabels.endDrawing(((GL10)canvas));
-
-            drawMsPF(((GL10)canvas), msPFX);
         }
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
@@ -204,47 +118,11 @@ public class ChartEngine {
 
         drawSlider(canvas);
 
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).restore();
+        if (canvas instanceof Canvas)
+            ((Canvas) canvas).restore();
 
         //drawing = false;
         return;//.getCanvas();
-    }
-
-    private void drawMsPF(GL10 gl, float rightMargin) {
-        long time = SystemClock.uptimeMillis();
-        if (mStartTime == 0) {
-            mStartTime = time;
-        }
-        if (mFrames++ == SAMPLE_PERIOD_FRAMES) {
-            mFrames = 0;
-            long delta = time - mStartTime;
-            mStartTime = time;
-            mMsPerFrame = (int) (delta * SAMPLE_FACTOR);
-        }
-        if (mMsPerFrame > 0) {
-            mNumericSprite.setValue(mMsPerFrame);
-            float numWidth = mNumericSprite.width();
-            float x = rightMargin - numWidth;
-            mNumericSprite.draw(gl, x, 0, mWidth, mHeight);
-        }
-    }
-
-    private void drawLabel(GL10 gl, int triangleVertex, int labelId) {
-        float x = mTriangle.getX(triangleVertex);
-        float y = mTriangle.getY(triangleVertex);
-        mScratch[0] = x;
-        mScratch[1] = y;
-        mScratch[2] = 0.0f;
-        mScratch[3] = 1.0f;
-        mProjector.project(mScratch, 0, mScratch, 4);
-        float sx = mScratch[4];
-        float sy = mScratch[5];
-        float height = mLabels.getHeight(labelId);
-        float width = mLabels.getWidth(labelId);
-        float tx = sx - width * 0.5f;
-        float ty = sy - height * 0.5f;
-        mLabels.draw(gl, tx, ty, labelId);
     }
 
     private int GetX(double x) {
@@ -265,13 +143,13 @@ public class ChartEngine {
 
     private void drawSlider(Object canvas) {
         //left part
-        drawRect( canvas, 0, H*sliderYfactor, xStart, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+        drawRect(canvas, 0, H * sliderYfactor, xStart, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
 
         //right part
-        drawRect(canvas, xEnd, H*sliderYfactor, W, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+        drawRect(canvas, xEnd, H * sliderYfactor, W, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
 
         //slider window
-        drawRect(canvas,xStart + 16, H*sliderYfactor + 4, xEnd - 16, H - 4, Color.parseColor(mTheme.sliderInner()), Color.alpha(Color.parseColor(mTheme.sliderInner())));
+        drawRect(canvas, xStart + 16, H * sliderYfactor + 4, xEnd - 16, H - 4, Color.parseColor(mTheme.sliderInner()), Color.alpha(Color.parseColor(mTheme.sliderInner())));
     }
 
     private void DrawChart(List<Series> series, Object canvas) {
@@ -312,7 +190,7 @@ public class ChartEngine {
 
         Path mPath = new Path();
         mPath.moveTo(xk, H * 0.f);
-        mPath.quadTo(xk, H / 2, xk, H * chartYendsFactor );
+        mPath.quadTo(xk, H / 2, xk, H * chartYendsFactor);
         Paint mPaint = new Paint();
         mPaint.setAntiAlias(false);
         mPaint.setColor(Color.BLACK);
@@ -328,7 +206,7 @@ public class ChartEngine {
             fpc.setColor(Color.parseColor(series.get(j).getColor()));
 
             float normalizator = 1f;
-            if(canvas instanceof Canvas)
+            if (canvas instanceof Canvas)
                 normalizator = 255;
 
             fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
@@ -343,7 +221,7 @@ public class ChartEngine {
                 int y2 = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
                 drawLine(canvas, x1, y1, x2, y2, fp.getColor(), series.get(j).getAlpha());
-                if(series.get(j).getAlpha() > 0.95)
+                if (series.get(j).getAlpha() > 0.95)
                     drawCircle(canvas, x1, y1, 2.0f, fpc);
             }
 
@@ -357,7 +235,7 @@ public class ChartEngine {
                 if (yk < yMin && yk > 50)
                     yMin = (int) yk;
 
-                if(series.get(j).isChecked()) {
+                if (series.get(j).isChecked()) {
                     fp.setColor(Color.parseColor(series.get(j).getColor()));
                     drawCircle(canvas, xk, yk, 10f, fp);
                     fp.setColor(Color.parseColor(mTheme.backgroundColor()));
@@ -431,7 +309,7 @@ public class ChartEngine {
         while (xLine <= numScale.niceMax) {
             float xL = GetX(xLine);
 
-            if(mShowVerticalLines) {
+            if (mShowVerticalLines) {
                 Path mPath = new Path();
                 mPath.moveTo(xL, H * 0.2f);
                 mPath.quadTo(xL, H / 2, xL, H * chartYendsFactor);
@@ -443,7 +321,7 @@ public class ChartEngine {
                 drawPath(canvas, mPath, mPaint);
             }
 
-            String str = Utils.unixtimeToString((long)xLine, "MMM dd");
+            String str = Utils.unixtimeToString((long) xLine, "MMM dd");
             Paint p = new Paint();
             float textSize = H * textAxisSize;
             int xw = (int) p.measureText(str);
@@ -485,7 +363,7 @@ public class ChartEngine {
 
         int leftX = (int) (lastX + Utils.FLOATING_MARGIN_LEFT);
         int rightX = (int) (leftX + xw * Utils.FLOATING_WIDTH_RATIO);
-        if(rightX > W) {
+        if (rightX > W) {
             rightX = W - 30;
             leftX = (int) (rightX - xw * Utils.FLOATING_WIDTH_RATIO);
         }
@@ -494,7 +372,7 @@ public class ChartEngine {
         paint.setColor(Color.parseColor(mTheme.legendBackgroundColor()));
         RectF rect = new RectF(
                 leftX,
-                lastY - H * 1f/15f,
+                lastY - H * 1f / 15f,
                 rightX,
                 lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
 
@@ -573,8 +451,8 @@ public class ChartEngine {
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                if(mChartData.getSeries() != null)
-                    mChartData.getSeries().get(k).setAlpha((float)animation.getAnimatedValue());
+                if (mChartData.getSeries() != null)
+                    mChartData.getSeries().get(k).setAlpha((float) animation.getAnimatedValue());
                 view.invalidate();
             }
         });
@@ -582,7 +460,7 @@ public class ChartEngine {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        if(mChartData == null) return false;
+        if (mChartData == null) return false;
 
         xTouched = event.getX();
         yTouched = event.getY();
@@ -590,24 +468,24 @@ public class ChartEngine {
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
 
-        if(yTouched >= H * sliderYfactor && event.getAction() == MotionEvent.ACTION_DOWN){
+        if (yTouched >= H * sliderYfactor && event.getAction() == MotionEvent.ACTION_DOWN) {
 
-            int leftDist = (int) Math.abs( xStart - xTouched);
-            int rightDist = (int) Math.abs( xEnd - xTouched);
+            int leftDist = (int) Math.abs(xStart - xTouched);
+            int rightDist = (int) Math.abs(xEnd - xTouched);
 
             catchedLeft = leftDist < 150;
             catchedRight = rightDist < 150;
 
-            if(catchedLeft) catchedRight = false;
-            if(catchedRight) catchedLeft = false;
+            if (catchedLeft) catchedRight = false;
+            if (catchedRight) catchedLeft = false;
 
-            if(catchedLeft)
+            if (catchedLeft)
                 xStartTouched = xTouched;
-            if(catchedRight)
+            if (catchedRight)
                 xEndTouched = xTouched;
 
-            if(!catchedLeft && !catchedRight){
-                if(xTouched < xEnd && xTouched > xStart) {
+            if (!catchedLeft && !catchedRight) {
+                if (xTouched < xEnd && xTouched > xStart) {
                     movingSlider = true;
                     xMoveTouched = xTouched;
                     xStartSaved = xStart;
@@ -618,29 +496,29 @@ public class ChartEngine {
             catchX = xTouched;
         }
 
-        if(event.getAction() == MotionEvent.ACTION_DOWN && isLegend(xTouched, yTouched)){
+        if (event.getAction() == MotionEvent.ACTION_DOWN && isLegend(xTouched, yTouched)) {
 
         }
 
-        if(event.getAction() == MotionEvent.ACTION_MOVE){
-            if(catchedLeft){
-                if(Math.abs(xTouched - xEnd) > 100 && xTouched < xEnd)
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (catchedLeft) {
+                if (Math.abs(xTouched - xEnd) > 100 && xTouched < xEnd)
                     xStart = xTouched;
             }
-            if(catchedRight){
-                if(Math.abs(xTouched - xStart) > 100 && xTouched > xStart)
+            if (catchedRight) {
+                if (Math.abs(xTouched - xStart) > 100 && xTouched > xStart)
                     xEnd = xTouched;
             }
-            if(movingSlider){
+            if (movingSlider) {
                 xStart = xStartSaved + (xTouched - xMoveTouched);
                 xEnd = xEndSaved + (xTouched - xMoveTouched);
             }
 
-            if(xStart < 0) xStart = 0;
-            if(xEnd > W) xEnd = W;
+            if (xStart < 0) xStart = 0;
+            if (xEnd > W) xEnd = W;
         }
 
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             movingSlider = false;
             catchedLeft = false;
             catchedRight = false;
@@ -649,7 +527,7 @@ public class ChartEngine {
         startNormalized = (xStart + 0.f) / W;
         endNormalized = (xEnd + 0.f) / W;
 
-        if(yTouched >= H * sliderYfactor) return true;
+        if (yTouched >= H * sliderYfactor) return true;
 
         float min = Float.MAX_VALUE;
         touchIndex = 0;
@@ -676,156 +554,52 @@ public class ChartEngine {
     // Draw methods
     ///////////////////////////////////
 
-    /*private void drawCanvasToTexture(
-            String aText,
-            float aFontSize) {
-        if (aFontSize < 8.0f)
-            aFontSize = 8.0f;
-        if (aFontSize > 500.0f)
-            aFontSize = 500.0f;
-        Paint textPaint = new Paint();
-        textPaint.setTextSize(aFontSize);
-        textPaint.setFakeBoldText(false);
-        textPaint.setAntiAlias(true);
-        textPaint.setARGB(255, 255, 255, 255);
-        // If a hinting is available on the platform you are developing, you should enable it (uncomment the line below).
-        //textPaint.setHinting(Paint.HINTING_ON);
-        textPaint.setSubpixelText(true);
-        textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
-        float realTextWidth = textPaint.measureText(aText);
-        // Creates a new mutable bitmap, with 128px of width and height
-        int bitmapWidth = (int)(realTextWidth + 2.0f);
-        int bitmapHeight = (int)aFontSize + 2;
-        Bitmap textBitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
-        textBitmap.eraseColor(Color.argb(0, 255, 255, 255));
-        // Creates a new canvas that will draw into a bitmap instead of rendering into the screen
-        Canvas bitmapCanvas = new Canvas(textBitmap);
-        // Set start drawing position to [1, base_line_position]
-        // The base_line_position may vary from one font to another but it usually is equal to 75% of font size (height).
-        bitmapCanvas.drawText(aText, 1, 1.0f + aFontSize * 0.75f, textPaint);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId[0]);
-        //HighQualityTextRenderer.checkGLError("glBindTexture");
-        // Assigns the OpenGL texture with the Bitmap
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, textBitmap, 0);
-        // Free memory resources associated with this texture
-        textBitmap.recycle();
-        // After the image has been subloaded to texture, regenerate mipmaps
-        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
-        //HighQualityTextRenderer.checkGLError("glGenerateMipmap");
-    }*/
-
-    /*public void makePixelCoords(float[] aMatrix,
-                                int aViewportWidth,
-                                int aViewportHeight) {
-        // Transform the vector into screen coordinates we assumes aMatrix is ModelViewProjection matrix
-        // transform method multiplies this vector by the matrix
-        transform(aMatrix);
-        // Make coordinates as homogenous
-        x /= w;
-        y /= w;
-        z /= w;
-        w = 1.0f;
-        // Now the vector is normalized to the range [-1.0, 1.0]
-        // Normalize values into NDC.
-        x = 0.5f + x * 0.5f;
-        y = 0.5f + y * 0.5f;
-        z = 0.5f + z * 0.5f;
-        w = 1.0f;
-        // Currently the valuse are clipped to the [0.0, 1.0] range
-        // Move coordinates into window space (in pixels)
-        x *= (float) aViewportWidth;
-        y *= (float) aViewportHeight;
-    }*/
-
     private void drawText(Object canvas1, String str, float x, float y, Paint p) {
-        if(canvas1 instanceof Canvas)
-            ((Canvas)canvas1).drawText(str, x, y, p);
-        if(canvas1 instanceof GL10) {
-            //pixel((GL10)canvas, (int)x, (int)y, 50f, 30f, p.getColor(), 1);
-            //drawRectGL((GL10)canvas, x, y, x + 50, y+10, p.getColor(), 1);
-/*
-
-            // Create an empty, mutable bitmap
-            Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_4444);
-// get a canvas to paint over the bitmap
-            Canvas canvas = new Canvas(bitmap);
-            bitmap.eraseColor(0);
-
-// get a background image from resources
-// note the image format must match the bitmap format
-            Drawable background = context.getResources().getDrawable(R.drawable.background);
-            background.setBounds(0, 0, 256, 256);
-            background.draw(canvas); // draw the background to our bitmap
-
-// Draw the text
-            Paint textPaint = new Paint();
-            textPaint.setTextSize(32);
-            textPaint.setAntiAlias(true);
-            textPaint.setARGB(0xff, 0x00, 0x00, 0x00);
-// draw the text centered
-            canvas.drawText("Hello World", 16,112, textPaint);
-
-//Generate one texture pointer...
-            ((GL10)canvas1).glGenTextures(1, textures, 0);
-//...and bind it to our array
-            ((GL10)canvas1).glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
-
-//Create Nearest Filtered Texture
-            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-
-//Different possible texture parameters, e.g. GL10.GL_CLAMP_TO_EDGE
-            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
-            ((GL10)canvas1).glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
-
-//Use the Android GLUtils to specify a two-dimensional texture image from our bitmap
-            GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-
-//Clean up
-            bitmap.recycle();
-*/
+        if (canvas1 instanceof Canvas)
+            ((Canvas) canvas1).drawText(str, x, y, p);
+        if (canvas1 instanceof GL10) {
         }
     }
 
     private void drawRoundRect(Object canvas, RectF rect, int x, int y, Paint paint) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawRoundRect(rect, x, y,  paint);
+        if (canvas instanceof Canvas)
+            ((Canvas) canvas).drawRoundRect(rect, x, y, paint);
     }
 
     private void drawPath(Object canvas, Path mPath, Paint mPaint) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawPath(mPath, mPaint);
+        if (canvas instanceof Canvas)
+            ((Canvas) canvas).drawPath(mPath, mPaint);
     }
 
     private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
-        if(canvas instanceof Canvas)
-            ((Canvas)canvas).drawCircle(x1, y1, v, fp);
+        if (canvas instanceof Canvas)
+            ((Canvas) canvas).drawCircle(x1, y1, v, fp);
     }
 
     private void drawRect(Object canvas, float x1, float y1, float x2, float y2, int color, int alpha) {
-        if(canvas instanceof Canvas) {
+        if (canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
             fp.setStyle(Paint.Style.FILL_AND_STROKE);
             ((Canvas) canvas).drawRect(x1, y1, x2, y2, fp);
         }
-        if(canvas instanceof GL10) {
-            drawRectGL((GL10)canvas, x1, y1, x2, y2, color, alpha/255f);
+        if (canvas instanceof GL10) {
+            drawRectGL((GL10) canvas, x1, y1, x2, y2, color, alpha / 255f);
         }
     }
 
     private void drawLine(Object canvas, int x1, int y1, int x2, int y2, int color, float alpha) {
-        if(canvas instanceof Canvas) {
+        if (canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
-            fp.setAlpha((int)(alpha * 255));
+            fp.setAlpha((int) (alpha * 255));
             fp.setAntiAlias(true);
             fp.setStyle(Paint.Style.FILL_AND_STROKE);
             fp.setStrokeWidth(5.0f);
 
             ((Canvas) canvas).drawLine(x1, y1, x2, y2, fp);
         }
-        if(canvas instanceof GL10) {
+        if (canvas instanceof GL10) {
             drawLineGL((GL10) canvas, x1, H - y1, x2, H - y2, 1f, color, alpha);
             //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
         }
@@ -834,22 +608,21 @@ public class ChartEngine {
     //// OpenGL
 
     private void setBackground(Object canvas, String backgroundColor) {
-        if(canvas instanceof GL10)
-        {
-            ((GL10)canvas).glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
-            ((GL10)canvas).glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
+        if (canvas instanceof GL10) {
+            ((GL10) canvas).glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
+            ((GL10) canvas).glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
             //mTheme.backgroundColor()
             float r = ((Color.parseColor(backgroundColor) >> 16) & 0xff) / 255f;
-            float g = ((Color.parseColor(backgroundColor) >>  8) & 0xff) / 255f;
-            float b = ((Color.parseColor(backgroundColor) >>  0) & 0xff) / 255f;
+            float g = ((Color.parseColor(backgroundColor) >> 8) & 0xff) / 255f;
+            float b = ((Color.parseColor(backgroundColor) >> 0) & 0xff) / 255f;
 
-            ((GL10)canvas).glClearColor(r, g, b, 1f); 	//Background
+            ((GL10) canvas).glClearColor(r, g, b, 1f);    //Background
             //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
-            ((GL10)canvas).glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
-            ((GL10)canvas).glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
+            ((GL10) canvas).glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
+            ((GL10) canvas).glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
 
             //Really Nice Perspective Calculations
-            ((GL10)canvas).glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
+            ((GL10) canvas).glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
         }
     }
 
@@ -875,7 +648,7 @@ public class ChartEngine {
     }
 
     private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, float alpha) {
-        float vertices[] = {x1-W/2, y1-H/2, x2-W/2, y2-H/2};
+        float vertices[] = {x1 - W / 2, y1 - H / 2, x2 - W / 2, y2 - H / 2};
 
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder()); // Use native byte order
@@ -884,8 +657,8 @@ public class ChartEngine {
         vertexBuffer.position(0);
 
         float r = ((color >> 16) & 0xff) / 255f;
-        float g = ((color >>  8) & 0xff) / 255f;
-        float b = ((color >>  0) & 0xff) / 255f;
+        float g = ((color >> 8) & 0xff) / 255f;
+        float b = ((color >> 0) & 0xff) / 255f;
 
         gl.glEnableClientState(GL_VERTEX_ARRAY);
         gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
@@ -938,10 +711,10 @@ public class ChartEngine {
         gl.glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
         //mTheme.backgroundColor()
         float r = ((Color.parseColor(mTheme.backgroundColor()) >> 16) & 0xff) / 255f;
-        float g = ((Color.parseColor(mTheme.backgroundColor()) >>  8) & 0xff) / 255f;
-        float b = ((Color.parseColor(mTheme.backgroundColor()) >>  0) & 0xff) / 255f;
+        float g = ((Color.parseColor(mTheme.backgroundColor()) >> 8) & 0xff) / 255f;
+        float b = ((Color.parseColor(mTheme.backgroundColor()) >> 0) & 0xff) / 255f;
 
-        gl.glClearColor(r, g, b, 1f); 	//Background
+        gl.glClearColor(r, g, b, 1f);    //Background
         //gl.glClearDepthf(1.0f); 					//Depth Buffer Setup
         gl.glEnable(GL10.GL_DEPTH_TEST);            //Enables Depth Testing
         gl.glDepthFunc(GL10.GL_LEQUAL);            //The Type Of Depth Testing To Do
@@ -949,70 +722,12 @@ public class ChartEngine {
         //Really Nice Perspective Calculations
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 
-
-
-        int[] textures = new int[1];
-        gl.glGenTextures(1, textures, 0);
-
-        mTextureID = textures[0];
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
-
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
-                GL10.GL_NEAREST);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D,
-                GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
-
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
-                GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
-                GL10.GL_CLAMP_TO_EDGE);
-
-        gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
-                GL10.GL_REPLACE);
-
-        InputStream is = mContext.getResources()
-                .openRawResource(R.raw.robot);
-        Bitmap bitmap;
-        try {
-            bitmap = BitmapFactory.decodeStream(is);
-        } finally {
-            try {
-                is.close();
-            } catch(IOException e) {
-                // Ignore.
-            }
-        }
-
-        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-        bitmap.recycle();
-
-        if (mLabels != null) {
-            mLabels.shutdown(gl);
-        } else {
-            mLabels = new LabelMaker(true, 256, 64);
-        }
-        mLabels.initialize(gl);
-        mLabels.beginAdding(gl);
-        mLabelA = mLabels.add(gl, "A", mLabelPaint);
-        mLabelB = mLabels.add(gl, "B", mLabelPaint);
-        mLabelC = mLabels.add(gl, "C", mLabelPaint);
-        mLabelMsPF = mLabels.add(gl, "ms/f", mLabelPaint);
-        mLabels.endAdding(gl);
-
-        if (mNumericSprite != null) {
-            mNumericSprite.shutdown(gl);
-        } else {
-            mNumericSprite = new NumericSprite();
-        }
-        mNumericSprite.initialize(gl, mLabelPaint);
-
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         W = width;
         H = height;
-        Log.d(TAG, "onSurfaceChanged: " + W + "x" + H );
+        Log.d(TAG, "onSurfaceChanged: " + W + "x" + H);
 
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL10.GL_PROJECTION);
@@ -1036,100 +751,4 @@ public class ChartEngine {
         gl.glLoadIdentity();
     }
 
-
-    private int mWidth;
-    private int mHeight;
-    private Context mContext;
-    private Triangle mTriangle;
-    private int mTextureID;
-    private int mFrames;
-    private int mMsPerFrame;
-    private final static int SAMPLE_PERIOD_FRAMES = 12;
-    private final static float SAMPLE_FACTOR = 1.0f / SAMPLE_PERIOD_FRAMES;
-    private long mStartTime;
-    private LabelMaker mLabels;
-    private Paint mLabelPaint;
-    private int mLabelA;
-    private int mLabelB;
-    private int mLabelC;
-    private int mLabelMsPF;
-    private Projector mProjector;
-    private NumericSprite mNumericSprite;
-    private float[] mScratch = new float[8];
-    private long mLastTime;
-
-    class Triangle {
-        public Triangle() {
-
-            // Buffers to be passed to gl*Pointer() functions
-            // must be direct, i.e., they must be placed on the
-            // native heap where the garbage collector cannot
-            // move them.
-            //
-            // Buffers with multi-byte datatypes (e.g., short, int, float)
-            // must have their byte order set to native order
-
-            ByteBuffer vbb = ByteBuffer.allocateDirect(VERTS * 3 * 4);
-            vbb.order(ByteOrder.nativeOrder());
-            mFVertexBuffer = vbb.asFloatBuffer();
-
-            ByteBuffer tbb = ByteBuffer.allocateDirect(VERTS * 2 * 4);
-            tbb.order(ByteOrder.nativeOrder());
-            mTexBuffer = tbb.asFloatBuffer();
-
-            ByteBuffer ibb = ByteBuffer.allocateDirect(VERTS * 2);
-            ibb.order(ByteOrder.nativeOrder());
-            mIndexBuffer = ibb.asShortBuffer();
-
-            for (int i = 0; i < VERTS; i++) {
-                for(int j = 0; j < 3; j++) {
-                    mFVertexBuffer.put(sCoords[i*3+j]);
-                }
-            }
-
-            for (int i = 0; i < VERTS; i++) {
-                for(int j = 0; j < 2; j++) {
-                    mTexBuffer.put(sCoords[i*3+j] * 2.0f + 0.5f);
-                }
-            }
-
-            for(int i = 0; i < VERTS; i++) {
-                mIndexBuffer.put((short) i);
-            }
-
-            mFVertexBuffer.position(0);
-            mTexBuffer.position(0);
-            mIndexBuffer.position(0);
-        }
-
-        public void draw(GL10 gl) {
-            gl.glFrontFace(GL10.GL_CCW);
-            gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mFVertexBuffer);
-            gl.glEnable(GL10.GL_TEXTURE_2D);
-            gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTexBuffer);
-            gl.glDrawElements(GL10.GL_TRIANGLE_STRIP, VERTS,
-                    GL10.GL_UNSIGNED_SHORT, mIndexBuffer);
-        }
-
-        public float getX(int vertex) {
-            return sCoords[3*vertex];
-        }
-
-        public float getY(int vertex) {
-            return sCoords[3*vertex+1];
-        }
-
-        private final static int VERTS = 3;
-
-        private FloatBuffer mFVertexBuffer;
-        private FloatBuffer mTexBuffer;
-        private ShortBuffer mIndexBuffer;
-        // A unit-sided equalateral triangle centered on the origin.
-        private final float[] sCoords = {
-                // X, Y, Z
-                -0.5f, -0.25f, 0,
-                0.5f, -0.25f, 0,
-                0.0f,  0.559016994f, 0
-        };
-    }
 }

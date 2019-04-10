@@ -468,11 +468,13 @@ public class ChartEngine {
 
             if(catchedLeft){
                 Log.d(TAG, "catchedLeft: " + deltaMove);
-                xStart = xTouched; //xStartTouched - deltaMove;
+                if(Math.abs(xTouched - xEnd) > 100 && xTouched < xEnd)
+                    xStart = xTouched;
             }
             if(catchedRight){
                 Log.d(TAG, "catchedRight: " + deltaMove);
-                xEnd = xTouched;// xEndTouched - deltaMove;
+                if(Math.abs(xTouched - xStart) > 100 && xTouched > xStart)
+                    xEnd = xTouched;
             }
             if(movingSlider){
                 Log.d(TAG, "movingSlider: " + deltaMove);

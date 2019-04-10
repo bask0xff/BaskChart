@@ -145,8 +145,8 @@ public class ChartEngine {
                     int x1 = (int) (W * ((i - 1.f) / (mChartData.getSeries().get(0).getValues().size() - 1)));
                     int x2 = (int) (W * ((i - 0.f) / (mChartData.getSeries().get(0).getValues().size() - 1)));
 
-                    int y1 = (int) ((1 - mChartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * hh);
-                    int y2 = (int) ((1 - mChartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * hh);
+                    int y1 = h0+(int) ((1 - mChartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * hh);
+                    int y2 = h0+(int) ((1 - mChartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * hh);
 
                     fp.setColor(Color.parseColor(mChartData.getSeries().get(j).getColor()));
 

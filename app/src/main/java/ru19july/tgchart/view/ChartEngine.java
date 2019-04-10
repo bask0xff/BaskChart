@@ -561,7 +561,7 @@ public class ChartEngine {
         if(canvas instanceof Canvas)
             ((Canvas)canvas).drawText(str, x, y, p);
         if(canvas instanceof GL10) {
-            pixel((GL10)canvas, (int)x, (int)y, 5f, p.getColor(), 1);
+            pixel((GL10)canvas, (int)x, (int)y, 50f, 10f, p.getColor(), 1);
             //drawRectGL((GL10)canvas, x, y, x + 50, y+10, p.getColor(), 1);
         }
     }
@@ -632,19 +632,19 @@ public class ChartEngine {
         }
     }
 
-    private void pixel(GL10 gl, int x, int y, float w, int color, int alpha) {
+    private void pixel(GL10 gl, int x, int y, float w, float h, int color, int alpha) {
         x = x - W / 2;
         y = -(y - H / 2);
         gl.glLoadIdentity();
         gl.glTranslatef(x, y, 0);
-        gl.glScalef(w, w, 1);
+        gl.glScalef(w, h, 1);
         new CubeColorSides().draw(gl, color, alpha);
         gl.glLoadIdentity();
     }
 
     private void drawRectGL(GL10 gl, float x1, float y1, float x2, float y2, int color, float alpha) {
         x1 = x1 - W / 2;
-        y1 = y1 - H / 2 - H * .9f;
+        y1 = (y1 - H / 2) - H * .9f;
         x2 = x2 - W / 2;
         y2 = (y2 - H / 2) - H * .9f;
         gl.glLoadIdentity();
@@ -687,7 +687,7 @@ public class ChartEngine {
 
         if (dx >= dy) {
             while (true) {
-                pixel(g, x, y, w, color, alpha);
+                pixel(g, x, y, w, w, color, alpha);
                 if (x == x2)
                     break;
                 x += ix;
@@ -699,7 +699,7 @@ public class ChartEngine {
             }
         } else {
             while (true) {
-                pixel(g, x, y, w, color, alpha);
+                pixel(g, x, y, w, w, color, alpha);
                 if (y == y2)
                     break;
                 y += iy;

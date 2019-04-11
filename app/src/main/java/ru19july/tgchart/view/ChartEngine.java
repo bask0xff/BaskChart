@@ -548,7 +548,8 @@ public class ChartEngine {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN && isLegend(xTouched, yTouched)) {
             //startTransformAnimation();
-            ChartData dayData = mChartData.loadMonth(selectedTimestamp);
+            ChartData monthData = mChartData.loadMonth(mContext, selectedTimestamp);
+            //mChartData = monthData;
             return true;
         }
 

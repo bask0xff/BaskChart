@@ -23,9 +23,10 @@ public class ChartData implements Serializable {
     private double minValue;
     private double maxValue;
 
-    private String mFilename;
+    private String mFilepath;
 
     public boolean isColumnsSizeEquals;
+    private Context mContext;
 
     public ChartData(){
     }
@@ -115,24 +116,17 @@ public class ChartData implements Serializable {
         return new NiceScale(minValue, maxValue);
     }
 
-    public ChartData loadMonth(long selectedTimestamp) {
+    public ChartData loadMonth(Context context, long selectedTimestamp) {
         String str = Utils.unixtimeToString(selectedTimestamp, "yyyy-MM");
-        Log.d(TAG, "loadMonth: " + selectedTimestamp + " => " + mFilename + " => " + str);
-        return null;
-    }
+        Log.d(TAG, "loadMonth: " + selectedTimestamp + " => " + mFilepath + " => " + str);
 
-    public String getFilename() {
-        return mFilename;
-    }
-
-    public void setFilename(String mFilename) {
-        this.mFilename = mFilename;
+        return loadData(context, mFilepath + str + "/01.json");
     }
 
     public ChartData loadData(Context context, String filename) {
+        mContext = context;
         String json2 = loadJSONFromAsset(context, filename);
         ChartData cd = readJsonContest2(json2);
-        cd.setFilename(filename);
         return cd;
     }
 
@@ -266,6 +260,7 @@ public class ChartData implements Serializable {
 
     public String loadJSONFromAsset(Context context, String filename) {
         String json = null;
+        Log.d(TAG, "loadJSONFromAsset: " + filename);
         try {
             InputStream is = context.getAssets().open(filename);
             int size = is.available();
@@ -278,5 +273,13 @@ public class ChartData implements Serializable {
             return null;
         }
         return json;
+    }
+
+    public String getFilepath() {
+        return mFilepath;
+    }
+
+    public void setFilepath(String mFilepath) {
+        this.mFilepath = mFilepath;
     }
 }

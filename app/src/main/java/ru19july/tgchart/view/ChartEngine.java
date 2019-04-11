@@ -177,6 +177,39 @@ public class ChartEngine {
             fp.setColor(Color.parseColor(mTheme.sliderInner()));
             canvas.drawRect(xStart + 16, h0+4, xEnd - 16, H - 4, fp);
         }
+
+        if (canvasX instanceof GL10) {
+            GL10 canvas = (GL10) canvasX;
+
+            int h0 = (int) (H * sliderYfactor);
+            int hh = H - h0;
+
+            NiceScale numScale = new NiceScale(mChartData.getSeries());
+
+            for (int i = 1; i < mChartData.getSeries().get(0).getValues().size(); i++) {
+                for (int j = 1; j < mChartData.getSeries().size(); j++) {
+                    if (!mChartData.getSeries().get(j).isChecked()) continue;
+
+                    int x1 = (int) (W * ((i - 1.f) / (mChartData.getSeries().get(0).getValues().size() - 1)));
+                    int x2 = (int) (W * ((i - 0.f) / (mChartData.getSeries().get(0).getValues().size() - 1)));
+
+                    int y1 = h0+(int) ((1 - mChartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * hh);
+                    int y2 = h0+(int) ((1 - mChartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * hh);
+
+                    drawLine(canvas, x1, y1, x2, y2, Color.parseColor(mChartData.getSeries().get(j).getColor()), 1f);
+                }
+            }
+
+            //left part
+            drawRect(canvas, 0, h0, xStart, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+
+            //right part
+            drawRect(canvas, xEnd, h0, W, H, Color.parseColor(mTheme.sliderBackground()), Color.alpha(Color.parseColor(mTheme.sliderBackground())));
+
+            //slider window
+            drawRect(canvas, xStart + 16, h0+4, xEnd - 16, H - 4, Color.parseColor(mTheme.sliderInner()), Color.alpha(Color.parseColor(mTheme.sliderInner())));
+        }
+
     }
 
     private int GetX(double x) {

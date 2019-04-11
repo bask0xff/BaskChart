@@ -588,10 +588,12 @@ public class ChartEngine {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawText(str, x, y, p);
         if (canvas instanceof GL10) {
-            drawTextGl((GL10)canvas, str, (int)x, (int)y, size, p.getColor(), 1);
-
-            glText.begin(1.0f, 1.0f, 1.0f, 1.0f);         // Begin Text Rendering (Set Color WHITE)
-            glText.draw(str, x-W/2, -(y-H/2));          // Draw Test String
+            glText.begin(
+                    (p.getColor() >> 16 & 0xff) / 255f,
+                    (p.getColor() >> 8 & 0xff) / 255f,
+                    (p.getColor() & 0xff) / 255f,
+                    p.getAlpha() / 255);         // Begin Text Rendering (Set Color WHITE)
+            glText.draw(str, x - W / 2, -(y - H / 2));          // Draw Test String
             glText.end();                                   // End Text Rendering
 
         }

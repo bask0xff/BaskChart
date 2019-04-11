@@ -15,6 +15,7 @@ import android.view.View;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -77,7 +78,7 @@ public class ChartEngine {
     private float xEndTouched = 0.0f;
     private float xMoveTouched = 0.0f;
     private RectF legendRect;
-    private GLText glText;
+    private HashMap<Integer, GLText> glTexts = new HashMap<>();
 
     public ChartEngine(Context ctx) {
         mContext = ctx;
@@ -97,16 +98,11 @@ public class ChartEngine {
 
         if (canvas instanceof GL10) {
             GL10 gl = (GL10) canvas;
-            if(glText == null) {
-                glText = new GLText(gl, mContext.getAssets());
-                glText.load("Roboto-Regular.ttf", 14, 2, 2);  // Create Font (Height: 14 Pixels / X+Y Padding 2 Pixels)
-            }
-
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-            gl.glEnable(GL10.GL_TEXTURE_2D);              // Enable Texture Mapping
-            gl.glEnable(GL10.GL_BLEND);                   // Enable Alpha Blend
-            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);  // Set Alpha Blend Function
+            //gl.glEnable(GL10.GL_TEXTURE_2D);              // Enable Texture Mapping
+            //gl.glEnable(GL10.GL_BLEND);                   // Enable Alpha Blend
+            //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);  // Set Alpha Blend Function
 
             gl.glLoadIdentity();
             //DrawPixels(((GL10)canvas));
@@ -588,11 +584,20 @@ public class ChartEngine {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawText(str, x, y, p);
         if (canvas instanceof GL10) {
+            //if(true) return;
+            int glSize = (int) (size * 2);
+            GLText glText = glTexts.get(glSize);
+            if(glText == null) {
+                glText = new GLText((GL10)canvas, mContext.getAssets());
+                glText.load("Roboto-Regular.ttf", glSize, 2, 2);  // Create Font (Height: 14 Pixels / X+Y Padding 2 Pixels)
+                glTexts.put(glSize, glText);
+            }
+
             glText.begin(
                     (p.getColor() >> 16 & 0xff) / 255f,
                     (p.getColor() >> 8 & 0xff) / 255f,
                     (p.getColor() & 0xff) / 255f,
-                    p.getAlpha() / 255);         // Begin Text Rendering (Set Color WHITE)
+                    p.getAlpha() / 255);
             glText.draw(str, x - W / 2, -(y - H / 2));          // Draw Test String
             glText.end();                                   // End Text Rendering
 

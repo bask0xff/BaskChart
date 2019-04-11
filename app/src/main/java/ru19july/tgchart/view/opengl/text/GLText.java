@@ -386,5 +386,22 @@ public class GLText {
       batch.endBatch();                               // End Batch
    }
 
+   @Override
+    public boolean equals(Object o){
+       if(o == this) return true;
+       if(!(o instanceof GLText)) return false;
+
+       GLText t = (GLText)o;
+       return t.textureId == ((GLText) o).textureId
+               && t.textureSize == ((GLText) o).textureSize
+               ;
+   }
+
+   @Override
+    public int hashCode(){
+       return 17 +
+               31 * textureId +
+               31 * textureSize;
+   }
 
 }

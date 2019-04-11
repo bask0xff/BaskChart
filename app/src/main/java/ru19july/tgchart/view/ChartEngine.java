@@ -591,8 +591,7 @@ public class ChartEngine {
             drawTextGl((GL10)canvas, str, (int)x, (int)y, size, p.getColor(), 1);
 
             glText.begin(1.0f, 1.0f, 1.0f, 1.0f);         // Begin Text Rendering (Set Color WHITE)
-            glText.draw("Test String :)", 0, 0);          // Draw Test String
-            glText.draw("Line 1", 50, 50);                // Draw Test String
+            glText.draw(str, x-W/2, -(y-H/2));          // Draw Test String
             glText.end();                                   // End Text Rendering
 
         }

@@ -29,6 +29,7 @@ import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
 import ru19july.tgchart.view.opengl.CubeColorSides;
+import ru19july.tgchart.view.opengl.text.GLText;
 import ru19july.tgchart.view.theme.DarkTheme;
 
 import static javax.microedition.khronos.opengles.GL10.GL_FLOAT;
@@ -76,6 +77,7 @@ public class ChartEngine {
     private float xEndTouched = 0.0f;
     private float xMoveTouched = 0.0f;
     private RectF legendRect;
+    private GLText glText;
 
     public ChartEngine(Context ctx) {
         mContext = ctx;
@@ -94,8 +96,19 @@ public class ChartEngine {
         if (xEnd < 1) xEnd = W;
 
         if (canvas instanceof GL10) {
-            ((GL10) canvas).glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-            ((GL10) canvas).glLoadIdentity();
+            GL10 gl = (GL10) canvas;
+            if(glText == null) {
+                glText = new GLText(gl, mContext.getAssets());
+                glText.load("Roboto-Regular.ttf", 14, 2, 2);  // Create Font (Height: 14 Pixels / X+Y Padding 2 Pixels)
+            }
+
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+            gl.glEnable(GL10.GL_TEXTURE_2D);              // Enable Texture Mapping
+            gl.glEnable(GL10.GL_BLEND);                   // Enable Alpha Blend
+            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);  // Set Alpha Blend Function
+
+            gl.glLoadIdentity();
             //DrawPixels(((GL10)canvas));
             //ticks++;
             //((GL10)canvas).glLoadIdentity();
@@ -576,6 +589,12 @@ public class ChartEngine {
             ((Canvas) canvas).drawText(str, x, y, p);
         if (canvas instanceof GL10) {
             drawTextGl((GL10)canvas, str, (int)x, (int)y, size, p.getColor(), 1);
+
+            glText.begin(1.0f, 1.0f, 1.0f, 1.0f);         // Begin Text Rendering (Set Color WHITE)
+            glText.draw("Test String :)", 0, 0);          // Draw Test String
+            glText.draw("Line 1", 50, 50);                // Draw Test String
+            glText.end();                                   // End Text Rendering
+
         }
     }
 

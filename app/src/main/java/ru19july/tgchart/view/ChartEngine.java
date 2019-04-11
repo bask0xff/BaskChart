@@ -80,6 +80,7 @@ public class ChartEngine {
     private float xMoveTouched = 0.0f;
     private RectF legendRect;
     private HashMap<Integer, GLText> glTexts = new HashMap<>();
+    private long selectedTimestamp;
 
     public ChartEngine(Context ctx, View v) {
         mContext = ctx;
@@ -222,7 +223,7 @@ public class ChartEngine {
 
         float[] markerValues = new float[series.size() - 1];
         String[] markerColors = new String[series.size() - 1];
-        long timestamp = 0L;
+        selectedTimestamp = 0L;
 
         float xk = 0;
         if (touchIndex >= 0)
@@ -268,7 +269,7 @@ public class ChartEngine {
             }
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
-                timestamp = series.get(0).getValues().get(touchIndex);
+                selectedTimestamp = series.get(0).getValues().get(touchIndex);
                 markerValues[j - 1] = series.get(j).getValues().get(touchIndex);
                 markerColors[j - 1] = series.get(j).getColor();
 
@@ -288,7 +289,7 @@ public class ChartEngine {
 
         yMin = 50;
         if (touchIndex > 0)
-            DrawMarker(canvas, timestamp, markerValues, markerColors, xk + 20, yMin);
+            DrawMarker(canvas, selectedTimestamp, markerValues, markerColors, xk + 20, yMin);
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
@@ -546,7 +547,9 @@ public class ChartEngine {
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN && isLegend(xTouched, yTouched)) {
-            startTransformAnimation();
+            //startTransformAnimation();
+            ChartData dayData = mChartData.loadMonth(selectedTimestamp);
+            return true;
         }
 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -578,18 +581,20 @@ public class ChartEngine {
 
         if (yTouched >= H * sliderYfactor) return true;
 
-        float min = Float.MAX_VALUE;
-        touchIndex = 0;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            float min = Float.MAX_VALUE;
+            touchIndex = 0;
 
-        for (int i = startIndex; i < endIndex; i++) {
-            float xt = ((mChartData.getSeries().get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
-            if (Math.abs(xt - xTouched) <= min) {
-                min = Math.abs(xt - xTouched);
-                touchIndex = i;
+            for (int i = startIndex; i < endIndex; i++) {
+                float xt = ((mChartData.getSeries().get(0).getValues().get(i) - leftMinValue) / (rightMaxValue - leftMinValue)) * W;
+                if (Math.abs(xt - xTouched) <= min) {
+                    min = Math.abs(xt - xTouched);
+                    touchIndex = i;
+                }
             }
-        }
 
-        oldTouchIndex = touchIndex;
+            oldTouchIndex = touchIndex;
+        }
 
         return true;
     }

@@ -527,8 +527,8 @@ public class ChartEngine {
             int leftDist = (int) Math.abs(xStart - xTouched);
             int rightDist = (int) Math.abs(xEnd - xTouched);
 
-            catchedLeft = leftDist < 150;
-            catchedRight = rightDist < 150;
+            catchedLeft = leftDist < 150 && leftDist < rightDist;
+            catchedRight = rightDist < 150 && rightDist < leftDist;
 
             if (catchedLeft) catchedRight = false;
             if (catchedRight) catchedLeft = false;

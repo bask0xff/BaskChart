@@ -164,7 +164,6 @@ public class MainActivity extends Activity {
         List<ChartData> charts = new ArrayList<>();
 
         try {
-
             JSONObject jsonColumn = new JSONObject(json);
             Log.d(TAG, "readJsonContest2: " + json);
 

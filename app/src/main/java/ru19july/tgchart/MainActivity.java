@@ -51,10 +51,10 @@ public class MainActivity extends Activity {
         Log.d(TAG, "JSON: " + json);
 
         chartsData = new ArrayList<>();
-        chartsData.addAll(readJson(json));
+        //chartsData.addAll(readJson(json));
 
         String json2 = loadJSONFromAsset("contest/1/overview.json");
-        readJsonContest2(json2);
+        chartsData.addAll(readJsonContest2(json2));
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
         int charts = chartsData.size();
         //charts = 1;
 
-        for (int i = 4; i < charts; i++) {
+        for (int i = 0; i < charts; i++) {
 
             Class<?> chartClass =
                     //i % 2 != 0

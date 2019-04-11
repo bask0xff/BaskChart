@@ -660,7 +660,8 @@ public class ChartEngine {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawText(str, x, y, p);
         if (canvas instanceof GL10) {
-            //if(true) return;
+            if(true) return;
+            
             int glSize = (int) (size * 2);
             GLText glText = glTexts.get(glSize);
             if(glText == null) {

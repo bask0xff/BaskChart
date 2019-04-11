@@ -408,15 +408,19 @@ public class ChartEngine {
         p.setTextSize(H * Utils.FLOATING_TEXT_SIZE_RATIO);
         int xw = (int) p.measureText(dat);
         int activeCounter = 0;
+        int fullTextWidth = 0;
+        int separatorWidth = 20;
         for (int i = 0; i < values.length; i++) {
             if (colors[i] == null) continue;
             int sz = (int) p.measureText(values[i] + "");
             if (xw < sz) xw = sz;
+            fullTextWidth += sz + separatorWidth;
             activeCounter++;
         }
 
         int leftX = (int) (lastX + Utils.FLOATING_MARGIN_LEFT);
         int rightX = (int) (leftX + xw * Utils.FLOATING_WIDTH_RATIO);
+        rightX = leftX + fullTextWidth;
         if (rightX > W) {
             rightX = W - 30;
             leftX = (int) (rightX - xw * Utils.FLOATING_WIDTH_RATIO);
@@ -428,7 +432,7 @@ public class ChartEngine {
                 leftX,
                 lastY - H * 1f / 15f,
                 rightX,
-                lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (activeCounter) * 105);
+                lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (1) * 105);
 
         drawRoundRect(canvas, legendRect, 8, 8, paint);
 
@@ -437,12 +441,15 @@ public class ChartEngine {
         drawText(canvas, dat, leftX + 50, lastY + 16, 30f, p);
 
         int k = 0;
+        int textOffset = 0;
         for (int i = 0; i < values.length; i++) {
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
             p.setColor(Color.parseColor(colors[i]));
-            drawText(canvas, str, leftX + 50, lastY + 16 + (k + 1) * 80, 30f, p);
+            int sz = (int) p.measureText(values[i] + "");
+            drawText(canvas, str, leftX + 50 + textOffset, lastY + 16 + 80, 30f, p);
+            textOffset += sz + separatorWidth;
             k++;
         }
     }
@@ -527,8 +534,8 @@ public class ChartEngine {
             int leftDist = (int) Math.abs(xStart - xTouched);
             int rightDist = (int) Math.abs(xEnd - xTouched);
 
-            catchedLeft = leftDist < 150 && leftDist < rightDist;
-            catchedRight = rightDist < 150 && rightDist < leftDist;
+            catchedLeft = leftDist < 100 && leftDist < rightDist;
+            catchedRight = rightDist < 100 && rightDist < leftDist;
 
             if (catchedLeft) catchedRight = false;
             if (catchedRight) catchedLeft = false;

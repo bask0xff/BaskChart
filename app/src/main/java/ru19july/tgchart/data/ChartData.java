@@ -18,7 +18,12 @@ import ru19july.tgchart.utils.Utils;
 
 public class ChartData implements Serializable {
 
+    public static enum CHART_TYPE {CHART_TYPE_LINE, CHART_TYPE_BAR, CHART_TYPE_FILLEDPOLY}
+
     private static final String TAG = ChartData.class.getSimpleName();
+
+    private CHART_TYPE chartType;
+
     private List<Series> mSeries;
     private double minValue;
     private double maxValue;
@@ -28,14 +33,14 @@ public class ChartData implements Serializable {
     public boolean isColumnsSizeEquals;
     private Context mContext;
 
-    public ChartData(){
+    public ChartData() {
     }
 
-    public List<Series> getSeries(){
+    public List<Series> getSeries() {
         return mSeries;
     }
 
-    public void setSeries(List<Series> series){
+    public void setSeries(List<Series> series) {
         mSeries = series;
     }
 
@@ -72,10 +77,12 @@ public class ChartData implements Serializable {
         minmax.min = Float.MAX_VALUE;
         minmax.max = Float.MIN_VALUE;
 
-        for(int i=1; i<getSeries().size(); i++) {
-            if(!getSeries().get(i).isChecked()) continue;
-            if (getSeries().get(i).getMinValue() < minmax.min) minmax.min = getSeries().get(i).getMinValue();
-            if (getSeries().get(i).getMaxValue() > minmax.max) minmax.max = getSeries().get(i).getMaxValue();
+        for (int i = 1; i < getSeries().size(); i++) {
+            if (!getSeries().get(i).isChecked()) continue;
+            if (getSeries().get(i).getMinValue() < minmax.min)
+                minmax.min = getSeries().get(i).getMinValue();
+            if (getSeries().get(i).getMaxValue() > minmax.max)
+                minmax.max = getSeries().get(i).getMaxValue();
         }
 
         NiceScale numScale = new NiceScale(minmax.min, minmax.max);
@@ -93,16 +100,19 @@ public class ChartData implements Serializable {
         minmax.min = Float.MAX_VALUE;
         minmax.max = Float.MIN_VALUE;
 
-        for(int i=1; i<getSeries().size(); i++) {
-            if(!getSeries().get(i).isChecked()) continue;
+        for (int i = 1; i < getSeries().size(); i++) {
+            if (!getSeries().get(i).isChecked()) continue;
 
             float min = Float.MAX_VALUE;
             float max = Float.MIN_VALUE;
 
-            for(int j = 0; j<getSeries().get(i).getValues().size(); j++){
-                if(getSeries().get(0).getValues().get(j) < leftMinValue || getSeries().get(0).getValues().get(j) > rightMaxValue) continue;
-                if(getSeries().get(i).getValues().get(j) < min) min =getSeries().get(i).getValues().get(j);
-                if(getSeries().get(i).getValues().get(j) > max) max =getSeries().get(i).getValues().get(j);
+            for (int j = 0; j < getSeries().get(i).getValues().size(); j++) {
+                if (getSeries().get(0).getValues().get(j) < leftMinValue || getSeries().get(0).getValues().get(j) > rightMaxValue)
+                    continue;
+                if (getSeries().get(i).getValues().get(j) < min)
+                    min = getSeries().get(i).getValues().get(j);
+                if (getSeries().get(i).getValues().get(j) > max)
+                    max = getSeries().get(i).getValues().get(j);
             }
 
             if (min < minmax.min) minmax.min = min;
@@ -120,7 +130,7 @@ public class ChartData implements Serializable {
         String dateFolder = Utils.unixtimeToString(selectedTimestamp, "yyyy-MM");
         Log.d(TAG, "loadMonth: " + selectedTimestamp + " => " + mFilepath + " => " + dateFolder);
 
-        for(int i=0; i<31; i++) {
+        for (int i = 0; i < 31; i++) {
             String dd = "00";
             if (i < 10) dd = "0" + i;
             else dd = "" + i;
@@ -128,8 +138,7 @@ public class ChartData implements Serializable {
             try {
                 Log.d(TAG, "loadMonth: " + filename);
                 ChartData dayChart = loadData(context, filename);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
             }
         }
 
@@ -295,4 +304,14 @@ public class ChartData implements Serializable {
     public void setFilepath(String mFilepath) {
         this.mFilepath = mFilepath;
     }
+
+    public void setType(CHART_TYPE chartType) {
+        this.chartType = chartType;
+    }
+
+    public CHART_TYPE getChartType() {
+        return chartType;
+    }
+
+
 }

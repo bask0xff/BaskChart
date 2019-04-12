@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
             ChartData chartData = new ChartData();
             String folder = "contest/" + (contestChartNumber+0) + "/";
             chartData = chartData.loadData(this, folder + "overview.json");
-            chartData.setFilepath(folder);
+            chartData.setType(ChartData.CHART_TYPE.CHART_TYPE_BAR);
             chartsData.add(chartData);
         //}
 

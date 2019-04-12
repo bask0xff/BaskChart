@@ -15,6 +15,7 @@ import android.view.View;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -243,7 +244,23 @@ public class ChartEngine {
             fp.setAlpha((int) (255 * alpha));
             fpc.setAlpha((int) (255 * alpha));
 
-            drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
+            float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4];
+
+            for (int i = minmaxIndexes.min; i < minmaxIndexes.max - 1; i++) {
+                if (canvas instanceof Canvas) {
+                    vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i));
+                    vertices[(i - minmaxIndexes.min) * 4 + 1] = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                    vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1));
+                    vertices[(i - minmaxIndexes.min) * 4 + 3] = GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                } else {
+                    vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                    vertices[(i - minmaxIndexes.min) * 4 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                    vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                    vertices[(i - minmaxIndexes.min) * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                }
+            }
+
+            drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
                 selectedTimestamp = series.get(0).getValues().get(touchIndex);
@@ -695,35 +712,19 @@ public class ChartEngine {
         }
     }
 
-    private void drawPoly(Object canvas, Series seriesX, Series seriesY, int from, int to, float width, int color, float alpha) {
+    private void drawPoly(Object canvas, final float[] vertices, int from, int to, float width, int color, float alpha) {
         if (canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
             fp.setAlpha((int) (alpha * 255));
             fp.setAntiAlias(true);
-            fp.setStyle(Paint.Style.FILL_AND_STROKE);
+            fp.setStyle(Paint.Style.STROKE);
             fp.setStrokeWidth(width);
 
-            //Path path = new Path();
-            //path.
-            //for()
-      //      int x1 = GetX(seriesX.getValues().get(i - 1));
-    //        int x2 = GetX(seriesX.getValues().get(i));
-
-  //          int y1 = (int) GetY(seriesY.getValues().get(i - 1), seriesY.getScale());
-//            int y2 = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
-
-            //((Canvas) canvas).drawLine(x1, y1, x2, y2, fp);
+            ((Canvas) canvas).drawLines(vertices, fp);
         }
         if (canvas instanceof GL10) {
             GL10 gl = (GL10) canvas;
-
-            float vertices[] = new float[seriesX.getValues().size() * 2];
-
-            for (int i = from; i < to; i++) {
-                vertices[i * 2] = GetX(seriesX.getValues().get(i)) - W / 2;
-                vertices[i * 2 + 1] = H / 2 - (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
-            }
 
             ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
             vbb.order(ByteOrder.nativeOrder()); // Use native byte order
@@ -739,7 +740,7 @@ public class ChartEngine {
             gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
             gl.glColor4f(r, g, b, alpha);
             gl.glLineWidth(width);
-            gl.glDrawArrays(GL_LINES, from, to - from);
+            gl.glDrawArrays(GL_LINES, 0, vertices.length/2);
         }
 
 

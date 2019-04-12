@@ -773,7 +773,7 @@ public class ChartEngine {
             gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
             gl.glColor4f(r, g, b, alpha);
             gl.glLineWidth(5f);
-            gl.glDrawArrays(GL_LINES, 0, to - from);
+            gl.glDrawArrays(GL_LINES, from, to - from);
         }
 
 

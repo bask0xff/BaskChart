@@ -264,8 +264,31 @@ public class ChartEngine {
 
                 drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
             }
+
+            if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
+                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4];
+
+                Path polyPath = new Path();
+                polyPath.moveTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
+
+                for (int i = minmaxIndexes.min; i < minmaxIndexes.max - 1; i++) {
+                    if (canvas instanceof Canvas) {
+                        int x = GetX(series.get(0).getValues().get(i));
+                        int y = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        polyPath.lineTo(x, y);
+                    } else {
+                    }
+                }
+
+                polyPath.lineTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
+
+                fp.setStyle(Paint.Style.FILL);
+                drawPath(canvas, polyPath, fp);
+            }
+
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
-                //drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
+
+//                drawBar(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
             }
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
@@ -714,7 +737,6 @@ public class ChartEngine {
         }
         if (canvas instanceof GL10) {
             drawLineGL((GL10) canvas, x1, H - y1, x2, H - y2, 1f, color, alpha);
-            //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
         }
     }
 

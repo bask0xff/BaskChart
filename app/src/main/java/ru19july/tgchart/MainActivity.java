@@ -39,6 +39,8 @@ public class MainActivity extends Activity {
     private RecyclerViewAdapter mAdapter;
     private int chartType = 0;
 
+    int contestChartNumber = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,7 @@ public class MainActivity extends Activity {
 
         Intent intent = getIntent();
         chartType = intent.getIntExtra("chart_type", 0);
+        contestChartNumber = intent.getIntExtra("chart_number", 1);
 
         chartsData = new ArrayList<>();
 
@@ -54,7 +57,6 @@ public class MainActivity extends Activity {
         //chartsData.addAll(readJson(json));
 
         ChartData chartData = new ChartData();
-        int contestChartNumber = 5;
         String folder = "contest/" + contestChartNumber + "/";
         chartData = chartData.loadData(this, folder + "overview.json");
         chartData.setFilepath(folder);

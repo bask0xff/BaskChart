@@ -260,6 +260,7 @@ public class ChartEngine {
                 }
             }
 
+            //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
             drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
@@ -742,20 +743,6 @@ public class ChartEngine {
             gl.glLineWidth(width);
             gl.glDrawArrays(GL_LINES, 0, vertices.length/2);
         }
-
-
-/*
-        for (int i = from; i < to; i++) {
-            //float deltaX = ()
-            int x1 = GetX(seriesX.getValues().get(i - 1));
-            int x2 = GetX(seriesX.getValues().get(i));
-
-            int y1 = (int) GetY(seriesY.getValues().get(i - 1), seriesY.getScale());
-            int y2 = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
-
-            drawLine(canvas, x1, y1, x2, y2, color, seriesY.getAlpha());
-            //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
-        }*/
     }
 
     //// OpenGL

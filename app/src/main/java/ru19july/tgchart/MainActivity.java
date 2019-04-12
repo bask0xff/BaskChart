@@ -55,13 +55,13 @@ public class MainActivity extends Activity {
         //String json = loadJSONFromAsset("chart_data.json");
         //Log.d(TAG, "JSON: " + json);
         //chartsData.addAll(readJson(json));
-        for(contestChartNumber = 0 ; contestChartNumber < 5; contestChartNumber++) {
+        //for(contestChartNumber = 0 ; contestChartNumber < 5; contestChartNumber++) {
             ChartData chartData = new ChartData();
-            String folder = "contest/" + (contestChartNumber+1) + "/";
+            String folder = "contest/" + (contestChartNumber+0) + "/";
             chartData = chartData.loadData(this, folder + "overview.json");
             chartData.setFilepath(folder);
             chartsData.add(chartData);
-        }
+        //}
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 

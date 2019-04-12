@@ -280,6 +280,17 @@ public class ChartEngine {
                     }
                 }
 
+                if(j>0){
+                    for (int i = minmaxIndexes.max; i > minmaxIndexes.min; i--) {
+                        if (canvas instanceof Canvas) {
+                            int x = GetX(series.get(0).getValues().get(i));
+                            int y = (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+                            polyPath.lineTo(x, y);
+                        } else {
+                        }
+                    }
+                }
+
                 polyPath.lineTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
 
                 fp.setStyle(Paint.Style.FILL);
@@ -287,7 +298,6 @@ public class ChartEngine {
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
-
 //                drawBar(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
             }
 

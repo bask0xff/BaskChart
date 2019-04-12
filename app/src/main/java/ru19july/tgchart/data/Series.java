@@ -32,7 +32,7 @@ public class Series implements Serializable {
 
     @Override
     public String toString(){
-        return String.format("%s - %s; type:%s; color:%s => [%d; %d] %s",
+        return String.format("%s - %s; type:%s; color:%s => <min:%d; max:%d> %s",
                 mName, mTitle, mType, mColor,
                 (int)getMinValue(), (int)getMaxValue(),
                 Arrays.toString(mValues.toArray()));

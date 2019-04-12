@@ -117,10 +117,23 @@ public class ChartData implements Serializable {
     }
 
     public ChartData loadMonth(Context context, long selectedTimestamp) {
-        String str = Utils.unixtimeToString(selectedTimestamp, "yyyy-MM");
-        Log.d(TAG, "loadMonth: " + selectedTimestamp + " => " + mFilepath + " => " + str);
+        String dateFolder = Utils.unixtimeToString(selectedTimestamp, "yyyy-MM");
+        Log.d(TAG, "loadMonth: " + selectedTimestamp + " => " + mFilepath + " => " + dateFolder);
 
-        return loadData(context, mFilepath + str + "/01.json");
+        for(int i=0; i<31; i++) {
+            String dd = "00";
+            if (i < 10) dd = "0" + i;
+            else dd = "" + i;
+            String filename = mFilepath + dateFolder + "/" + dd + ".json";
+            try {
+                Log.d(TAG, "loadMonth: " + filename);
+                ChartData dayChart = loadData(context, filename);
+            }
+            catch (Exception e){
+            }
+        }
+
+        return null;
     }
 
     public ChartData loadData(Context context, String filename) {
@@ -210,7 +223,7 @@ public class ChartData implements Serializable {
             int columnsLength = 0;
             for (int j = 0; j < columnsArray.length(); j++) {
                 JSONArray arrColumns = columnsArray.getJSONArray(j);
-                //Log.d(TAG, "\t\tarrColumns(" + j + ":" + arrColumns.length() + "): " + arrColumns);
+                Log.d(TAG, "\t\tarrColumns(" + j + ":" + arrColumns.length() + "): " + arrColumns);
 
                 Series ser = new Series();
                 ser.setName(arrColumns.getString(0));
@@ -237,7 +250,7 @@ public class ChartData implements Serializable {
             JSONObject namesObj = jsonColumn.getJSONObject("names");
             JSONObject colorsObj = jsonColumn.getJSONObject("colors");
 
-            Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals);
+            Log.d(TAG, "---- chartData.isColumnsSizeEquals: " + chartData.isColumnsSizeEquals + "; series:" + series.size());
             for (int j = 0; j < series.size(); j++) {
                 String seriesName = series.get(j).getName();
                 if (namesObj.has(seriesName))

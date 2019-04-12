@@ -280,7 +280,7 @@ public class ChartEngine {
                     }
                 }
 
-                if(j>0){
+                if(j>1 ){
                     for (int i = minmaxIndexes.max; i > minmaxIndexes.min; i--) {
                         if (canvas instanceof Canvas) {
                             int x = GetX(series.get(0).getValues().get(i));

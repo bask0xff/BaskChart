@@ -64,6 +64,10 @@ public class MainActivity extends Activity {
                             contestChartNumber == 3 ? ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY :
                                     ChartData.CHART_TYPE.CHART_TYPE_LINE
             );
+
+            if(contestChartNumber == 3)
+                chartData.recalc();
+
             chartsData.add(chartData);
         //}
 

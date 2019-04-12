@@ -313,5 +313,19 @@ public class ChartData implements Serializable {
         return chartType;
     }
 
+    public void recalc() {
+        for(int j = 2; j<mSeries.size(); j++){
+            for(int i=0; i<mSeries.get(0).getValues().size(); i++){
+                long newValue = 0;
+
+                for(int k = 1; k<j; k++)
+                    newValue += mSeries.get(k).getValues().get(i);
+
+                mSeries.get(j).getValues().set(i, newValue);
+            }
+        }
+    }
+
+
 
 }

@@ -255,18 +255,7 @@ public class ChartEngine {
             fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
             fpc.setAlpha((int) (series.get(j).getAlpha() * normalizator));
 
-            for (int i = minmaxIndexes.min + 1; i < minmaxIndexes.max + 1; i++) {
-                //float deltaX = ()
-                int x1 = GetX(series.get(0).getValues().get(i - 1));
-                int x2 = GetX(series.get(0).getValues().get(i));
-
-                int y1 = (int) GetY(series.get(j).getValues().get(i - 1), series.get(j).getScale());
-                int y2 = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
-
-                drawLine(canvas, x1, y1, x2, y2, fp.getColor(), series.get(j).getAlpha());
-                if (series.get(j).getAlpha() > 0.95)
-                    drawCircle(canvas, x1, y1, 2.0f, fpc);
-            }
+            drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, fp.getColor());
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
                 selectedTimestamp = series.get(0).getValues().get(touchIndex);
@@ -290,6 +279,20 @@ public class ChartEngine {
         yMin = 50;
         if (touchIndex > 0)
             DrawMarker(canvas, selectedTimestamp, markerValues, markerColors, xk + 20, yMin);
+    }
+
+    private void drawPoly(Object canvas, Series seriesX, Series seriesY, int from, int to, int color) {
+        for (int i = from; i < to; i++) {
+            //float deltaX = ()
+            int x1 = GetX(seriesX.getValues().get(i - 1));
+            int x2 = GetX(seriesX.getValues().get(i));
+
+            int y1 = (int) GetY(seriesY.getValues().get(i - 1), seriesY.getScale());
+            int y2 = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
+
+            drawLine(canvas, x1, y1, x2, y2, color, seriesY.getAlpha());
+            //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
+        }
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {

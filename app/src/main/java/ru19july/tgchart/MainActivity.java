@@ -54,8 +54,10 @@ public class MainActivity extends Activity {
         //chartsData.addAll(readJson(json));
 
         ChartData chartData = new ChartData();
-        chartData = chartData.loadData(this, "contest/1/overview.json");
-        chartData.setFilepath("contest/1/");
+        int contestChartNumber = 3;
+        String folder = "contest/" + contestChartNumber + "/";
+        chartData = chartData.loadData(this, folder + "overview.json");
+        chartData.setFilepath(folder);
         chartsData.add(chartData);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);

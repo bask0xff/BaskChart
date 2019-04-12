@@ -252,10 +252,11 @@ public class ChartEngine {
             if (canvas instanceof Canvas)
                 normalizator = 255;
 
-            fp.setAlpha((int) (series.get(j).getAlpha() * normalizator));
-            fpc.setAlpha((int) (series.get(j).getAlpha() * normalizator));
+            int alpha = (int) (series.get(j).getAlpha() * normalizator);
+            fp.setAlpha(alpha);
+            fpc.setAlpha(alpha);
 
-            drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, fp.getColor());
+            drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, fp.getColor(), alpha);
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
                 selectedTimestamp = series.get(0).getValues().get(touchIndex);
@@ -279,20 +280,6 @@ public class ChartEngine {
         yMin = 50;
         if (touchIndex > 0)
             DrawMarker(canvas, selectedTimestamp, markerValues, markerColors, xk + 20, yMin);
-    }
-
-    private void drawPoly(Object canvas, Series seriesX, Series seriesY, int from, int to, int color) {
-        for (int i = from; i < to; i++) {
-            //float deltaX = ()
-            int x1 = GetX(seriesX.getValues().get(i - 1));
-            int x2 = GetX(seriesX.getValues().get(i));
-
-            int y1 = (int) GetY(seriesY.getValues().get(i - 1), seriesY.getScale());
-            int y2 = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
-
-            drawLine(canvas, x1, y1, x2, y2, color, seriesY.getAlpha());
-            //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
-        }
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
@@ -736,6 +723,72 @@ public class ChartEngine {
             drawLineGL((GL10) canvas, x1, H - y1, x2, H - y2, 1f, color, alpha);
             //pixel((GL10)canvas, x1, H-y1, 1f, fp.getColor(), fp.getAlpha());
         }
+    }
+
+    private void drawPoly(Object canvas, Series seriesX, Series seriesY, int from, int to, int color, float alpha) {
+        if (canvas instanceof Canvas) {
+            Paint fp = new Paint();
+            fp.setColor(color);
+            fp.setAlpha((int) (alpha * 255));
+            fp.setAntiAlias(true);
+            fp.setStyle(Paint.Style.FILL_AND_STROKE);
+            fp.setStrokeWidth(5.0f);
+
+            //Path path = new Path();
+            //path.
+            //for()
+      //      int x1 = GetX(seriesX.getValues().get(i - 1));
+    //        int x2 = GetX(seriesX.getValues().get(i));
+
+  //          int y1 = (int) GetY(seriesY.getValues().get(i - 1), seriesY.getScale());
+//            int y2 = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
+
+            //((Canvas) canvas).drawLine(x1, y1, x2, y2, fp);
+        }
+        if (canvas instanceof GL10) {
+            GL10 gl = (GL10) canvas;
+
+            float vertices[] = new float[seriesX.getValues().size() * 2];
+
+            for (int i = from; i < to; i++) {
+
+                int x = GetX(seriesX.getValues().get(i));
+                int y = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
+
+                vertices[i * 2] = x - W / 2;
+                vertices[i * 2 + 1] = H / 2 - y;
+            }
+
+            ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+            vbb.order(ByteOrder.nativeOrder()); // Use native byte order
+            FloatBuffer vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
+            vertexBuffer.put(vertices);         // Copy data into buffer
+            vertexBuffer.position(0);
+
+            float r = ((color >> 16) & 0xff) / 255f;
+            float g = ((color >> 8) & 0xff) / 255f;
+            float b = ((color >> 0) & 0xff) / 255f;
+
+            gl.glEnableClientState(GL_VERTEX_ARRAY);
+            gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
+            gl.glColor4f(r, g, b, alpha);
+            gl.glLineWidth(5f);
+            gl.glDrawArrays(GL_LINES, 0, to - from);
+        }
+
+
+/*
+        for (int i = from; i < to; i++) {
+            //float deltaX = ()
+            int x1 = GetX(seriesX.getValues().get(i - 1));
+            int x2 = GetX(seriesX.getValues().get(i));
+
+            int y1 = (int) GetY(seriesY.getValues().get(i - 1), seriesY.getScale());
+            int y2 = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
+
+            drawLine(canvas, x1, y1, x2, y2, color, seriesY.getAlpha());
+            //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
+        }*/
     }
 
     //// OpenGL

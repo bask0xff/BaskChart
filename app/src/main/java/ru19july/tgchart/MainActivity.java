@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
         //chartsData.addAll(readJson(json));
 
         ChartData chartData = new ChartData();
-        int contestChartNumber = 3;
+        int contestChartNumber = 5;
         String folder = "contest/" + contestChartNumber + "/";
         chartData = chartData.loadData(this, folder + "overview.json");
         chartData.setFilepath(folder);

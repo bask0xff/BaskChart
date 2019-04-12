@@ -248,13 +248,9 @@ public class ChartEngine {
             fp.setColor(Color.parseColor(series.get(j).getColor()));
             fpc.setColor(Color.parseColor(series.get(j).getColor()));
 
-            float normalizator = 1f;
-            if (canvas instanceof Canvas)
-                normalizator = 255;
-
-            int alpha = (int) (series.get(j).getAlpha() * normalizator);
-            fp.setAlpha(alpha);
-            fpc.setAlpha(alpha);
+            float alpha = series.get(j).getAlpha();
+            fp.setAlpha((int) (255 * alpha));
+            fpc.setAlpha((int) (255 * alpha));
 
             drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, fp.getColor(), alpha);
 
@@ -751,12 +747,8 @@ public class ChartEngine {
             float vertices[] = new float[seriesX.getValues().size() * 2];
 
             for (int i = from; i < to; i++) {
-
-                int x = GetX(seriesX.getValues().get(i));
-                int y = (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
-
-                vertices[i * 2] = x - W / 2;
-                vertices[i * 2 + 1] = H / 2 - y;
+                vertices[i * 2] = GetX(seriesX.getValues().get(i)) - W / 2;
+                vertices[i * 2 + 1] = H / 2 - (int) GetY(seriesY.getValues().get(i), seriesY.getScale());
             }
 
             ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);

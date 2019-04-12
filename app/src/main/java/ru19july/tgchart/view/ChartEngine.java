@@ -154,7 +154,7 @@ public class ChartEngine {
                 int y1 = h0 + (int) ((1 - mChartData.getSeries().get(j).getValues().get(i - 1) / numScale.niceMax) * hh);
                 int y2 = h0 + (int) ((1 - mChartData.getSeries().get(j).getValues().get(i) / numScale.niceMax) * hh);
 
-                drawLine(canvas, x1, y1, x2, y2, Color.parseColor(mChartData.getSeries().get(j).getColor()), 1f);
+                drawLine(canvas, x1, y1, x2, y2, 1f, Color.parseColor(mChartData.getSeries().get(j).getColor()), 1f);
             }
         }
 
@@ -231,17 +231,8 @@ public class ChartEngine {
 
         int yMin = H;
 
-        Path mPath = new Path();
-        mPath.moveTo(xk, H * 0.f);
-        mPath.quadTo(xk, H / 2, xk, H * chartYendsFactor);
-        Paint mPaint = new Paint();
-        mPaint.setAntiAlias(false);
-        mPaint.setColor(Color.BLACK);
-        mPaint.setStrokeWidth(3f);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-
-        drawPath(canvas, mPath, mPaint);
+        //touched vertical line
+        drawLine(canvas, (int)xk, 0, (int)xk, (int)(H * chartYendsFactor), 2f, Color.BLACK, 1f);
 
         for (int j = 1; j < series.size(); j++) {
             //if (!series.get(j).isChecked()) continue;
@@ -252,7 +243,7 @@ public class ChartEngine {
             fp.setAlpha((int) (255 * alpha));
             fpc.setAlpha((int) (255 * alpha));
 
-            drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, fp.getColor(), alpha);
+            drawPoly(canvas, series.get(0), series.get(j), minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
                 selectedTimestamp = series.get(0).getValues().get(touchIndex);
@@ -306,16 +297,7 @@ public class ChartEngine {
         while (yLine <= numScale.niceMax) {
             float yL = GetY(yLine, 1f);
 
-            Path mPath = new Path();
-            mPath.moveTo(0, yL);
-            mPath.quadTo(W / 2, yL, W, yL);
-            Paint mPaint = new Paint();
-            mPaint.setAntiAlias(false);
-            //mPaint.setColor(Utils.MARKER_BG_COLOR);
-            mPaint.setColor(Color.BLACK);
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-            drawPath(canvas, mPath, mPaint);
+            drawLine(canvas, 0, (int)yL, W, (int)yL, 2f, Color.BLACK, 1f);
 
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) yLine);
@@ -339,15 +321,7 @@ public class ChartEngine {
             float xL = GetX(xLine);
 
             if (mShowVerticalLines) {
-                Path mPath = new Path();
-                mPath.moveTo(xL, H * 0.2f);
-                mPath.quadTo(xL, H / 2, xL, H * chartYendsFactor);
-                Paint mPaint = new Paint();
-                mPaint.setAntiAlias(false);
-                mPaint.setColor(Color.BLACK);
-                mPaint.setStyle(Paint.Style.STROKE);
-                mPaint.setPathEffect(new DashPathEffect(new float[]{1, 1}, 0));
-                drawPath(canvas, mPath, mPaint);
+                drawLine(canvas, (int)xL, (int)(H * 0.2f), (int)xL, (int)(H * chartYendsFactor), 2f, Color.BLACK, 1f);
             }
 
             String str = Utils.unixtimeToString((long) xLine, "MMM dd");
@@ -682,10 +656,10 @@ public class ChartEngine {
         }
     }
 
-    private void drawPath(Object canvas, Path mPath, Paint mPaint) {
+    /*private void drawPath(Object canvas, Path mPath, Paint mPaint) {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawPath(mPath, mPaint);
-    }
+    }*/
 
     private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
         if (canvas instanceof Canvas)
@@ -704,14 +678,14 @@ public class ChartEngine {
         }
     }
 
-    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, int color, float alpha) {
+    private void drawLine(Object canvas, int x1, int y1, int x2, int y2, float width, int color, float alpha) {
         if (canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
             fp.setAlpha((int) (alpha * 255));
             fp.setAntiAlias(true);
             fp.setStyle(Paint.Style.FILL_AND_STROKE);
-            fp.setStrokeWidth(5.0f);
+            fp.setStrokeWidth(width);
 
             ((Canvas) canvas).drawLine(x1, y1, x2, y2, fp);
         }
@@ -721,14 +695,14 @@ public class ChartEngine {
         }
     }
 
-    private void drawPoly(Object canvas, Series seriesX, Series seriesY, int from, int to, int color, float alpha) {
+    private void drawPoly(Object canvas, Series seriesX, Series seriesY, int from, int to, float width, int color, float alpha) {
         if (canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
             fp.setAlpha((int) (alpha * 255));
             fp.setAntiAlias(true);
             fp.setStyle(Paint.Style.FILL_AND_STROKE);
-            fp.setStrokeWidth(5.0f);
+            fp.setStrokeWidth(width);
 
             //Path path = new Path();
             //path.
@@ -764,7 +738,7 @@ public class ChartEngine {
             gl.glEnableClientState(GL_VERTEX_ARRAY);
             gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
             gl.glColor4f(r, g, b, alpha);
-            gl.glLineWidth(5f);
+            gl.glLineWidth(width);
             gl.glDrawArrays(GL_LINES, from, to - from);
         }
 
@@ -825,7 +799,7 @@ public class ChartEngine {
         new CubeColorSides().draw(gl, color, alpha);
     }
 
-    private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float w, int color, float alpha) {
+    private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float width, int color, float alpha) {
         float vertices[] = {x1 - W / 2, y1 - H / 2, x2 - W / 2, y2 - H / 2};
 
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -841,7 +815,7 @@ public class ChartEngine {
         gl.glEnableClientState(GL_VERTEX_ARRAY);
         gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
         gl.glColor4f(r, g, b, alpha);
-        gl.glLineWidth(5f);
+        gl.glLineWidth(width);
         gl.glDrawArrays(GL_LINES, 0, 2);
     }
 

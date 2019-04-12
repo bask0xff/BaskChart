@@ -244,24 +244,29 @@ public class ChartEngine {
             fp.setAlpha((int) (255 * alpha));
             fpc.setAlpha((int) (255 * alpha));
 
-            float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4];
-
-            for (int i = minmaxIndexes.min; i < minmaxIndexes.max - 1; i++) {
-                if (canvas instanceof Canvas) {
-                    vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i));
-                    vertices[(i - minmaxIndexes.min) * 4 + 1] = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
-                    vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1));
-                    vertices[(i - minmaxIndexes.min) * 4 + 3] = GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
-                } else {
-                    vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
-                    vertices[(i - minmaxIndexes.min) * 4 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
-                    vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
-                    vertices[(i - minmaxIndexes.min) * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
-                }
-            }
-
             //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
-            drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
+            if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_LINE) {
+                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4];
+
+                for (int i = minmaxIndexes.min; i < minmaxIndexes.max - 1; i++) {
+                    if (canvas instanceof Canvas) {
+                        vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i));
+                        vertices[(i - minmaxIndexes.min) * 4 + 1] = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1));
+                        vertices[(i - minmaxIndexes.min) * 4 + 3] = GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                    } else {
+                        vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                        vertices[(i - minmaxIndexes.min) * 4 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[(i - minmaxIndexes.min) * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                    }
+                }
+
+                drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
+            }
+            if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
+                //drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
+            }
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
                 selectedTimestamp = series.get(0).getValues().get(touchIndex);
@@ -339,7 +344,7 @@ public class ChartEngine {
             float xL = GetX(xLine);
 
             if (mShowVerticalLines) {
-                drawLine(canvas, (int)xL, (int)(H * 0.2f), (int)xL, (int)(H * chartYendsFactor), 2f, Color.BLACK, 1f);
+                drawLine(canvas, (int)xL, (int)(H * chartYstartsFactor), (int)xL, (int)(H * chartYendsFactor), 2f, Color.BLACK, 1f);
             }
 
             String str = Utils.unixtimeToString((long) xLine, "MMM dd");
@@ -674,10 +679,10 @@ public class ChartEngine {
         }
     }
 
-    /*private void drawPath(Object canvas, Path mPath, Paint mPaint) {
+    private void drawPath(Object canvas, Path mPath, Paint mPaint) {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawPath(mPath, mPaint);
-    }*/
+    }
 
     private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
         if (canvas instanceof Canvas)

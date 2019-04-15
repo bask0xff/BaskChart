@@ -301,9 +301,13 @@ public class ChartEngine {
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
                 float barWidth = W / (minmaxIndexes.max - minmaxIndexes.min);
                 for (int i = minmaxIndexes.min; i < minmaxIndexes.max; i++) {
+
                     if (canvas instanceof Canvas) {
                         float x  = GetX(series.get(0).getValues().get(i));
-                        float y = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        float offsetY = 0f;
+
+                        float y = offsetY + GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+
                         drawBar(canvas, x, y, barWidth, fp.getColor(), alpha);
                     } else {
                         /*vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
@@ -732,7 +736,7 @@ public class ChartEngine {
             ((Canvas) canvas).drawRect(rect, fp);
         }
         if (canvas instanceof GL10) {
-            //pixel((GL10)canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, paint.getColor(), 1);
+            pixel((GL10)canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, color, 1);
         }
     }
 

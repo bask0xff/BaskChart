@@ -56,6 +56,7 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
     }
 
     public boolean onTouchEvent(MotionEvent e) {
+        this.view.getParent().requestDisallowInterceptTouchEvent(true);
         return chartEngine.onTouchEvent(e);
     }
 

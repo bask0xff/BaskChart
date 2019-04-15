@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -298,7 +299,19 @@ public class ChartEngine {
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
-//                drawBar(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
+                float barWidth = W / (minmaxIndexes.max - minmaxIndexes.min);
+                for (int i = minmaxIndexes.min; i < minmaxIndexes.max; i++) {
+                    if (canvas instanceof Canvas) {
+                        float x  = GetX(series.get(0).getValues().get(i));
+                        float y = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        drawBar(canvas, x, y, barWidth, fp.getColor(), alpha);
+                    } else {
+                        /*vertices[(i - minmaxIndexes.min) * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                        vertices[(i - minmaxIndexes.min) * 4 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        vertices[(i - minmaxIndexes.min) * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[(i - minmaxIndexes.min) * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());*/
+                    }
+                }
             }
 
             if (touchIndex >= 0 && touchIndex < series.get(j).getValues().size()) {
@@ -525,6 +538,10 @@ public class ChartEngine {
         va.start();
     }
 
+    public boolean onTouch(View v, MotionEvent event) {
+        return onTouchEvent(event);
+    }
+
     public boolean onTouchEvent(MotionEvent event) {
         if (mChartData == null) return false;
 
@@ -701,6 +718,21 @@ public class ChartEngine {
     private void drawTextGl(GL10 gl, String text, int x, int y, float size, int color, int alpha) {
         for(int i=0; i<text.length(); i++) {
             pixel(gl, (int) (x + i * size), (int) y, size * 0.8f, size, color, alpha);
+        }
+    }
+
+    private void drawBar(Object canvas, float x, float y, float barWidth, int color, float alpha) {
+        Rect rect = new Rect((int)(x - barWidth/2), (int)y, (int)(x + barWidth/2), (int)(H * chartYendsFactor));
+        if (canvas instanceof Canvas){
+            Paint fp = new Paint();
+            fp.setColor(color);
+            fp.setAlpha((int) (alpha * 255));
+            fp.setAntiAlias(false);
+            fp.setStyle(Paint.Style.FILL_AND_STROKE);
+            ((Canvas) canvas).drawRect(rect, fp);
+        }
+        if (canvas instanceof GL10) {
+            //pixel((GL10)canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, paint.getColor(), 1);
         }
     }
 

@@ -311,9 +311,10 @@ public class ChartEngine {
                         drawBar(canvas, x, y, barWidth, fp.getColor(), alpha);
                     } else {
                         float x = GetX(series.get(0).getValues().get(i));
+                        float h = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         float y = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
-                        pixel((GL10) canvas, x, y, barWidth, 10, fp.getColor(), 1f);
+                        pixel((GL10) canvas, x, 0, barWidth, h, fp.getColor(), 1f);
                     }
                 }
             }

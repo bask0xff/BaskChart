@@ -55,21 +55,22 @@ public class MainActivity extends Activity {
         //String json = loadJSONFromAsset("chart_data.json");
         //Log.d(TAG, "JSON: " + json);
         //chartsData.addAll(readJson(json));
-        //for(contestChartNumber = 0 ; contestChartNumber < 5; contestChartNumber++) {
+
+        for(contestChartNumber = 0 ; contestChartNumber < 5; contestChartNumber++) {
             ChartData chartData = new ChartData();
-            String folder = "contest/" + (contestChartNumber+0) + "/";
+            String folder = "contest/" + (contestChartNumber+1) + "/";
             chartData = chartData.loadData(this, folder + "overview.json");
             chartData.setType(
-                    contestChartNumber == 2 ? ChartData.CHART_TYPE.CHART_TYPE_BAR :
-                            contestChartNumber == 3 ? ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY :
+                    contestChartNumber == 1 ? ChartData.CHART_TYPE.CHART_TYPE_BAR :
+                            contestChartNumber == 2 ? ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY :
                                     ChartData.CHART_TYPE.CHART_TYPE_LINE
             );
 
-            if(contestChartNumber == 3)
+            if(contestChartNumber == 2)
                 chartData.recalc();
 
             chartsData.add(chartData);
-        //}
+        }
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 

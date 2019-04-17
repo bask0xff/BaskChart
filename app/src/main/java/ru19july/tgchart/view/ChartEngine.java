@@ -113,7 +113,7 @@ public class ChartEngine {
             //gl.glEnable(GL10.GL_BLEND);                   // Enable Alpha Blend
             //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);  // Set Alpha Blend Function
 
-//            gl.glLoadIdentity();
+            gl.glLoadIdentity();
         }
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;

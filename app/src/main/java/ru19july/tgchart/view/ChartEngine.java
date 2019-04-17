@@ -92,7 +92,6 @@ public class ChartEngine {
 
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
-        Log.d(TAG, "--------------- DrawChart: " + chartData);
 
         if (chartData == null) return;
 
@@ -120,11 +119,9 @@ public class ChartEngine {
 
         setBackground(canvas, mTheme.backgroundColor());
 
-        Log.d(TAG, "========= DrawChart: " + leftMinValue + " - " + rightMaxValue);
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
             NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
-            Log.d(TAG, "######### DrawChart:, NiceScale: " + numScaleV.niceMin + " / " + numScaleV.niceMax);
 
             DrawHorizontalLines(numScaleV, decimalCount, canvas);
 
@@ -147,8 +144,6 @@ public class ChartEngine {
     private void drawSliderGraph(Object canvas) {
         int h0 = (int) (H * sliderYfactor);
         int hh = H - h0;
-
-        Log.d(TAG, "--------------- drawSliderGraph: ");
 
         NiceScale numScale = new NiceScale(mChartData.getSeries());
 
@@ -348,7 +343,6 @@ public class ChartEngine {
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
-        Log.d(TAG, "..... findIndexes: ");
         MinMaxIndex result = new MinMaxIndex();
         result.min = 0;
         result.max = values.getValues().size() - 1;
@@ -486,17 +480,12 @@ public class ChartEngine {
         xStart = startX;
         xEnd = endX;
 
-        Log.d(TAG, "/////////// updateSlideFrameWindow: " + startX + " / " + endX);
-
         startNormalized = (xStart + 0.f) / W;
         endNormalized = (xEnd + 0.f) / W;
     }
 
     public void setData(ChartData chartData) {
-        Log.d(TAG, "setData: " + chartData);
         mChartData = chartData;
-
-        Log.d(TAG, "~~~~~ setData: " + chartData);
 
         if (endNormalized <= 0.0E-10)
             endNormalized = 1.0f;
@@ -558,7 +547,6 @@ public class ChartEngine {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "+++++++ onTouchEvent: " + mChartData);
         if (mChartData == null) return false;
 
         xTouched = event.getX();

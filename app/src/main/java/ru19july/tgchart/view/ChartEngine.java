@@ -55,7 +55,7 @@ public class ChartEngine {
     private IChartTheme mTheme = new DarkTheme();
 
     float startNormalized = 0.0f;
-    float endNormalized = 0.0f;
+    float endNormalized = 1.0f;
     private float catchX = 0.0f;
     private float xTouched = 0.0f;
     private float yTouched = 0.0f;
@@ -83,6 +83,7 @@ public class ChartEngine {
     private RectF legendRect;
     private HashMap<Integer, GLText> glTexts = new HashMap<>();
     private long selectedTimestamp;
+    private MinMaxIndex minmaxIndexes;
 
     public ChartEngine(Context ctx, View v) {
         mContext = ctx;
@@ -91,8 +92,11 @@ public class ChartEngine {
 
     public void DrawChart(Object canvas) {
         ChartData chartData = mChartData;
+        Log.d(TAG, "--------------- DrawChart: " + chartData);
 
         if (chartData == null) return;
+
+        minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
         if (canvas instanceof Canvas) {
             ((Canvas) canvas).save();
@@ -109,19 +113,19 @@ public class ChartEngine {
             //gl.glEnable(GL10.GL_BLEND);                   // Enable Alpha Blend
             //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);  // Set Alpha Blend Function
 
-            gl.glLoadIdentity();
-            //DrawPixels(((GL10)canvas));
-            //ticks++;
-            //((GL10)canvas).glLoadIdentity();
+//            gl.glLoadIdentity();
         }
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
         setBackground(canvas, mTheme.backgroundColor());
 
+        Log.d(TAG, "========= DrawChart: " + leftMinValue + " - " + rightMaxValue);
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
             NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
+            Log.d(TAG, "######### DrawChart:, NiceScale: " + numScaleV.niceMin + " / " + numScaleV.niceMax);
+
             DrawHorizontalLines(numScaleV, decimalCount, canvas);
 
             NiceDate numScaleH = new NiceDate(leftMinValue, rightMaxValue);
@@ -143,6 +147,8 @@ public class ChartEngine {
     private void drawSliderGraph(Object canvas) {
         int h0 = (int) (H * sliderYfactor);
         int hh = H - h0;
+
+        Log.d(TAG, "--------------- drawSliderGraph: ");
 
         NiceScale numScale = new NiceScale(mChartData.getSeries());
 
@@ -220,8 +226,6 @@ public class ChartEngine {
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
-
-        MinMaxIndex minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
         float[] markerValues = new float[series.size() - 1];
         String[] markerColors = new String[series.size() - 1];
@@ -314,7 +318,7 @@ public class ChartEngine {
                         float h = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         float y = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
-                        pixel((GL10) canvas, x, 0, barWidth, h, fp.getColor(), 1f);
+                        pixel((GL10) canvas, x, H/2 + y/2, barWidth, 10, fp.getColor(), 1f);
                     }
                 }
             }
@@ -344,6 +348,7 @@ public class ChartEngine {
     }
 
     private MinMaxIndex findIndexes(Series values, float start, float end) {
+        Log.d(TAG, "..... findIndexes: ");
         MinMaxIndex result = new MinMaxIndex();
         result.min = 0;
         result.max = values.getValues().size() - 1;
@@ -481,6 +486,8 @@ public class ChartEngine {
         xStart = startX;
         xEnd = endX;
 
+        Log.d(TAG, "/////////// updateSlideFrameWindow: " + startX + " / " + endX);
+
         startNormalized = (xStart + 0.f) / W;
         endNormalized = (xEnd + 0.f) / W;
     }
@@ -488,6 +495,9 @@ public class ChartEngine {
     public void setData(ChartData chartData) {
         Log.d(TAG, "setData: " + chartData);
         mChartData = chartData;
+
+        Log.d(TAG, "~~~~~ setData: " + chartData);
+
         if (endNormalized <= 0.0E-10)
             endNormalized = 1.0f;
         touchIndex = -1;
@@ -548,6 +558,7 @@ public class ChartEngine {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d(TAG, "+++++++ onTouchEvent: " + mChartData);
         if (mChartData == null) return false;
 
         xTouched = event.getX();

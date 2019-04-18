@@ -769,7 +769,42 @@ public class ChartEngine {
             if (canvas instanceof GL10) {
                 GL10 gl = (GL10) canvas;
 
+                FloatBuffer vertexBuffer;  // Buffer for vertex-array
+                int numFaces = vertices.length / 8;
+
+                int color = mPaint.getColor();
+                float alpha = mPaint.getAlpha() / 255f;
+                float width = 1f;
+
                 ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+                vbb.order(ByteOrder.nativeOrder()); // Use native byte order
+                vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
+                vertexBuffer.put(vertices);         // Copy data into buffer
+                vertexBuffer.position(0);           // Rewind
+
+                gl.glFrontFace(GL10.GL_CCW);    // Front face in counter-clockwise orientation
+                gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
+                gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
+
+                gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+                gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
+
+                float r = ((color >> 16) & 0xff) / 255f;
+                float g = ((color >> 8) & 0xff) / 255f;
+                float b = ((color >> 0) & 0xff) / 255f;
+
+                // Render all the faces
+                for (int face = 0; face < numFaces; face++) {
+                    // Set the color for each of the faces
+                    gl.glColor4f(r, g, b, alpha);
+                    // Draw the primitive from the vertex-array directly
+                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*4, 4);
+                }
+                gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+                gl.glDisable(GL10.GL_CULL_FACE);
+
+
+                /*ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
                 vbb.order(ByteOrder.nativeOrder()); // Use native byte order
                 FloatBuffer vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
                 vertexBuffer.put(vertices);         // Copy data into buffer
@@ -787,7 +822,7 @@ public class ChartEngine {
                 gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
                 gl.glColor4f(r, g, b, alpha);
                 gl.glLineWidth(width);
-                gl.glDrawArrays(GL_LINES, 0, vertices.length/2);
+                gl.glDrawArrays(GL_LINES, 0, vertices.length/2);*/
             }
         }
     }

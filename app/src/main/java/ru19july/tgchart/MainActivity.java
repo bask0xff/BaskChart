@@ -73,6 +73,9 @@ public class MainActivity extends Activity {
             chartsData.add(chartData);
         }
 
+        ChartData chartData = new ChartData();
+        chartsData.add(chartData);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         BaskChartView baskChartView = findViewById(R.id.baskChartView1);

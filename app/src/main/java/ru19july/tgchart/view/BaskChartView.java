@@ -162,6 +162,7 @@ public class BaskChartView extends LinearLayout {
 
         ViewGroup insertPoint = (ViewGroup) findViewById(R.id.insert_point);
         insertPoint.removeAllViews();
+        if(mChartData.getSeries() == null || mChartData.getSeries().size()<1) return;
 
         for (int i = 1; i < mChartData.getSeries().size(); i++) {
             CheckBox checkBox = new CheckBox(mContext);

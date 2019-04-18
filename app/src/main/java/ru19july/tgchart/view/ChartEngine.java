@@ -93,6 +93,7 @@ public class ChartEngine {
         ChartData chartData = mChartData;
 
         if (chartData == null) return;
+        if(mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return;
 
         minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
@@ -562,6 +563,8 @@ public class ChartEngine {
 
         xTouched = event.getX();
         yTouched = event.getY();
+
+        if(mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return false;
 
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());

@@ -66,8 +66,9 @@ public class MainActivity extends Activity {
                                     ChartData.CHART_TYPE.CHART_TYPE_LINE
             );
 
-            if(contestChartNumber == 2)
+            if(contestChartNumber == 2) {
                 chartData.recalc();
+            }
 
             chartsData.add(chartData);
         }

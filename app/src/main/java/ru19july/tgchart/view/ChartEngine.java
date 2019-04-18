@@ -16,7 +16,6 @@ import android.view.View;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -31,7 +30,7 @@ import ru19july.tgchart.interfaces.IChartTheme;
 import ru19july.tgchart.utils.NiceDate;
 import ru19july.tgchart.utils.NiceScale;
 import ru19july.tgchart.utils.Utils;
-import ru19july.tgchart.view.opengl.CubeColorSides;
+import ru19july.tgchart.view.opengl.ColorRectangle;
 import ru19july.tgchart.view.opengl.text.GLText;
 import ru19july.tgchart.view.theme.DarkTheme;
 
@@ -266,27 +265,39 @@ public class ChartEngine {
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
-                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4];
+                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4*2];
 
                 Path polyPath = new Path();
                 polyPath.moveTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
 
+                int indx = 0;
                 for (int i = minmaxIndexes.min; i < minmaxIndexes.max - 1; i++) {
                     if (canvas instanceof Canvas) {
                         int x = GetX(series.get(0).getValues().get(i));
                         int y = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         polyPath.lineTo(x, y);
                     } else {
+                        vertices[indx * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                        vertices[indx * 4 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        vertices[indx * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[indx * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                        indx++;
                     }
                 }
 
                 if(j>1 ){
-                    for (int i = minmaxIndexes.max; i > minmaxIndexes.min; i--) {
+                    for (int i = minmaxIndexes.max-1; i > minmaxIndexes.min; i--) {
                         if (canvas instanceof Canvas) {
                             int x = GetX(series.get(0).getValues().get(i));
                             int y = (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
                             polyPath.lineTo(x, y);
+
                         } else {
+                            vertices[indx * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                            vertices[indx * 4 + 1] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+                            vertices[indx * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                            vertices[indx * 4 + 3] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i + 1), series.get(j-1).getScale());
+                            indx++;
                         }
                     }
                 }
@@ -294,7 +305,7 @@ public class ChartEngine {
                 polyPath.lineTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
 
                 fp.setStyle(Paint.Style.FILL);
-                drawPath(canvas, polyPath, fp);
+                drawPath(canvas, vertices, polyPath, fp);
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
@@ -748,9 +759,34 @@ public class ChartEngine {
         }
     }
 
-    private void drawPath(Object canvas, Path mPath, Paint mPaint) {
+    private void drawPath(Object canvas, float[] vertices, Path mPath, Paint mPaint) {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawPath(mPath, mPaint);
+        if (canvas instanceof GL10) {
+            if (canvas instanceof GL10) {
+                GL10 gl = (GL10) canvas;
+
+                ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+                vbb.order(ByteOrder.nativeOrder()); // Use native byte order
+                FloatBuffer vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
+                vertexBuffer.put(vertices);         // Copy data into buffer
+                vertexBuffer.position(0);
+
+                int color = mPaint.getColor();
+                float alpha = mPaint.getAlpha() / 255f;
+                float width = 1f;
+
+                float r = ((color >> 16) & 0xff) / 255f;
+                float g = ((color >> 8) & 0xff) / 255f;
+                float b = ((color >> 0) & 0xff) / 255f;
+
+                gl.glEnableClientState(GL_VERTEX_ARRAY);
+                gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
+                gl.glColor4f(r, g, b, alpha);
+                gl.glLineWidth(width);
+                gl.glDrawArrays(GL_LINES, 0, vertices.length/2);
+            }
+        }
     }
 
     private void drawCircle(Object canvas, float x1, float y1, float v, Paint fp) {
@@ -845,7 +881,7 @@ public class ChartEngine {
         gl.glLoadIdentity();
         gl.glTranslatef(x, y, 0);
         gl.glScalef(w, h, 1);
-        new CubeColorSides().draw(gl, color, alpha);
+        new ColorRectangle().draw(gl, color, alpha);
         gl.glLoadIdentity();
     }
 
@@ -857,7 +893,7 @@ public class ChartEngine {
         gl.glLoadIdentity();
         gl.glTranslatef(x1, y1, 0);
         gl.glScalef(x2 - x1, y2 - y1, 0);
-        new CubeColorSides().draw(gl, color, alpha);
+        new ColorRectangle().draw(gl, color, alpha);
     }
 
     private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float width, int color, float alpha) {

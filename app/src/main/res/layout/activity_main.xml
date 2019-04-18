@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ru19july.tgchart.view.BaskChartView
+    <ru19july.baskchart.view.BaskChartView
         android:id="@+id/baskChartView1"
         android:visibility="gone"
         chart:renderType="canvas"

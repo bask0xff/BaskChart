@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <!-- chart:renderType is required attribute!!! -->
-        <!--ru19july.tgchart.view.BaskChartView
+        <!--ru19july.baskchart.view.BaskChartView
             android:background="#0000ff"
             android:id="@+id/baskChartView"
             android:paddingTop="20dp"

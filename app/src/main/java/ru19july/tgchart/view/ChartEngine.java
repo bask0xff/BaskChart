@@ -266,7 +266,7 @@ public class ChartEngine {
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
-                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4*2];
+                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*8];
 
                 Path polyPath = new Path();
                 polyPath.moveTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
@@ -278,10 +278,18 @@ public class ChartEngine {
                         int y = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         polyPath.lineTo(x, y);
                     } else {
-                        vertices[indx * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
-                        vertices[indx * 4 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
-                        vertices[indx * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
-                        vertices[indx * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                        vertices[indx * 8] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                        vertices[indx * 8 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+
+                        vertices[indx * 8 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[indx * 8 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+
+                        vertices[indx * 8 + 4] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[indx * 8 + 5] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i + 1), series.get(j-1).getScale());
+
+                        vertices[indx * 8 + 6] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                        vertices[indx * 8 + 7] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+
                         indx++;
                     }
                 }
@@ -294,11 +302,6 @@ public class ChartEngine {
                             polyPath.lineTo(x, y);
 
                         } else {
-                            vertices[indx * 4] = GetX(series.get(0).getValues().get(i)) - W / 2;
-                            vertices[indx * 4 + 1] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
-                            vertices[indx * 4 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
-                            vertices[indx * 4 + 3] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i + 1), series.get(j-1).getScale());
-                            indx++;
                         }
                     }
                 }

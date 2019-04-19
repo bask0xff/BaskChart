@@ -807,7 +807,7 @@ public class ChartEngine {
                     // Set the color for each of the faces
                     gl.glColor4f(r, g, b, alpha);
                     // Draw the primitive from the vertex-array directly
-                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*3, 4);
+                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*3, 3);
                 }
                 gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
                 gl.glDisable(GL10.GL_CULL_FACE);

@@ -266,7 +266,7 @@ public class ChartEngine {
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
-                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*8];
+                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)* 12];
 
                 Path polyPath = new Path();
                 polyPath.moveTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
@@ -278,17 +278,23 @@ public class ChartEngine {
                         int y = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         polyPath.lineTo(x, y);
                     } else {
-                        vertices[indx * 8] = GetX(series.get(0).getValues().get(i)) - W / 2;
-                        vertices[indx * 8 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        vertices[indx * 12] = GetX(series.get(0).getValues().get(i)) - W / 2;
+                        vertices[indx * 12 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
-                        vertices[indx * 8 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
-                        vertices[indx * 8 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
+                        vertices[indx * 12 + 2] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[indx * 12 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
 
-                        vertices[indx * 8 + 4] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
-                        vertices[indx * 8 + 5] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i + 1), series.get(j-1).getScale());
+                        vertices[indx * 12 + 4] = GetX(series.get(0).getValues().get(i + 1)) - W / 2;
+                        vertices[indx * 12 + 5] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i + 1), series.get(j-1).getScale());
 
-                        vertices[indx * 8 + 6] = GetX(series.get(0).getValues().get(i)) - W / 2;
-                        vertices[indx * 8 + 7] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+                        vertices[indx * 12 + 6] = vertices[indx * 12 + 4];
+                        vertices[indx * 12 + 7] = vertices[indx * 12 + 5];
+
+                        vertices[indx * 12 + 8] = vertices[indx * 12];
+                        vertices[indx * 12 + 9] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+
+                        vertices[indx * 12 + 10] = vertices[indx * 12];
+                        vertices[indx * 12 + 11] = vertices[indx * 12 + 1];
 
                         indx++;
                     }
@@ -773,7 +779,7 @@ public class ChartEngine {
                 GL10 gl = (GL10) canvas;
 
                 FloatBuffer vertexBuffer;  // Buffer for vertex-array
-                int numFaces = vertices.length / 8;
+                int numFaces = vertices.length / 6;
 
                 int color = mPaint.getColor();
                 float alpha = mPaint.getAlpha() / 255f;
@@ -785,7 +791,7 @@ public class ChartEngine {
                 vertexBuffer.put(vertices);         // Copy data into buffer
                 vertexBuffer.position(0);           // Rewind
 
-                gl.glFrontFace(GL10.GL_CCW);    // Front face in counter-clockwise orientation
+                gl.glFrontFace(GL10.GL_CW);    // Front face in counter-clockwise orientation
                 gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
                 gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
 
@@ -801,28 +807,11 @@ public class ChartEngine {
                     // Set the color for each of the faces
                     gl.glColor4f(r, g, b, alpha);
                     // Draw the primitive from the vertex-array directly
-                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*4, 4);
+                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*3, 6);
                 }
                 gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
                 gl.glDisable(GL10.GL_CULL_FACE);
 
-
-                gl.glFrontFace(GL10.GL_CW);    // Front face in counter-clockwise orientation
-                gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
-                gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
-
-                gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-                gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
-
-                // Render all the faces
-                for (int face = 0; face < numFaces; face++) {
-                    // Set the color for each of the faces
-                    gl.glColor4f(r, g, b, alpha);
-                    // Draw the primitive from the vertex-array directly
-                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*4, 4);
-                }
-                gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-                gl.glDisable(GL10.GL_CULL_FACE);
             }
         }
     }

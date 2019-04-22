@@ -277,6 +277,10 @@ public class ChartEngine {
                         int y = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         polyPath.lineTo(x, y);
                     } else {
+                        if(j==series.size()-1){
+
+                        }
+
                         vertices[indx * 12] = GetX(series.get(0).getValues().get(i)) - W / 2;
                         vertices[indx * 12 + 1] = H / 2 - (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 

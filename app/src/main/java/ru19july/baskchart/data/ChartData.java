@@ -318,13 +318,16 @@ public class ChartData implements Serializable {
         for (int i = 0; i < mSeries.get(0).getValues().size(); i++) {
             long[] newValues = new long[mSeries.size()];
 
-            for (int j = 2; j < mSeries.size(); j++) {
+            for (int j = 1; j < mSeries.size(); j++) {
                 if(!mSeries.get(j).isChecked()) continue;
 
-                for (int k = 1; k < j; k++)
+                for (int k = 1; k <= j; k++)
                     if(mSeries.get(k).isChecked())
                         newValues[j] += mSeries.get(k).getValues().get(i);
 
+            }
+
+            for (int j = 1; j < mSeries.size(); j++) {
                 mSeries.get(j).getValues().set(i, newValues[j]);
             }
         }

@@ -266,7 +266,7 @@ public class ChartEngine {
             }
 
             if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
-                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)* 12];
+                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min) * 12];
 
                 Path polyPath = new Path();
                 polyPath.moveTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
@@ -305,6 +305,17 @@ public class ChartEngine {
                         if (canvas instanceof Canvas) {
                             int x = GetX(series.get(0).getValues().get(i));
                             int y = (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+                            polyPath.lineTo(x, y);
+
+                        } else {
+                        }
+                    }
+                }
+                else{
+                    for (int i = minmaxIndexes.max-1; i > minmaxIndexes.min; i--) {
+                        if (canvas instanceof Canvas) {
+                            int x = GetX(series.get(0).getValues().get(i));
+                            int y = (int) GetY(0, 1);
                             polyPath.lineTo(x, y);
 
                         } else {

@@ -261,7 +261,6 @@ public class ChartEngine {
                         vertices[(i - minmaxIndexes.min) * 4 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
                     }
                 }
-
                 drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
             }
 
@@ -342,10 +341,11 @@ public class ChartEngine {
                         drawBar(canvas, x, y, barWidth, fp.getColor(), alpha);
                     } else {
                         float x = GetX(series.get(0).getValues().get(i));
-                        float h = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
+                        float h = (float) (H*((series.get(j).getValues().get(i) - mChartData.getMinValue()) / (float)(mChartData.getMaxValue() - mChartData.getMinValue())));
+
                         float y = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
-                        pixel((GL10) canvas, x, H/2 + y/2, barWidth, 10, fp.getColor(), 1f);
+                        pixel((GL10) canvas, x, y + h/2, barWidth, h/2, fp.getColor(), 1f);
                     }
                 }
             }

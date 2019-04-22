@@ -241,6 +241,7 @@ public class ChartData implements Serializable {
                     vals.add(arrColumns.getLong(k));
                 }
                 ser.setValues(vals);
+                ser.setChecked(true);
 
                 if (columnsLength == 0)
                     columnsLength = ser.getValues().size();
@@ -314,18 +315,19 @@ public class ChartData implements Serializable {
     }
 
     public void recalc() {
-        for(int j = 2; j<mSeries.size(); j++){
-            for(int i=0; i<mSeries.get(0).getValues().size(); i++){
-                long newValue = 0;
+        for (int i = 0; i < mSeries.get(0).getValues().size(); i++) {
+            long[] newValues = new long[mSeries.size()];
 
-                for(int k = 1; k<j; k++)
-                    newValue += mSeries.get(k).getValues().get(i);
+            for (int j = 2; j < mSeries.size(); j++) {
+                if(!mSeries.get(j).isChecked()) continue;
 
-                mSeries.get(j).getValues().set(i, newValue);
+                for (int k = 1; k < j; k++)
+                    if(mSeries.get(k).isChecked())
+                        newValues[j] += mSeries.get(k).getValues().get(i);
+
+                mSeries.get(j).getValues().set(i, newValues[j]);
             }
         }
     }
-
-
 
 }

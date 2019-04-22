@@ -887,7 +887,7 @@ public class ChartEngine {
         if (canvas instanceof GL10) {
             ((GL10) canvas).glEnable(GL10.GL_TEXTURE_2D);            //Enable Texture Mapping ( NEW )
             ((GL10) canvas).glShadeModel(GL10.GL_SMOOTH);            //Enable Smooth Shading
-            //mTheme.backgroundColor()
+
             float r = ((Color.parseColor(backgroundColor) >> 16) & 0xff) / 255f;
             float g = ((Color.parseColor(backgroundColor) >> 8) & 0xff) / 255f;
             float b = ((Color.parseColor(backgroundColor) >> 0) & 0xff) / 255f;

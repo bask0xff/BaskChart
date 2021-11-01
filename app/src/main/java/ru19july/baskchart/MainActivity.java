@@ -56,9 +56,9 @@ public class MainActivity extends Activity {
         //Log.d(TAG, "JSON: " + json);
         //chartsData.addAll(readJson(json));
 
-        for(contestChartNumber = 0 ; contestChartNumber < 5; contestChartNumber++) {
+        for (contestChartNumber = 0; contestChartNumber < 5; contestChartNumber++) {
             ChartData chartData = new ChartData();
-            String folder = "contest/" + (contestChartNumber+1) + "/";
+            String folder = "contest/" + (contestChartNumber + 1) + "/";
             chartData = chartData.loadData(this, folder + "overview.json");
             chartData.setType(
                     contestChartNumber == 1 ? ChartData.CHART_TYPE.CHART_TYPE_BAR :
@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
                                     ChartData.CHART_TYPE.CHART_TYPE_LINE
             );
 
-            if(contestChartNumber == 2) {
+            if (contestChartNumber == 2) {
                 chartData.recalc();
             }
 
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
             Class<?> chartClass =
                     //i % 2 != 0
                     chartType == 1
-                    ? ChartCanvasView.class : ChartGLView.class;
+                            ? ChartCanvasView.class : ChartGLView.class;
             IChartTheme theme = i % 1 == 0 ? new DarkTheme() : new LightTheme();
 
             Log.d(TAG, "initChartView: ------------------ CHART #" + i + " => " + theme.getClass().getSimpleName());
@@ -112,7 +112,6 @@ public class MainActivity extends Activity {
             baskChartViews.add(baskChartView);
         }
     }
-
 
 
     @Override
@@ -138,7 +137,7 @@ public class MainActivity extends Activity {
 
         IChartTheme theme = nightTheme ? new DarkTheme() : new LightTheme();
 
-        for(int i=0; i< baskChartViews.size(); i++) {
+        for (int i = 0; i < baskChartViews.size(); i++) {
             Log.d(TAG, "toggleTheme, baskChartViews[" + i + "]: " + theme.getClass().getSimpleName());
             updateChart(baskChartViews.get(i), theme, i);
         }

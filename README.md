@@ -1,4 +1,4 @@
-# BaskChart - interactive charts with aimation
+# BaskChart - interactive charts with animation
 
 My solution of Telegram chart contest, 2019 https://t.me/contest/6
 

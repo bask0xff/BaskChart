@@ -1,6 +1,6 @@
 # BaskChart - interactive charts with aimation
 
-My solution of Telegram chart contest, 2019
+My solution of Telegram chart contest, 2019 https://t.me/contest/6
 
 You can select two drawing types: OpenGL-chart or Canvas-chart custom views
 

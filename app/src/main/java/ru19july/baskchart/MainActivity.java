@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
         baskChartView.setData(chartsData.get(0));
         baskChartView.invalidate();
 
-        initChartView();
+        baskChartViews = initChartView();
 
 //        recyclerView.setHasFixedSize(true);
 
@@ -92,7 +92,8 @@ public class MainActivity extends Activity {
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void initChartView() {
+    private List<BaskChartView> initChartView() {
+        List<BaskChartView> baskChartViews = new ArrayList<>();
         int charts = chartsData.size();
         //charts = 1;
 
@@ -111,6 +112,7 @@ public class MainActivity extends Activity {
 
             baskChartViews.add(baskChartView);
         }
+        return baskChartViews;
     }
 
 

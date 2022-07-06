@@ -9,6 +9,8 @@ import android.widget.RadioGroup;
 
 public class StartActivity extends AppCompatActivity {
 
+    int CHART_TYPE_GL = 0;
+    int CHART_TYPE_CANVAS = 1;
     int chartNumber = 1;
 
     @Override
@@ -22,24 +24,18 @@ public class StartActivity extends AppCompatActivity {
         btnGl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                intent.putExtra("chart_type", 0);
-                intent.putExtra("chart_number", chartNumber);
-                startActivity(intent);
+                launchChart(CHART_TYPE_GL);
             }
         });
 
         btnCnv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                intent.putExtra("chart_type", 1);
-                intent.putExtra("chart_number", chartNumber);
-                startActivity(intent);
+                launchChart(CHART_TYPE_CANVAS);
             }
         });
 
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        RadioGroup radioGroup = findViewById(R.id.radioGroup);
 
         radioGroup.clearCheck();
 
@@ -68,5 +64,13 @@ public class StartActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void launchChart(int chart_type) {
+        Intent intent = new Intent(StartActivity.this, MainActivity.class);
+        intent.putExtra("chart_type", chart_type);
+        intent.putExtra("chart_number", chartNumber);
+        startActivity(intent);
+
     }
 }

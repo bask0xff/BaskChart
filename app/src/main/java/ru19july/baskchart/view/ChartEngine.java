@@ -89,7 +89,7 @@ public class ChartEngine {
         mView = v;
     }
 
-    public void DrawChart(Object canvas) {
+    public void DrawChart(Object canvasOrOpenGL) {
         ChartData chartData = mChartData;
 
         if (chartData == null) return;
@@ -97,15 +97,15 @@ public class ChartEngine {
 
         minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
-        if (canvas instanceof Canvas) {
-            ((Canvas) canvas).save();
-            W = ((Canvas) canvas).getWidth();
-            H = ((Canvas) canvas).getHeight();
+        if (canvasOrOpenGL instanceof Canvas) {
+            ((Canvas) canvasOrOpenGL).save();
+            W = ((Canvas) canvasOrOpenGL).getWidth();
+            H = ((Canvas) canvasOrOpenGL).getHeight();
         }
         if (xEnd < 1) xEnd = W;
 
-        if (canvas instanceof GL10) {
-            GL10 gl = (GL10) canvas;
+        if (canvasOrOpenGL instanceof GL10) {
+            GL10 gl = (GL10) canvasOrOpenGL;
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
             //gl.glEnable(GL10.GL_TEXTURE_2D);              // Enable Texture Mapping
@@ -117,25 +117,25 @@ public class ChartEngine {
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
-        setBackground(canvas, mTheme.backgroundColor());
+        setBackground(canvasOrOpenGL, mTheme.backgroundColor());
 
         if (chartData.getSeries().get(0).getValues().size() > 0) {
 
             NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
 
-            DrawHorizontalLines(numScaleV, decimalCount, canvas);
+            DrawHorizontalLines(numScaleV, decimalCount, canvasOrOpenGL);
 
             NiceDate numScaleH = new NiceDate(leftMinValue, rightMaxValue);
-            DrawVerticalLines(numScaleH, canvas);
+            DrawVerticalLines(numScaleH, canvasOrOpenGL);
 
-            DrawChart(chartData.getSeries(), canvas);
+            DrawChart(chartData.getSeries(), canvasOrOpenGL);
         }
 
-        drawSliderGraph(canvas);
+        drawSliderGraph(canvasOrOpenGL);
         //drawSlider(canvas);
 
-        if (canvas instanceof Canvas)
-            ((Canvas) canvas).restore();
+        if (canvasOrOpenGL instanceof Canvas)
+            ((Canvas) canvasOrOpenGL).restore();
 
         //drawing = false;
         return;//.getCanvas();

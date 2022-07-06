@@ -93,7 +93,7 @@ public class ChartEngine {
         ChartData chartData = mChartData;
 
         if (chartData == null) return;
-        if(mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return;
+        if (mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return;
 
         minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
@@ -101,10 +101,7 @@ public class ChartEngine {
             ((Canvas) canvasOrOpenGL).save();
             W = ((Canvas) canvasOrOpenGL).getWidth();
             H = ((Canvas) canvasOrOpenGL).getHeight();
-        }
-        if (xEnd < 1) xEnd = W;
-
-        if (canvasOrOpenGL instanceof GL10) {
+        } else if (canvasOrOpenGL instanceof GL10) {
             GL10 gl = (GL10) canvasOrOpenGL;
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
@@ -114,6 +111,8 @@ public class ChartEngine {
 
             gl.glLoadIdentity();
         }
+
+        if (xEnd < 1) xEnd = W;
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
@@ -233,7 +232,7 @@ public class ChartEngine {
         int yMin = H;
 
         //touched vertical line
-        drawLine(canvas, (int)xk, 0, (int)xk, (int)(H * chartYendsFactor), 2f, Color.BLACK, 1f);
+        drawLine(canvas, (int) xk, 0, (int) xk, (int) (H * chartYendsFactor), 2f, Color.BLACK, 1f);
 
         for (int j = 1; j < series.size(); j++) {
             //if (!series.get(j).isChecked()) continue;
@@ -245,8 +244,8 @@ public class ChartEngine {
             fpc.setAlpha((int) (255 * alpha));
 
             //if (seriesY.getAlpha() > 0.95) drawCircle(canvas, x1, y1, 2.0f, fpc);
-            if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_LINE) {
-                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min)*4];
+            if (mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_LINE) {
+                float vertices[] = new float[(minmaxIndexes.max - minmaxIndexes.min) * 4];
 
                 for (int i = minmaxIndexes.min; i < minmaxIndexes.max; i++) {
                     if (canvas instanceof Canvas) {
@@ -264,8 +263,8 @@ public class ChartEngine {
                 drawPoly(canvas, vertices, minmaxIndexes.min + 1, minmaxIndexes.max + 1, 5f, fp.getColor(), alpha);
             }
 
-            if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
-                float vertices[] = new float[(minmaxIndexes.max  - minmaxIndexes.min) * 12];
+            if (mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_FILLEDPOLY) {
+                float vertices[] = new float[(minmaxIndexes.max - minmaxIndexes.min) * 12];
 
                 Path polyPath = new Path();
                 polyPath.moveTo(GetX(series.get(0).getValues().get(minmaxIndexes.min)), GetY(series.get(j).getValues().get(minmaxIndexes.min), series.get(j).getScale()));
@@ -277,7 +276,7 @@ public class ChartEngine {
                         int y = (int) GetY(series.get(j).getValues().get(i), series.get(j).getScale());
                         polyPath.lineTo(x, y);
                     } else {
-                        if(j==series.size()-1){
+                        if (j == series.size() - 1) {
 
                         }
 
@@ -288,13 +287,13 @@ public class ChartEngine {
                         vertices[indx * 12 + 3] = H / 2 - (int) GetY(series.get(j).getValues().get(i + 1), series.get(j).getScale());
 
                         vertices[indx * 12 + 4] = vertices[indx * 12 + 2];
-                        vertices[indx * 12 + 5] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i + 1), series.get(j-1).getScale());
+                        vertices[indx * 12 + 5] = H / 2 - (int) GetY(series.get(j - 1).getValues().get(i + 1), series.get(j - 1).getScale());
 
                         vertices[indx * 12 + 6] = vertices[indx * 12 + 4];
                         vertices[indx * 12 + 7] = vertices[indx * 12 + 5];
 
                         vertices[indx * 12 + 8] = vertices[indx * 12];
-                        vertices[indx * 12 + 9] = H / 2 - (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+                        vertices[indx * 12 + 9] = H / 2 - (int) GetY(series.get(j - 1).getValues().get(i), series.get(j - 1).getScale());
 
                         vertices[indx * 12 + 10] = vertices[indx * 12];
                         vertices[indx * 12 + 11] = vertices[indx * 12 + 1];
@@ -303,19 +302,18 @@ public class ChartEngine {
                     }
                 }
 
-                if(j>1 ){
-                    for (int i = minmaxIndexes.max-1; i > minmaxIndexes.min; i--) {
+                if (j > 1) {
+                    for (int i = minmaxIndexes.max - 1; i > minmaxIndexes.min; i--) {
                         if (canvas instanceof Canvas) {
                             int x = GetX(series.get(0).getValues().get(i));
-                            int y = (int) GetY(series.get(j-1).getValues().get(i), series.get(j-1).getScale());
+                            int y = (int) GetY(series.get(j - 1).getValues().get(i), series.get(j - 1).getScale());
                             polyPath.lineTo(x, y);
 
                         } else {
                         }
                     }
-                }
-                else{
-                    for (int i = minmaxIndexes.max-1; i > minmaxIndexes.min; i--) {
+                } else {
+                    for (int i = minmaxIndexes.max - 1; i > minmaxIndexes.min; i--) {
                         if (canvas instanceof Canvas) {
                             int x = GetX(series.get(0).getValues().get(i));
                             int y = (int) GetY(0, 1);
@@ -332,12 +330,12 @@ public class ChartEngine {
                 drawPath(canvas, vertices, polyPath, fp);
             }
 
-            if(mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
+            if (mChartData.getChartType() == ChartData.CHART_TYPE.CHART_TYPE_BAR) {
                 int barWidth = W / (minmaxIndexes.max - minmaxIndexes.min);
                 for (int i = minmaxIndexes.min; i < minmaxIndexes.max; i++) {
 
                     if (canvas instanceof Canvas) {
-                        float x  = GetX(series.get(0).getValues().get(i));
+                        float x = GetX(series.get(0).getValues().get(i));
                         float offsetY = 0f;
 
                         float y = offsetY + GetY(series.get(j).getValues().get(i), series.get(1).getScale());
@@ -345,11 +343,11 @@ public class ChartEngine {
                         drawBar(canvas, x, y, barWidth, fp.getColor(), alpha);
                     } else {
                         float x = GetX(series.get(0).getValues().get(i));
-                        float h = (float) (H*((series.get(j).getValues().get(i) - mChartData.getMinValue()) / (float)(mChartData.getMaxValue() - mChartData.getMinValue())));
+                        float h = (float) (H * ((series.get(j).getValues().get(i) - mChartData.getMinValue()) / (float) (mChartData.getMaxValue() - mChartData.getMinValue())));
 
                         float y = GetY(series.get(j).getValues().get(i), series.get(j).getScale());
 
-                        pixel((GL10) canvas, x, y + h/2, barWidth, h/2, fp.getColor(), 1f);
+                        pixel((GL10) canvas, x, y + h / 2, barWidth, h / 2, fp.getColor(), 1f);
                     }
                 }
             }
@@ -406,7 +404,7 @@ public class ChartEngine {
         while (yLine <= numScale.niceMax) {
             float yL = GetY(yLine, 1f);
 
-            drawLine(canvas, 0, (int)yL, W, (int)yL, 2f, Color.BLACK, 1f);
+            drawLine(canvas, 0, (int) yL, W, (int) yL, 2f, Color.BLACK, 1f);
 
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) yLine);
@@ -430,7 +428,7 @@ public class ChartEngine {
             float xL = GetX(xLine);
 
             if (mShowVerticalLines) {
-                drawLine(canvas, (int)xL, (int)(H * chartYstartsFactor), (int)xL, (int)(H * chartYendsFactor), 2f, Color.BLACK, 1f);
+                drawLine(canvas, (int) xL, (int) (H * chartYstartsFactor), (int) xL, (int) (H * chartYendsFactor), 2f, Color.BLACK, 1f);
             }
 
             String str = Utils.unixtimeToString((long) xLine, "MMM dd");
@@ -588,7 +586,7 @@ public class ChartEngine {
         xTouched = event.getX();
         yTouched = event.getY();
 
-        if(mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return false;
+        if (mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return false;
 
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
@@ -685,16 +683,16 @@ public class ChartEngine {
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
 
-                    for (int i = 0; i < mChartData.getSeries().get(0).getValues().size(); i++) {
-                        long newValue = mChartData.getSeries().get(0).getValues().get(i)/10;
-                        //mChartData.getSeries().get(0).getValues().set(i, newValue);
-                        for (int j = 1; j < mChartData.getSeries().size(); j++) {
-                            long newValue2 = (long) (mChartData.getSeries().get(j).getValues().get(i) * (float) animation.getAnimatedValue());
+                for (int i = 0; i < mChartData.getSeries().get(0).getValues().size(); i++) {
+                    long newValue = mChartData.getSeries().get(0).getValues().get(i) / 10;
+                    //mChartData.getSeries().get(0).getValues().set(i, newValue);
+                    for (int j = 1; j < mChartData.getSeries().size(); j++) {
+                        long newValue2 = (long) (mChartData.getSeries().get(j).getValues().get(i) * (float) animation.getAnimatedValue());
 
-                            //Log.d(TAG, "onAnimationUpdate: " + i + "(" + j + ") " + mChartData.getSeries().get(j).getValues().get(i) + " =(" + (float) animation.getAnimatedValue()  + ")=> " + newValue);
-                            mChartData.getSeries().get(j).getValues().set(i, newValue2);
-                        }
+                        //Log.d(TAG, "onAnimationUpdate: " + i + "(" + j + ") " + mChartData.getSeries().get(j).getValues().get(i) + " =(" + (float) animation.getAnimatedValue()  + ")=> " + newValue);
+                        mChartData.getSeries().get(j).getValues().set(i, newValue2);
                     }
+                }
 
                 //for (int i = 1; i < mChartData.getSeries().size(); i++)
                 //    mChartData.getSeries().get(i).updateMorphTransformation(oldChartData, newChartData, (float) animation.getAnimatedValue());
@@ -708,13 +706,13 @@ public class ChartEngine {
     private ChartData createNewForm(ChartData chartData) {
         ChartData newChart = new ChartData();
         //new X coordinates
-        for(int i=0; i< chartData.getSeries().get(0).getValues().size(); i++){
+        for (int i = 0; i < chartData.getSeries().get(0).getValues().size(); i++) {
             long newValue = 0;
             chartData.getSeries().get(0).getValues().set(i, newValue);
         }
         //change Y coordinates
-        for(int j=1; j<chartData.getSeries().size(); j++)
-            for(int i=0; i< chartData.getSeries().get(0).getValues().size(); i++) {
+        for (int j = 1; j < chartData.getSeries().size(); j++)
+            for (int i = 0; i < chartData.getSeries().get(0).getValues().size(); i++) {
                 long newValue = 0;
                 chartData.getSeries().get(j).getValues().set(i, newValue);
             }
@@ -723,7 +721,7 @@ public class ChartEngine {
     }
 
     private boolean isLegend(float x, float y) {
-        if(legendRect == null) return false;
+        if (legendRect == null) return false;
         return (x >= legendRect.left && x <= legendRect.right && y >= legendRect.top && y <= legendRect.bottom);
     }
 
@@ -736,12 +734,12 @@ public class ChartEngine {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawText(str, x, y, p);
         if (canvas instanceof GL10) {
-            if(true) return;
-            
+            if (true) return;
+
             int glSize = (int) (size * 2);
             GLText glText = glTexts.get(glSize);
-            if(glText == null) {
-                glText = new GLText((GL10)canvas, mContext.getAssets());
+            if (glText == null) {
+                glText = new GLText((GL10) canvas, mContext.getAssets());
                 glText.load("Roboto-Regular.ttf", glSize, 2, 2);  // Create Font (Height: 14 Pixels / X+Y Padding 2 Pixels)
                 glTexts.put(glSize, glText);
             }
@@ -758,14 +756,14 @@ public class ChartEngine {
     }
 
     private void drawTextGl(GL10 gl, String text, int x, int y, float size, int color, int alpha) {
-        for(int i=0; i<text.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
             pixel(gl, (int) (x + i * size), (int) y, size * 0.8f, size, color, alpha);
         }
     }
 
     private void drawBar(Object canvas, float x, float y, float barWidth, int color, float alpha) {
-        Rect rect = new Rect((int)(x - barWidth/2), (int)y, (int)(x + barWidth/2), (int)(H * chartYendsFactor));
-        if (canvas instanceof Canvas){
+        Rect rect = new Rect((int) (x - barWidth / 2), (int) y, (int) (x + barWidth / 2), (int) (H * chartYendsFactor));
+        if (canvas instanceof Canvas) {
             Paint fp = new Paint();
             fp.setColor(color);
             fp.setAlpha((int) (alpha * 255));
@@ -774,7 +772,7 @@ public class ChartEngine {
             ((Canvas) canvas).drawRect(rect, fp);
         }
         if (canvas instanceof GL10) {
-            pixel((GL10)canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, color, 1);
+            pixel((GL10) canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, color, 1);
         }
     }
 
@@ -782,7 +780,7 @@ public class ChartEngine {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawRoundRect(rect, x, y, paint);
         if (canvas instanceof GL10) {
-            pixel((GL10)canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, paint.getColor(), 1);
+            pixel((GL10) canvas, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, paint.getColor(), 1);
         }
     }
 
@@ -822,7 +820,7 @@ public class ChartEngine {
                     // Set the color for each of the faces
                     gl.glColor4f(r, g, b, alpha);
                     // Draw the primitive from the vertex-array directly
-                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face*3, 3);
+                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face * 3, 3);
                 }
                 gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
                 gl.glDisable(GL10.GL_CULL_FACE);
@@ -892,7 +890,7 @@ public class ChartEngine {
             gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
             gl.glColor4f(r, g, b, alpha);
             gl.glLineWidth(width);
-            gl.glDrawArrays(GL_LINES, 0, vertices.length/2);
+            gl.glDrawArrays(GL_LINES, 0, vertices.length / 2);
         }
     }
 

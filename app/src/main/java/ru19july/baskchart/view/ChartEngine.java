@@ -38,6 +38,10 @@ import static javax.microedition.khronos.opengles.GL10.GL_FLOAT;
 import static javax.microedition.khronos.opengles.GL10.GL_LINES;
 import static javax.microedition.khronos.opengles.GL10.GL_VERTEX_ARRAY;
 
+/*
+ Created by Sergey V. Baskov in 2019
+ */
+
 public class ChartEngine {
 
     private static final String TAG = ChartEngine.class.getSimpleName();

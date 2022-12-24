@@ -16,7 +16,11 @@ import ru19july.baskchart.interfaces.IChartTheme;
 import ru19july.baskchart.interfaces.IChartView;
 import ru19july.baskchart.view.ChartEngine;
 
-public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View.OnTouchListener  {
+/*
+ Created by Sergey V. Baskov in 2019
+ */
+
+public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View.OnTouchListener {
     private static final String TAG = ChartGLRenderer.class.getSimpleName();
     private final View view;
 

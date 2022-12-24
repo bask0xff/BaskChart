@@ -28,6 +28,10 @@ import ru19july.baskchart.view.opengl.ChartGLRenderer;
 import ru19july.baskchart.view.theme.DarkTheme;
 import ru19july.baskchart.view.theme.LightTheme;
 
+/*
+ Created by Sergey V. Baskov in 2019
+ */
+
 public class BaskChartView extends LinearLayout {
 
     private String TAG = BaskChartView.class.getSimpleName();

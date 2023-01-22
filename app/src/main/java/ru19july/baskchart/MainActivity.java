@@ -1,27 +1,19 @@
 package ru19july.baskchart;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import ru19july.baskchart.data.ChartData;
-import ru19july.baskchart.data.Series;
 import ru19july.baskchart.interfaces.IChartTheme;
 import ru19july.baskchart.view.BaskChartView;
 import ru19july.baskchart.view.canvas.ChartCanvasView;

@@ -28,7 +28,7 @@ public class DarkTheme implements IChartTheme {
 
     @Override
     public String sliderBackground() {
-        return "#77000000";
+        return "#bb000000";
     }
 
     @Override

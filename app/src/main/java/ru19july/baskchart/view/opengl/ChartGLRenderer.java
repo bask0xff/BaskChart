@@ -1,7 +1,9 @@
 package ru19july.baskchart.view.opengl;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,7 +26,7 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
     private static final String TAG = ChartGLRenderer.class.getSimpleName();
     private final View view;
 
-    private ChartEngine chartEngine;
+    private final ChartEngine chartEngine;
 
     public ChartGLRenderer(View chartView, Context context) {
         chartEngine = new ChartEngine(context, chartView);
@@ -81,8 +83,10 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        Log.d(TAG, "onTouch: " + event);
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             invalidate();
         }

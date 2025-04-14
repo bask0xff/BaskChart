@@ -1,6 +1,7 @@
 package ru19july.baskchart.view;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -38,16 +39,18 @@ import static javax.microedition.khronos.opengles.GL10.GL_FLOAT;
 import static javax.microedition.khronos.opengles.GL10.GL_LINES;
 import static javax.microedition.khronos.opengles.GL10.GL_VERTEX_ARRAY;
 
+import androidx.annotation.NonNull;
+
 /*
  Created by Sergey V. Baskov in 2019
  */
-
+// This class is responsible for drawing the chart on the canvas or OpenGL surface.
 public class ChartEngine {
 
     private static final String TAG = ChartEngine.class.getSimpleName();
     private final Context mContext;
     private final View mView;
-    private int W, H;
+    private int W, H; // width and height of the view
 
     Paint paint;
     Random r = new Random();
@@ -71,20 +74,19 @@ public class ChartEngine {
     private String themeName;
     private ChartData mChartData;
 
-    private float chartYstartsFactor = .2f;
-    private float chartYfinishFactor = .5f;
-    private float chartYendsFactor = .8f;
-    private float textYFactor = 0.82f;
-    private float textAxisSize = 0.033f;
-    private float sliderYfactor = textYFactor + textAxisSize + 0.01f;
-    private boolean catchedLeft = false;
-    private boolean catchedRight = false;
-    private boolean movingSlider = false;
+    private final float chartYstartsFactor = .2f; // variable for chart Y axis
+    private float chartYendsFactor = .8f; // variable for chart Y axis
+    private float textYFactor = 0.82f; // variable for text Y axis
+    private float textAxisSize = 0.033f; // variable for text axis size
+    private float sliderYfactor = textYFactor + textAxisSize + 0.01f; // variable for slider Y axis
+    private boolean catchedLeft = false; // variable for catching left slider
+    private boolean catchedRight = false; // variable for catching right slider
+    private boolean movingSlider = false; // variable for moving slider
     private float xStartTouched = 0.0f;
     private float xEndTouched = 0.0f;
     private float xMoveTouched = 0.0f;
     private RectF legendRect;
-    private HashMap<Integer, GLText> glTexts = new HashMap<>();
+    private final HashMap<Integer, GLText> glTexts = new HashMap<>(); // HashMap for storing GLText objects
     private long selectedTimestamp;
     private MinMaxIndex minmaxIndexes;
 
@@ -93,6 +95,7 @@ public class ChartEngine {
         mView = v;
     }
 
+    // This method is responsible for drawing the chart on the canvas or OpenGL surface.
     public void DrawChart(Object canvasOrOpenGL) {
         ChartData chartData = mChartData;
 
@@ -101,6 +104,7 @@ public class ChartEngine {
 
         minmaxIndexes = findIndexes(mChartData.getSeries().get(0), startNormalized, endNormalized);
 
+        // Canvas or OpenGL
         if (canvasOrOpenGL instanceof Canvas) {
             ((Canvas) canvasOrOpenGL).save();
             W = ((Canvas) canvasOrOpenGL).getWidth();
@@ -109,6 +113,7 @@ public class ChartEngine {
             GL10 gl = (GL10) canvasOrOpenGL;
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+            // commented because of error
             //gl.glEnable(GL10.GL_TEXTURE_2D);              // Enable Texture Mapping
             //gl.glEnable(GL10.GL_BLEND);                   // Enable Alpha Blend
             //gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);  // Set Alpha Blend Function
@@ -116,13 +121,14 @@ public class ChartEngine {
             gl.glLoadIdentity();
         }
 
+        // calculate the width and height of the view
         if (xEnd < 1) xEnd = W;
 
         int decimalCount = Utils.DEFAULT_DECIMAL_COUNT;
 
         setBackground(canvasOrOpenGL, mTheme.backgroundColor());
 
-        if (chartData.getSeries().get(0).getValues().size() > 0) {
+        if (!chartData.getSeries().get(0).getValues().isEmpty()) {
 
             NiceScale numScaleV = chartData.getNiceScale(leftMinValue, rightMaxValue);
 
@@ -180,6 +186,8 @@ public class ChartEngine {
 
     private float GetY(double y, float scale) {
         float realY = 0;
+        // variable for chart Y axis
+        float chartYfinishFactor = .5f;
         if ((mChartData.getMaxValue() - mChartData.getMinValue()) > 0)
             realY = (float) (H * (1 - chartYstartsFactor - chartYfinishFactor * scale * (y - mChartData.getMinValue()) / (mChartData.getMaxValue() - mChartData.getMinValue())));
         return realY;
@@ -410,6 +418,7 @@ public class ChartEngine {
 
             drawLine(canvas, 0, (int) yL, W, (int) yL, 2f, Color.BLACK, 1f);
 
+            @SuppressLint("DefaultLocale")
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) yLine);
 
@@ -492,7 +501,7 @@ public class ChartEngine {
                 leftX,
                 lastY - H * 1f / 15f,
                 rightX,
-                lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + (1) * 105);
+                lastY + H * Utils.FLOATING_MARGIN_BOTTOM_RATIO + 105);
 
         drawRoundRect(canvas, legendRect, 8, 8, paint);
 
@@ -503,6 +512,7 @@ public class ChartEngine {
         int k = 0;
         int textOffset = 0;
         for (int i = 0; i < values.length; i++) {
+            @SuppressLint("DefaultLocale")
             String strFmt = String.format("%%.%df", decimalCount);
             String str = String.format(strFmt, (float) values[i]);
             if (colors[i] == null) continue;
@@ -553,7 +563,7 @@ public class ChartEngine {
         int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                 for (int i = 1; i < mChartData.getSeries().size(); i++)
                     mChartData.getSeries().get(i).setScale((float) animation.getAnimatedValue());
 
@@ -571,7 +581,7 @@ public class ChartEngine {
         int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                 if (mChartData.getSeries() != null)
                     mChartData.getSeries().get(k).setAlpha((float) animation.getAnimatedValue());
                 view.invalidate();
@@ -590,7 +600,7 @@ public class ChartEngine {
         xTouched = event.getX();
         yTouched = event.getY();
 
-        if (mChartData.getSeries() == null || mChartData.getSeries().size() < 1) return false;
+        if (mChartData.getSeries() == null || mChartData.getSeries().isEmpty()) return false;
 
         int startIndex = (int) (startNormalized * mChartData.getSeries().get(0).getValues().size());
         int endIndex = (int) (endNormalized * mChartData.getSeries().get(0).getValues().size());
@@ -685,7 +695,7 @@ public class ChartEngine {
         int mDuration = 1000;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
 
                 for (int i = 0; i < mChartData.getSeries().get(0).getValues().size(); i++) {
                     long newValue = mChartData.getSeries().get(0).getValues().get(i) / 10;
@@ -752,8 +762,8 @@ public class ChartEngine {
                     (p.getColor() >> 16 & 0xff) / 255f,
                     (p.getColor() >> 8 & 0xff) / 255f,
                     (p.getColor() & 0xff) / 255f,
-                    p.getAlpha() / 255);
-            glText.draw(str, x - W / 2, -(y - H / 2));          // Draw Test String
+                    (float) p.getAlpha() / 255);
+            glText.draw(str, x - (float) W / 2, -(y - (float) H / 2));          // Draw Test String
             glText.end();                                   // End Text Rendering
 
         }
@@ -792,44 +802,41 @@ public class ChartEngine {
         if (canvas instanceof Canvas)
             ((Canvas) canvas).drawPath(mPath, mPaint);
         if (canvas instanceof GL10) {
-            if (canvas instanceof GL10) {
-                GL10 gl = (GL10) canvas;
+            GL10 gl = (GL10) canvas;
 
-                FloatBuffer vertexBuffer;  // Buffer for vertex-array
-                int numFaces = vertices.length / 6;
+            FloatBuffer vertexBuffer;  // Buffer for vertex-array
+            int numFaces = vertices.length / 6;
 
-                int color = mPaint.getColor();
-                float alpha = mPaint.getAlpha() / 255f;
-                float width = 1f;
+            int color = mPaint.getColor();
+            float alpha = mPaint.getAlpha() / 255f;
+            float width = 1f;
 
-                ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
-                vbb.order(ByteOrder.nativeOrder()); // Use native byte order
-                vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
-                vertexBuffer.put(vertices);         // Copy data into buffer
-                vertexBuffer.position(0);           // Rewind
+            ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+            vbb.order(ByteOrder.nativeOrder()); // Use native byte order
+            vertexBuffer = vbb.asFloatBuffer(); // Convert from byte to float
+            vertexBuffer.put(vertices);         // Copy data into buffer
+            vertexBuffer.position(0);           // Rewind
 
-                gl.glFrontFace(GL10.GL_CW);    // Front face in counter-clockwise orientation
-                gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
-                gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
+            gl.glFrontFace(GL10.GL_CW);    // Front face in counter-clockwise orientation
+            gl.glEnable(GL10.GL_CULL_FACE); // Enable cull face
+            gl.glCullFace(GL10.GL_BACK);    // Cull the back face (don't display)
 
-                gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-                gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
+            gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+            gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
 
-                float r = ((color >> 16) & 0xff) / 255f;
-                float g = ((color >> 8) & 0xff) / 255f;
-                float b = ((color >> 0) & 0xff) / 255f;
+            float r = ((color >> 16) & 0xff) / 255f;
+            float g = ((color >> 8) & 0xff) / 255f;
+            float b = ((color) & 0xff) / 255f;
 
-                // Render all the faces
-                for (int face = 0; face < numFaces; face++) {
-                    // Set the color for each of the faces
-                    gl.glColor4f(r, g, b, alpha);
-                    // Draw the primitive from the vertex-array directly
-                    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face * 3, 3);
-                }
-                gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-                gl.glDisable(GL10.GL_CULL_FACE);
-
+            // Render all the faces
+            for (int face = 0; face < numFaces; face++) {
+                // Set the color for each of the faces
+                gl.glColor4f(r, g, b, alpha);
+                // Draw the primitive from the vertex-array directly
+                gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, face * 3, 3);
             }
+            gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+            gl.glDisable(GL10.GL_CULL_FACE);
         }
     }
 
@@ -888,7 +895,7 @@ public class ChartEngine {
 
             float r = ((color >> 16) & 0xff) / 255f;
             float g = ((color >> 8) & 0xff) / 255f;
-            float b = ((color >> 0) & 0xff) / 255f;
+            float b = ((color) & 0xff) / 255f;
 
             gl.glEnableClientState(GL_VERTEX_ARRAY);
             gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);
@@ -918,10 +925,9 @@ public class ChartEngine {
             ((GL10) canvas).glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
         }
     }
-
     private void pixel(GL10 gl, float x, float y, float w, float h, int color, float alpha) {
-        x = x - W / 2;
-        y = -(y - H / 2);
+        x = x - (float) W / 2;
+        y = -(y - (float) H / 2);
         gl.glLoadIdentity();
         gl.glTranslatef(x, y, 0);
         gl.glScalef(w, h, 1);
@@ -941,7 +947,7 @@ public class ChartEngine {
     }
 
     private void drawLineGL(GL10 gl, int x1, int y1, int x2, int y2, float width, int color, float alpha) {
-        float vertices[] = {x1 - W / 2, y1 - H / 2, x2 - W / 2, y2 - H / 2};
+        float[] vertices = {x1 - (float) W / 2, y1 - (float) H / 2, x2 - (float) W / 2, y2 - (float) H / 2};
 
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder()); // Use native byte order
@@ -951,7 +957,7 @@ public class ChartEngine {
 
         float r = ((color >> 16) & 0xff) / 255f;
         float g = ((color >> 8) & 0xff) / 255f;
-        float b = ((color >> 0) & 0xff) / 255f;
+        float b = ((color) & 0xff) / 255f;
 
         gl.glEnableClientState(GL_VERTEX_ARRAY);
         gl.glVertexPointer(2, GL_FLOAT, 0, vertexBuffer);

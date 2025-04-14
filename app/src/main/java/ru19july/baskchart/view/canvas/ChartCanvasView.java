@@ -1,6 +1,7 @@
 package ru19july.baskchart.view.canvas;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -22,6 +23,7 @@ import ru19july.baskchart.view.ChartEngine;
 import ru19july.baskchart.view.opengl.ChartGLRenderer;
 import ru19july.baskchart.view.theme.DarkTheme;
 
+// This class is a custom view that extends View and implements IChartView and OnTouchListener interfaces.
 public class ChartCanvasView extends View implements IChartView, View.OnTouchListener {
 
     private final String TAG = ChartCanvasView.class.getSimpleName();
@@ -50,7 +52,6 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         setMeasuredDimension(width, height);
     }
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
     public void initView(Context context, AttributeSet attrs) {
         setOnTouchListener(this);
 
@@ -101,7 +102,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        //Log.d(TAG, "onTouch: " + event);
+        Log.d(TAG, "onTouch: " + event);
         this.getParent().requestDisallowInterceptTouchEvent(true);
         invalidate();
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -109,6 +110,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
         return chartEngine.onTouch(v, event);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         this.getParent().requestDisallowInterceptTouchEvent(true);

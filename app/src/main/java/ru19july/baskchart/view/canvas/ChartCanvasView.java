@@ -102,7 +102,7 @@ public class ChartCanvasView extends View implements IChartView, View.OnTouchLis
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, "onTouch: " + event);
+        //Log.d(TAG, "onTouch: " + event);
         this.getParent().requestDisallowInterceptTouchEvent(true);
         invalidate();
         if (event.getAction() == MotionEvent.ACTION_MOVE) {

@@ -86,7 +86,7 @@ public class ChartGLRenderer implements IChartView, GLSurfaceView.Renderer, View
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, "onTouch: " + event);
+        //Log.d(TAG, "onTouch: " + event);
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             invalidate();
         }

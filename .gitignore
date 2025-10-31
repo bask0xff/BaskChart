@@ -46,3 +46,5 @@ output.json
 
 *.li
 .li
+/app/release/app-release.aab
+/app/release/testers.csv

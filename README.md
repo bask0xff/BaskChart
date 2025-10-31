@@ -19,15 +19,15 @@ My solution for the [Telegram Chart Contest, 2019](https://t.me/contest/6). This
 
 ### CanvasChartView
 
-![Canvas ChartView](screenshots/canvas1.png)
-![Canvas ChartView](screenshots/canvas2.png)
-![Canvas ChartView](screenshots/canvas3.png)
+![Canvas ChartView](https://i.imgur.com/YaZu8RE.jpg)
+![Canvas ChartView](https://i.imgur.com/xz6mp10.jpg)
+![Canvas ChartView](https://i.imgur.com/d7xQruj.jpg)
 
 ### OpenGL ChartView
 
-![OpenGL ChartView](screenshots/opengl1.png)
-![OpenGL ChartView](screenshots/opengl2.png)
-![OpenGL ChartView](screenshots/opengl3.png)
+![OpenGL ChartView](https://i.imgur.com/6LMDn0D.jpg)
+![OpenGL ChartView](https://i.imgur.com/tl8Z1aa.jpg)
+![OpenGL ChartView](https://i.imgur.com/F00Ix6v.jpg)
 
 ## Installation
 

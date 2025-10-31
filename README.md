@@ -50,14 +50,14 @@ dependencies {
 ## Usage
 ### Basic Setup
 In your layout XML:
-```
+```xml
 <ru.bask.chart.CanvasChartView
     android:id="@+id/chart"
     android:layout_width="match_parent"
     android:layout_height="200dp" />
 ```
 In your Activity/Fragment:
-```
+```java
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

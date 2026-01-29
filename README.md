@@ -4,6 +4,10 @@
 
 My solution for the [Telegram Chart Contest, 2019](https://t.me/contest/6). This Android library provides smooth, interactive charts with animation support, rendered via either custom Canvas drawing or OpenGL ES for high performance.
 
+## Donate
+USDT TRC20 : THR5VLuZWn7z8iiXwJ1WK9Sg4E6Ae8qUmk
+USDT ERC20 : 0x4b5fAF36e95918AD3e65bF9bd42E1FDEca93db2e
+
 ## Features
 
 - **Two Rendering Modes**:

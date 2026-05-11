@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BaskChart</string>
+    <string name="app_name">BaskChart Demo</string>
 
     <string name="statistics">Statistics</string>
     <string name="day">Day</string>
